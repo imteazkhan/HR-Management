@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR Management System | ik soft</title>
+    <title>HR Management System | ik</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4361ee;
+            --primary:rgb(39, 97, 163);
             --secondary: #3f37c9;
             --success: #4cc9f0;
             --info: #4895ef;
@@ -512,7 +512,7 @@
             <nav class="navbar">
                 <a href="{{ route('home') }}" class="logo">
                     <i class="fas fa-users"></i>
-                    ik soft
+                    ik 
                 </a>
                 
                 <ul class="nav-links">
@@ -570,7 +570,15 @@
                     @endauth
                     <div class="hero-buttons">
                         @auth
-                            <a href="{{ route('dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+                            @php
+                                $dashboardRoute = match(Auth::user()->role) {
+                                    'superadmin' => route('superadmin.dashboard'),
+                                    'manager' => route('manager.dashboard'),
+                                    'employee' => route('employee.dashboard'),
+                                    default => route('dashboard')
+                                };
+                            @endphp
+                            <a href="{{ $dashboardRoute }}" class="btn btn-primary">Go to Dashboard</a>
                             <a href="{{ route('profile.edit') }}" class="btn btn-outline">Manage Profile</a>
                         @else
                             <a href="{{ route('register') }}" class="btn btn-primary">Get Started</a>
@@ -646,7 +654,62 @@
     </section>
 
     <!-- Testimonials Section -->
-    <section class="testimonials" id="about">
+
+<section class="testimonials" id="about">
+    <div class="container">
+        <div class="section-title">
+            <h2>What Our Clients Say</h2>
+            <p>Hear from businesses that have transformed their HR processes with our platform</p>
+        </div>
+
+        <div class="testimonials-grid">
+            @php
+                $testimonials = [
+                    [
+                        'text' => "ik has revolutionized how we manage our HR processes. We've reduced administrative work by 60% and improved employee satisfaction significantly.",
+                        'name' => "Al Imran Emon",
+                        'role' => "HR Director, zZone Ecommerce"
+                    ],
+                    [
+                        'text' => "The payroll automation alone has saved us countless hours each month. The reporting features have given us insights we never had before.",
+                        'name' => "Mhamuda Jhuma",
+                        'role' => "CFO, CareerBridge"
+                    ],
+                    [
+                        'text' => "Implementation was smooth, and the support team was incredibly helpful. Our employees find the system intuitive and easy to use.",
+                        'name' => "Abdul Aziz",
+                        'role' => "Operations Manager, Social Talk"
+                    ],
+                ];
+            @endphp
+
+            @foreach ($testimonials as $t)
+                @php
+                    $initials = collect(explode(' ', $t['name']))
+                        ->map(fn($word) => strtoupper($word[0]))
+                        ->join('');
+                    $initials = substr($initials, 0, 2); // keep max 2 letters
+                @endphp
+
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "{{ $t['text'] }}"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">{{ $initials }}</div>
+                        <div class="author-info">
+                            <h4>{{ $t['name'] }}</h4>
+                            <p>{{ $t['role'] }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+
+    <!-- <section class="testimonials" id="about">
         <div class="container">
             <div class="section-title">
                 <h2>What Our Clients Say</h2>
@@ -656,13 +719,13 @@
             <div class="testimonials-grid">
                 <div class="testimonial-card">
                     <div class="testimonial-text">
-                        "TalentFlow has revolutionized how we manage our HR processes. We've reduced administrative work by 60% and improved employee satisfaction significantly."
+                        "ik has revolutionized how we manage our HR processes. We've reduced administrative work by 60% and improved employee satisfaction significantly."
                     </div>
                     <div class="testimonial-author">
-                        <div class="author-avatar">SD</div>
+                        <div class="author-avatar">IE</div>
                         <div class="author-info">
-                            <h4>Sarah Johnson</h4>
-                            <p>HR Director, TechSolutions Inc.</p>
+                            <h4>Al Imran Emon</h4>
+                            <p>HR Director, zZone Ecommerce</p>
                         </div>
                     </div>
                 </div>
@@ -672,10 +735,10 @@
                         "The payroll automation alone has saved us countless hours each month. The reporting features have given us insights we never had before."
                     </div>
                     <div class="testimonial-author">
-                        <div class="author-avatar">MR</div>
+                        <div class="author-avatar">MJ</div>
                         <div class="author-info">
-                            <h4>Michael Rodriguez</h4>
-                            <p>CFO, Growth Enterprises</p>
+                            <h4>Mhamuda Jhuma</h4>
+                            <p>CFO, CarrerBridge</p>
                         </div>
                     </div>
                 </div>
@@ -685,16 +748,16 @@
                         "Implementation was smooth, and the support team was incredibly helpful. Our employees find the system intuitive and easy to use."
                     </div>
                     <div class="testimonial-author">
-                        <div class="author-avatar">AL</div>
+                        <div class="author-avatar">AA</div>
                         <div class="author-info">
-                            <h4>Amanda Lee</h4>
-                            <p>Operations Manager, Nova Services</p>
+                            <h4>Abdul Aziz</h4>
+                            <p>Operations Manager, Social Talk</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- CTA Section -->
     <section class="cta" id="pricing">
@@ -702,7 +765,15 @@
             <h2>Ready to Transform Your HR Management?</h2>
             <p>Join thousands of companies that have streamlined their HR processes with TalentFlow. Get started today with our 14-day free trial.</p>
             @auth
-                <a href="{{ route('dashboard') }}" class="btn">Go to Dashboard</a>
+                @php
+                    $dashboardRoute = match(Auth::user()->role) {
+                        'superadmin' => route('superadmin.dashboard'),
+                        'manager' => route('manager.dashboard'),
+                        'employee' => route('employee.dashboard'),
+                        default => route('dashboard')
+                    };
+                @endphp
+                <a href="{{ $dashboardRoute }}" class="btn">Go to Dashboard</a>
             @else
                 <a href="{{ route('register') }}" class="btn">Start Free Trial</a>
             @endauth
@@ -714,7 +785,7 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-column">
-                    <h3>TalentFlow</h3>
+                    <h3>ik </h3>
                     <p>Modern HR management solutions for businesses of all sizes.</p>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -759,7 +830,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2023 TalentFlow HR Management System. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} ik HR Management System. All rights reserved.</p>
             </div>
         </div>
     </footer>
