@@ -73,7 +73,7 @@
             overflow: hidden;
         }
         .card:hover { 
-            transform: translateY(-8px) scale(1.02); 
+          transform: translateY(-1px); 
             box-shadow: 0 12px 40px rgba(0,0,0,0.15);
         }
         .stat-card { 
@@ -121,11 +121,11 @@
         
         /* Button Animations */
         .btn {
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border-radius: 8px;
         }
         .btn:hover {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .btn:active {

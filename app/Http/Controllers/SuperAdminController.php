@@ -310,6 +310,8 @@ class SuperAdminController extends Controller
             'working_hours_start' => '09:00',
             'working_hours_end' => '17:00',
             'annual_leave_days' => 20,
+            'records_per_page' => 15,
+            'session_timeout' => 60,
         ];
 
         return view('dashboards.Admin.settings', compact('settings'));
@@ -364,6 +366,25 @@ class SuperAdminController extends Controller
         
         return redirect()->route('superadmin.payroll')
             ->with('success', 'Payroll processed successfully!');
+    }
+
+    /**
+     * Update payroll
+     */
+    public function updatePayroll(Request $request, $payrollId): RedirectResponse
+    {
+        $request->validate([
+            'base_salary' => 'required|numeric|min:0',
+            'bonuses' => 'required|numeric|min:0',
+            'deductions' => 'required|numeric|min:0'
+        ]);
+
+        // Here you would update the payroll data
+        // For now, this is a mock implementation since payroll data is currently hardcoded
+        // In a real application, you would update the payroll record in the database
+        
+        return redirect()->route('superadmin.payroll')
+            ->with('success', 'Payroll updated successfully!');
     }
 
     /**

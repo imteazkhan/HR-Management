@@ -52,6 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/settings', [SuperAdminController::class, 'updateSettings'])->name('settings.update');
         Route::get('/payroll', [SuperAdminController::class, 'showPayroll'])->name('payroll');
         Route::post('/payroll/process', [SuperAdminController::class, 'processPayroll'])->name('payroll.process');
+        Route::patch('/payroll/{payroll}', [SuperAdminController::class, 'updatePayroll'])->name('payroll.update');
         Route::get('/analytics', [SuperAdminController::class, 'showAnalytics'])->name('analytics');
         Route::get('/security', [SuperAdminController::class, 'showSecurity'])->name('security');
         Route::get('/database', [SuperAdminController::class, 'showDatabase'])->name('database');
