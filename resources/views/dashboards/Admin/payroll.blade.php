@@ -73,7 +73,7 @@
             overflow: hidden;
         }
         .card:hover { 
-           transform: translateY(-1px)
+           transform: translateY(-1px);
             box-shadow: 0 12px 40px rgba(0,0,0,0.15);
         }
         .stat-card { 

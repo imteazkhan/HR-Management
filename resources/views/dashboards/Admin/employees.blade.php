@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Employee Management - Super Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
@@ -320,14 +321,27 @@
 
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
+                <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
         @if(session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
+                <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>Please fix the following issues:</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
@@ -414,6 +428,7 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Role</th>
+                                <th>Department</th>
                                 <th>Joined</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -437,16 +452,23 @@
                                         {{ ucfirst($employee->role) }}
                                     </span>
                                 </td>
+                                <td>
+                                    @if($employee->department)
+                                        <span class="text-muted">{{ $employee->department->name }}</span>
+                                    @else
+                                        <span class="text-muted">No Department</span>
+                                    @endif
+                                </td>
                                 <td>{{ $employee->created_at->format('M d, Y') }}</td>
                                 <td>
                                     <span class="badge bg-success">Active</span>
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewEmployee({{ $employee->id }}, '{{ $employee->name }}', '{{ $employee->email }}', '{{ $employee->role }}', '{{ $employee->created_at->format('M d, Y') }}')" title="View">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewEmployee({{ $employee->id }}, '{{ $employee->name }}', '{{ $employee->email }}', '{{ $employee->role }}', '{{ $employee->created_at->format('M d, Y') }}', '{{ $employee->department ? $employee->department->name : 'No Department' }}', {{ $employee->department_id ?? 'null' }})" title="View">
                                             <i class="bi bi-eye"></i>
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editEmployee({{ $employee->id }}, '{{ $employee->name }}', '{{ $employee->email }}', '{{ $employee->role }}')" title="Edit">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editEmployee({{ $employee->id }}, '{{ $employee->name }}', '{{ $employee->email }}', '{{ $employee->role }}', {{ $employee->department_id ?? 'null' }})" title="Edit">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteEmployee({{ $employee->id }}, '{{ $employee->name }}')" title="Delete">
@@ -467,12 +489,12 @@
     </div>
 
     <!-- Add Employee Modal -->
-    <div class="modal fade" id="addEmployeeModal" tabindex="-1">
+    <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add New Employee</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="addEmployeeModalLabel">Add New Employee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="{{ route('superadmin.employees.create') }}" method="POST">
                     @csrf
@@ -517,12 +539,12 @@
     </div>
 
     <!-- Edit Employee Modal -->
-    <div class="modal fade" id="editEmployeeModal" tabindex="-1">
+    <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Employee</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="editEmployeeModalLabel">Edit Employee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="editEmployeeForm" method="POST">
                     @csrf
@@ -560,7 +582,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Update Employee</button>
+                        <button type="submit" class="btn btn-primary" onclick="console.log('Form submission URL:', document.getElementById('editEmployeeForm').action)">Update Employee</button>
                     </div>
                 </form>
             </div>
@@ -568,12 +590,12 @@
     </div>
 
     <!-- View Employee Modal -->
-    <div class="modal fade" id="viewEmployeeModal" tabindex="-1">
+    <div class="modal fade" id="viewEmployeeModal" tabindex="-1" aria-labelledby="viewEmployeeModalLabel">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Employee Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="viewEmployeeModalLabel">Employee Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -584,6 +606,7 @@
                             <h4 id="viewEmployeeName">-</h4>
                             <p class="text-muted mb-1"><i class="bi bi-envelope me-2"></i><span id="viewEmployeeEmail">-</span></p>
                             <p class="text-muted mb-1"><i class="bi bi-person-badge me-2"></i><span id="viewEmployeeRole">-</span></p>
+                            <p class="text-muted mb-1"><i class="bi bi-building me-2"></i><span id="viewEmployeeDepartment">-</span></p>
                             <p class="text-muted mb-1"><i class="bi bi-calendar me-2"></i>Joined: <span id="viewEmployeeJoined">-</span></p>
                             <span class="badge bg-success">Active</span>
                         </div>
@@ -598,12 +621,12 @@
     </div>
 
     <!-- Delete Employee Modal -->
-    <div class="modal fade" id="deleteEmployeeModal" tabindex="-1">
+    <div class="modal fade" id="deleteEmployeeModal" tabindex="-1" aria-labelledby="deleteEmployeeModalLabel">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Delete Employee</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="deleteEmployeeModalLabel">Delete Employee</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to delete the employee <strong id="deleteEmployeeName"></strong>?</p>
@@ -646,28 +669,41 @@
         }
         
         // View Employee Function
-        window.viewEmployee = function(id, name, email, role, joined) {
+        window.viewEmployee = function(id, name, email, role, joined, departmentName, departmentId) {
             document.getElementById('viewEmployeeName').textContent = name;
             document.getElementById('viewEmployeeEmail').textContent = email;
             document.getElementById('viewEmployeeRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+            document.getElementById('viewEmployeeDepartment').textContent = departmentName || 'No Department';
             document.getElementById('viewEmployeeJoined').textContent = joined;
             document.getElementById('viewEmployeeAvatar').textContent = name.charAt(0).toUpperCase();
             
-            // Store ID for edit function
+            // Store ID and department ID for edit function
             document.getElementById('viewEmployeeModal').setAttribute('data-employee-id', id);
+            document.getElementById('viewEmployeeModal').setAttribute('data-department-id', departmentId);
             
             var viewModal = new bootstrap.Modal(document.getElementById('viewEmployeeModal'));
             viewModal.show();
         }
 
         // Edit Employee Function
-        window.editEmployee = function(id, name, email, role) {
+        window.editEmployee = function(id, name, email, role, departmentId) {
+            console.log('Edit Employee called with ID:', id);
             document.getElementById('editEmployeeName').value = name;
             document.getElementById('editEmployeeEmail').value = email;
             document.getElementById('editEmployeeRole').value = role;
             
-            // Update form action
-            document.getElementById('editEmployeeForm').action = '/superadmin/employees/' + id;
+            // Set department selection
+            const departmentSelect = document.getElementById('editEmployeeDepartment');
+            if (departmentSelect && departmentId) {
+                departmentSelect.value = departmentId;
+            } else if (departmentSelect) {
+                departmentSelect.value = '';
+            }
+            
+            // Update form action with correct Laravel route
+            const actionUrl = '{{ url("superadmin/employees") }}/' + id;
+            console.log('Setting form action to:', actionUrl);
+            document.getElementById('editEmployeeForm').action = actionUrl;
             
             var editModal = new bootstrap.Modal(document.getElementById('editEmployeeModal'));
             editModal.show();
@@ -677,6 +713,7 @@
         window.editFromView = function() {
             const viewModal = bootstrap.Modal.getInstance(document.getElementById('viewEmployeeModal'));
             const employeeId = document.getElementById('viewEmployeeModal').getAttribute('data-employee-id');
+            const departmentId = document.getElementById('viewEmployeeModal').getAttribute('data-department-id');
             const name = document.getElementById('viewEmployeeName').textContent;
             const email = document.getElementById('viewEmployeeEmail').textContent;
             const role = document.getElementById('viewEmployeeRole').textContent.toLowerCase();
@@ -684,14 +721,17 @@
             viewModal.hide();
             
             setTimeout(() => {
-                editEmployee(employeeId, name, email, role);
+                editEmployee(employeeId, name, email, role, departmentId === 'null' ? null : departmentId);
             }, 300);
         }
 
         // Delete Employee Function
         window.deleteEmployee = function(id, name) {
+            console.log('Delete Employee called with ID:', id);
             document.getElementById('deleteEmployeeName').textContent = name;
-            document.getElementById('deleteEmployeeForm').action = '/superadmin/employees/' + id;
+            const actionUrl = '{{ url("superadmin/employees") }}/' + id;
+            console.log('Setting delete form action to:', actionUrl);
+            document.getElementById('deleteEmployeeForm').action = actionUrl;
             
             var deleteModal = new bootstrap.Modal(document.getElementById('deleteEmployeeModal'));
             deleteModal.show();
@@ -727,6 +767,74 @@
                     }, 500);
                 }, 5000);
             }
+        });
+
+        // Modal Focus Management for Better Accessibility
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('show.bs.modal', function () {
+                // Remove aria-hidden when modal is being shown
+                modal.removeAttribute('aria-hidden');
+            });
+            
+            modal.addEventListener('shown.bs.modal', function () {
+                // Ensure aria-hidden is removed and focus on the first focusable element
+                modal.removeAttribute('aria-hidden');
+                const firstFocusable = modal.querySelector('input, select, textarea, button:not([data-bs-dismiss])');
+                if (firstFocusable) {
+                    firstFocusable.focus();
+                }
+            });
+            
+            modal.addEventListener('hide.bs.modal', function () {
+                // Remove aria-hidden before hiding
+                modal.removeAttribute('aria-hidden');
+            });
+            
+            modal.addEventListener('hidden.bs.modal', function () {
+                // Only add aria-hidden after modal is completely hidden
+                setTimeout(() => {
+                    modal.setAttribute('aria-hidden', 'true');
+                }, 100);
+            });
+        });
+
+        // Override Bootstrap's default modal behavior
+        const originalModalShow = bootstrap.Modal.prototype.show;
+        bootstrap.Modal.prototype.show = function() {
+            // Remove aria-hidden before calling original show
+            this._element.removeAttribute('aria-hidden');
+            return originalModalShow.call(this);
+        };
+
+        const originalModalHide = bootstrap.Modal.prototype.hide;
+        bootstrap.Modal.prototype.hide = function() {
+            // Remove aria-hidden before hiding
+            this._element.removeAttribute('aria-hidden');
+            return originalModalHide.call(this);
+        };
+
+        // MutationObserver to prevent Bootstrap from adding aria-hidden on visible modals
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+                    const target = mutation.target;
+                    if (target.classList.contains('modal') && target.style.display === 'block') {
+                        // If modal is visible but aria-hidden was added, remove it
+                        if (target.getAttribute('aria-hidden') === 'true') {
+                            target.removeAttribute('aria-hidden');
+                        }
+                    }
+                }
+            });
+        });
+
+        // Observe all modals for attribute changes
+        modals.forEach(modal => {
+            observer.observe(modal, {
+                attributes: true,
+                attributeFilter: ['aria-hidden', 'style', 'class']
+            });
         });
     });
 </script>

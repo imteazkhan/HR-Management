@@ -72,7 +72,7 @@
             overflow: hidden;
         }
         .card:hover { 
-          transform: translateY(-1px)
+          transform: translateY(-1px);
             box-shadow: 0 12px 40px rgba(0,0,0,0.15);
         }
         .stat-card { 
@@ -198,6 +198,29 @@
         }
         .fade-in-up {
             animation: fadeInUp 0.6s ease-out;
+        }
+        
+        /* Modal accessibility improvements */
+        .modal.show {
+            /* Ensure visible modals never have aria-hidden */
+        }
+        .modal.show[aria-hidden="true"] {
+            /* Force remove aria-hidden on visible modals */
+            aria-hidden: false !important;
+        }
+        
+        /* Focus management for better accessibility */
+        .modal .btn-close:focus {
+            outline: 2px solid #0d6efd;
+            outline-offset: 2px;
+        }
+        
+        /* Ensure proper contrast for focus indicators */
+        .btn:focus,
+        .form-control:focus,
+        .form-select:focus {
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+            border-color: #86b7fe;
         }
     </style>
 </head>
@@ -365,12 +388,18 @@
                                     <span class="badge bg-success">Active</span>
                                 </td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#changeRoleModal{{ $user->id }}">
+                                    <div class="btn-group" role="group" aria-label="User actions for {{ $user->name }}">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#changeRoleModal{{ $user->id }}"
+                                            aria-label="Change role for {{ $user->name }}">
                                             <i class="bi bi-arrow-repeat"></i> Change Role
                                         </button>
                                         @if($user->role !== 'superadmin')
-                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal{{ $user->id }}">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#deleteUserModal{{ $user->id }}"
+                                            aria-label="Delete user {{ $user->name }}">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                         @endif
@@ -379,28 +408,30 @@
                             </tr>
 
                             <!-- Change Role Modal -->
-                            <div class="modal fade" id="changeRoleModal{{ $user->id }}" tabindex="-1">
+                            <div class="modal fade" id="changeRoleModal{{ $user->id }}" tabindex="-1"
+                                aria-labelledby="changeRoleModalLabel{{ $user->id }}">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header bg-primary text-white">
-                                            <h5 class="modal-title">Change User Role</h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            <h5 class="modal-title" id="changeRoleModalLabel{{ $user->id }}">Change User Role</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <form action="{{ route('superadmin.users.role') }}" method="POST">
                                             @csrf
                                             @method('PATCH')
                                             <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                            <div class="modal-body">
-                                                <p>Change role for <strong>{{ $user->name }}</strong></p>
-                                                <div class="mb-3">
-                                                    <label for="role{{ $user->id }}" class="form-label">New Role</label>
-                                                    <select class="form-select" id="role{{ $user->id }}" name="role" required>
-                                                        <option value="employee" {{ $user->role === 'employee' ? 'selected' : '' }}>Employee</option>
-                                                        <option value="manager" {{ $user->role === 'manager' ? 'selected' : '' }}>Manager</option>
-                                                        <option value="superadmin" {{ $user->role === 'superadmin' ? 'selected' : '' }}>Super Admin</option>
-                                                    </select>
-                                                </div>
+                                        <div class="modal-body">
+                                            <p>Change role for <strong>{{ $user->name }}</strong></p>
+                                            <div class="mb-3">
+                                                <label for="role{{ $user->id }}" class="form-label">New Role</label>
+                                                <select class="form-select" id="role{{ $user->id }}" name="role" required aria-describedby="roleHelp{{ $user->id }}">
+                                                    <option value="employee" {{ $user->role === 'employee' ? 'selected' : '' }}>Employee</option>
+                                                    <option value="manager" {{ $user->role === 'manager' ? 'selected' : '' }}>Manager</option>
+                                                    <option value="superadmin" {{ $user->role === 'superadmin' ? 'selected' : '' }}>Super Admin</option>
+                                                </select>
+                                                <div id="roleHelp{{ $user->id }}" class="form-text">Select the new role for this user.</div>
                                             </div>
+                                        </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                                 <button type="submit" class="btn btn-primary">Update Role</button>
@@ -411,7 +442,8 @@
                             </div>
 
                             <!-- Delete User Modal -->
-                            <div class="modal fade" id="deleteUserModal{{ $user->id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel{{ $user->id }}" aria-hidden="true">
+                           <div class="modal fade" id="deleteUserModal{{ $user->id }}" tabindex="-1" 
+                                aria-labelledby="deleteUserModalLabel{{ $user->id }}">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header bg-danger text-white">
@@ -420,14 +452,19 @@
                                         </div>
                                         <div class="modal-body">
                                             <p>Are you sure you want to delete the user <strong>{{ $user->name }}</strong>?</p>
-                                            <p class="text-muted">This action cannot be undone.</p>
+                                            <p class="text-muted">This action cannot be undone and will permanently remove all user data.</p>
+                                            <div class="alert alert-warning" role="alert">
+                                                <i class="bi bi-exclamation-triangle"></i> 
+                                                This will delete all associated records for this user.
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <form action="{{ route('superadmin.users.delete', $user->id) }}" method="POST" style="display: inline;">
+                                            <form action="{{ route('superadmin.users.delete') }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you absolutely sure you want to delete {{ $user->name }}? This cannot be undone.')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">Delete User</button>
+                                                <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                                <button type="submit" class="btn btn-danger" aria-describedby="deleteWarning{{ $user->id }}">Delete User</button>
                                             </form>
                                         </div>
                                     </div>
@@ -439,36 +476,46 @@
                 </div>
             </div>
             <div class="card-footer">
-                {{ $users->links() }}
+               {{ $users->links('pagination::bootstrap-5') }}
+
             </div>
         </div>
 
         <!-- Add User Modal -->
-        <div class="modal fade" id="addUserModal" tabindex="-1">
+        <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title">Add New User</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form action="{{ route('superadmin.users.create') }}" method="POST">
                         @csrf
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label for="userName" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="userName" name="name" required>
+                                <label for="userName" class="form-label">Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="userName" name="name" required aria-describedby="nameHelp">
+                                <div id="nameHelp" class="form-text">Enter the full name of the user.</div>
                             </div>
                             <div class="mb-3">
-                                <label for="userEmail" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="userEmail" name="email" required>
+                                <label for="userEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="userEmail" name="email" required aria-describedby="emailHelp">
+                                <div id="emailHelp" class="form-text">Enter a valid email address.</div>
                             </div>
                             <div class="mb-3">
-                                <label for="userRole" class="form-label">Role</label>
-                                <select class="form-select" id="userRole" name="role" required>
+                                <label for="userPassword" class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="userPassword" name="password" required minlength="8" aria-describedby="passwordHelp">
+                                <div id="passwordHelp" class="form-text">Password must be at least 8 characters long.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="userRole" class="form-label">Role <span class="text-danger">*</span></label>
+                                <select class="form-select" id="userRole" name="role" required aria-describedby="roleSelectHelp">
+                                    <option value="">Select a role</option>
                                     <option value="employee">Employee</option>
                                     <option value="manager">Manager</option>
                                     <option value="superadmin">Super Admin</option>
                                 </select>
+                                <div id="roleSelectHelp" class="form-text">Choose the appropriate role for this user.</div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -538,6 +585,113 @@
                     }, 5000);
                 }
             });
+
+            // Modal Focus Management for Better Accessibility
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.addEventListener('show.bs.modal', function () {
+                    // Remove aria-hidden when modal is being shown
+                    modal.removeAttribute('aria-hidden');
+                });
+                
+                modal.addEventListener('shown.bs.modal', function () {
+                    // Ensure aria-hidden is removed and focus on the first focusable element
+                    modal.removeAttribute('aria-hidden');
+                    const firstFocusable = modal.querySelector('input, select, textarea, button:not([data-bs-dismiss])');
+                    if (firstFocusable) {
+                        firstFocusable.focus();
+                    }
+                });
+                
+                modal.addEventListener('hide.bs.modal', function () {
+                    // Remove aria-hidden before hiding
+                    modal.removeAttribute('aria-hidden');
+                });
+                
+                modal.addEventListener('hidden.bs.modal', function () {
+                    // Only add aria-hidden after modal is completely hidden
+                    setTimeout(() => {
+                        modal.setAttribute('aria-hidden', 'true');
+                    }, 100);
+                });
+            });
+
+            // Override Bootstrap's default modal behavior
+            const originalModalShow = bootstrap.Modal.prototype.show;
+            bootstrap.Modal.prototype.show = function() {
+                // Remove aria-hidden before calling original show
+                this._element.removeAttribute('aria-hidden');
+                return originalModalShow.call(this);
+            };
+
+            const originalModalHide = bootstrap.Modal.prototype.hide;
+            bootstrap.Modal.prototype.hide = function() {
+                // Remove aria-hidden before hiding
+                this._element.removeAttribute('aria-hidden');
+                return originalModalHide.call(this);
+            };
+
+            // Keyboard navigation improvements
+            document.addEventListener('keydown', function(e) {
+                // Enhanced ESC key handling for modals
+                if (e.key === 'Escape') {
+                    const openModal = document.querySelector('.modal.show');
+                    if (openModal) {
+                        const modalInstance = bootstrap.Modal.getInstance(openModal);
+                        if (modalInstance) {
+                            modalInstance.hide();
+                        }
+                    }
+                }
+            });
+
+            // MutationObserver to prevent Bootstrap from adding aria-hidden on visible modals
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+                        const target = mutation.target;
+                        if (target.classList.contains('modal') && target.style.display === 'block') {
+                            // If modal is visible but aria-hidden was added, remove it
+                            if (target.getAttribute('aria-hidden') === 'true') {
+                                target.removeAttribute('aria-hidden');
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Observe all modals for attribute changes
+            modals.forEach(modal => {
+                observer.observe(modal, {
+                    attributes: true,
+                    attributeFilter: ['aria-hidden', 'style', 'class']
+                });
+            });
+
+            // Special handling for close buttons to prevent aria-hidden conflicts
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn-close') || e.target.closest('.btn-close')) {
+                    const modal = e.target.closest('.modal');
+                    if (modal) {
+                        // Ensure aria-hidden is removed before the close action
+                        modal.removeAttribute('aria-hidden');
+                    }
+                }
+            });
+
+            // Override the default Bootstrap modal backdrop behavior
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal') && e.target.classList.contains('show')) {
+                    const modalInstance = bootstrap.Modal.getInstance(e.target);
+                    if (modalInstance) {
+                        e.target.removeAttribute('aria-hidden');
+                        modalInstance.hide();
+                    }
+                }
+            });
+
+            
+
         });
     </script>
 </body>

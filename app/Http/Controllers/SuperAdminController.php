@@ -47,7 +47,9 @@ class SuperAdminController extends Controller
      */
     public function showEmployees(): View
     {
-        $employees = User::where('role', '!=', 'superadmin')->paginate(15);
+        $employees = User::with('department')
+            ->where('role', '!=', 'superadmin')
+            ->paginate(15);
         $departments = Department::all();
         return view('dashboards.Admin.employees', compact('employees', 'departments'));
     }
@@ -129,6 +131,20 @@ class SuperAdminController extends Controller
 
         return redirect()->route('superadmin.employees')
             ->with('success', 'Employee deleted successfully!');
+    }
+
+    /**
+     * Show all users for user management
+     */
+    public function showUsers(): View
+    {
+        $users = User::orderBy('role', 'asc')->paginate(15);
+        $roleCounts = [
+            'superadmin' => User::where('role', 'superadmin')->count(),
+            'manager' => User::where('role', 'manager')->count(),
+            'employee' => User::where('role', 'employee')->count()
+        ];
+        return view('dashboards.Admin.user-roles', compact('users', 'roleCounts'));
     }
 
     /**
