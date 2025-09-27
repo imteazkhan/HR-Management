@@ -43,6 +43,7 @@
             width: 20px; 
             margin-right: 10px;
         }
+<<<<<<< HEAD
         .sidebar .dropdown-menu {
             background: #34495e;
             border: none;
@@ -66,6 +67,8 @@
             top: 50%;
             transform: translateY(-50%);
         }
+=======
+>>>>>>> f37dbbf8b1009745044820acded90aff98423c3f
         .main-content { 
             margin-left: 250px; 
             padding: 20px;
@@ -285,6 +288,7 @@
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.departments') ? 'active' : '' }}" href="{{ route('superadmin.departments') }}"><i class="bi bi-building"></i> Departments</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.user-roles') ? 'active' : '' }}" href="{{ route('superadmin.user-roles') }}"><i class="bi bi-person-badge"></i> User Roles</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.payroll') ? 'active' : '' }}" href="{{ route('superadmin.payroll') }}"><i class="bi bi-cash-stack"></i> Payroll Management</a></li>
+<<<<<<< HEAD
             
             <!-- HRM Dropdown -->
             <li class="nav-item dropdown">
@@ -309,6 +313,8 @@
                 </ul>
             </li>
             
+=======
+>>>>>>> f37dbbf8b1009745044820acded90aff98423c3f
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.analytics') ? 'active' : '' }}" href="{{ route('superadmin.analytics') }}"><i class="bi bi-graph-up"></i> Analytics</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.security') ? 'active' : '' }}" href="{{ route('superadmin.security') }}"><i class="bi bi-shield-check"></i> System Security</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.settings') ? 'active' : '' }}" href="{{ route('superadmin.settings') }}"><i class="bi bi-gear"></i> System Settings</a></li>
