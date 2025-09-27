@@ -33,7 +33,7 @@ class EmployeeController extends Controller
             ['icon' => 'file-earmark-text', 'color' => 'primary', 'message' => 'Downloaded payslip for November 2024', 'time' => 'Yesterday']
         ];
 
-        return view('dashboards.employee', compact('stats', 'recentActivities'));
+        return view('dashboards.Employees.employee', compact('stats', 'recentActivities'));
     }
 
     /**

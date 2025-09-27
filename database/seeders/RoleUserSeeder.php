@@ -23,7 +23,7 @@ class RoleUserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Create manager user
+        // Create manager users
         User::create([
             'name' => 'John Manager',
             'email' => 'manager@hrmanagement.com',
@@ -32,13 +32,50 @@ class RoleUserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Create employee user
         User::create([
-            'name' => 'Jane Employee',
-            'email' => 'employee@hrmanagement.com',
+            'name' => 'Sarah Johnson',
+            'email' => 'sarah.johnson@hrmanagement.com',
             'password' => Hash::make('password'),
-            'role' => 'employee',
+            'role' => 'manager',
             'email_verified_at' => now(),
         ]);
+
+        User::create([
+            'name' => 'Mike Wilson',
+            'email' => 'mike.wilson@hrmanagement.com',
+            'password' => Hash::make('password'),
+            'role' => 'manager',
+            'email_verified_at' => now(),
+        ]);
+
+        // Create employee users
+        $employees = [
+            ['name' => 'Jane Employee', 'email' => 'employee@hrmanagement.com'],
+            ['name' => 'Alex Rodriguez', 'email' => 'alex.rodriguez@hrmanagement.com'],
+            ['name' => 'Emily Davis', 'email' => 'emily.davis@hrmanagement.com'],
+            ['name' => 'David Brown', 'email' => 'david.brown@hrmanagement.com'],
+            ['name' => 'Lisa Anderson', 'email' => 'lisa.anderson@hrmanagement.com'],
+            ['name' => 'Robert Taylor', 'email' => 'robert.taylor@hrmanagement.com'],
+            ['name' => 'Jennifer White', 'email' => 'jennifer.white@hrmanagement.com'],
+            ['name' => 'Christopher Lee', 'email' => 'christopher.lee@hrmanagement.com'],
+            ['name' => 'Amanda Garcia', 'email' => 'amanda.garcia@hrmanagement.com'],
+            ['name' => 'Kevin Martinez', 'email' => 'kevin.martinez@hrmanagement.com'],
+            ['name' => 'Michelle Thompson', 'email' => 'michelle.thompson@hrmanagement.com'],
+            ['name' => 'Brian Clark', 'email' => 'brian.clark@hrmanagement.com'],
+            ['name' => 'Ashley Lewis', 'email' => 'ashley.lewis@hrmanagement.com'],
+            ['name' => 'Daniel Walker', 'email' => 'daniel.walker@hrmanagement.com'],
+            ['name' => 'Nicole Hall', 'email' => 'nicole.hall@hrmanagement.com'],
+        ];
+
+        foreach ($employees as $employee) {
+            User::create([
+                'name' => $employee['name'],
+                'email' => $employee['email'],
+                'password' => Hash::make('password'),
+                'role' => 'employee',
+                'email_verified_at' => now(),
+                'created_at' => now()->subDays(rand(1, 365)),
+            ]);
+        }
     }
 }

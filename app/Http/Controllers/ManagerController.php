@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Message;
+use App\Models\Notification;
+use App\Models\ManagerSetting;
+use App\Models\TeamMember;
+use App\Models\PerformanceReview;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -17,23 +23,68 @@ class ManagerController extends Controller
     {
         $user = Auth::user();
         
-        // Get manager stats
+        // Get real manager stats
+        $teamMembersCount = TeamMember::forManager($user->id)->active()->count();
+        $attendanceToday = TeamMember::forManager($user->id)
+            ->whereHas('employee.attendance', function($q) {
+                $q->whereDate('created_at', today())->where('status', 'present');
+            })
+            ->count();
+        $pendingApprovals = \App\Models\LeaveRequest::where('status', 'pending')
+            ->whereHas('user.teamMemberships', function($q) use ($user) {
+                $q->where('manager_id', $user->id);
+            })
+            ->count();
+        
         $stats = [
-            'employees' => 15, // Team members
+            'employees' => $teamMembersCount,
             'departments' => 1,
-            'attendance_today' => 12, // Present today
-            'payroll_today' => '45K' // Team monthly payroll
+            'attendance_today' => $attendanceToday,
+            'payroll_today' => $pendingApprovals // Using as pending approvals count
         ];
         
-        // Get recent team activities
-        $recentActivities = [
-            ['icon' => 'person-check', 'color' => 'success', 'message' => 'John Smith clocked in', 'time' => '2 hours ago'],
-            ['icon' => 'calendar-event', 'color' => 'info', 'message' => 'Sarah Lee submitted leave request', 'time' => '4 hours ago'],
-            ['icon' => 'check-circle', 'color' => 'warning', 'message' => 'Mike Davis completed project milestone', 'time' => '6 hours ago'],
-            ['icon' => 'award', 'color' => 'primary', 'message' => 'Team performance review scheduled for Finance Team', 'time' => 'Yesterday']
-        ];
+        // Get recent team activities from notifications
+        $recentActivities = Notification::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->take(4)
+            ->get()
+            ->map(function($notification) {
+                return [
+                    'icon' => $this->getIconForNotificationType($notification->type),
+                    'color' => $this->getColorForNotificationType($notification->type),
+                    'message' => $notification->message,
+                    'time' => $notification->created_at->diffForHumans()
+                ];
+            })
+            ->toArray();
 
-        return view('dashboards.manager', compact('stats', 'recentActivities'));
+        return view('dashboards.Manager.manager', compact('stats', 'recentActivities'));
+    }
+
+    /**
+     * Get icon for notification type
+     */
+    private function getIconForNotificationType($type): string
+    {
+        return match($type) {
+            'attendance' => 'person-check',
+            'leave_request' => 'calendar-event',
+            'task' => 'check-circle',
+            default => 'award'
+        };
+    }
+
+    /**
+     * Get color for notification type
+     */
+    private function getColorForNotificationType($type): string
+    {
+        return match($type) {
+            'attendance' => 'success',
+            'leave_request' => 'info',
+            'task' => 'warning',
+            default => 'primary'
+        };
     }
 
     /**
@@ -41,12 +92,24 @@ class ManagerController extends Controller
      */
     public function showTeam(): View
     {
-        // Mock team data
-        $teamMembers = [
-            ['id' => 1, 'name' => 'John Smith', 'email' => 'john@company.com', 'position' => 'Developer', 'status' => 'Active', 'join_date' => '2023-01-15'],
-            ['id' => 2, 'name' => 'Sarah Lee', 'email' => 'sarah@company.com', 'position' => 'Designer', 'status' => 'Active', 'join_date' => '2023-03-10'],
-            ['id' => 3, 'name' => 'Mike Davis', 'email' => 'mike@company.com', 'position' => 'Analyst', 'status' => 'Active', 'join_date' => '2023-06-01'],
-        ];
+        $user = Auth::user();
+        
+        // Get real team members
+        $teamMembers = TeamMember::forManager($user->id)
+            ->with('employee')
+            ->active()
+            ->get()
+            ->map(function($teamMember) {
+                return [
+                    'id' => $teamMember->id,
+                    'name' => $teamMember->employee->name,
+                    'email' => $teamMember->employee->email,
+                    'position' => $teamMember->position ?? 'Not specified',
+                    'status' => ucfirst($teamMember->status),
+                    'join_date' => $teamMember->join_date->format('Y-m-d')
+                ];
+            })
+            ->toArray();
 
         return view('manager.team', compact('teamMembers'));
     }
@@ -56,11 +119,29 @@ class ManagerController extends Controller
      */
     public function showLeaveRequests(): View
     {
-        // Mock leave requests
-        $leaveRequests = [
-            ['id' => 1, 'employee' => 'John Smith', 'type' => 'Vacation', 'start_date' => '2024-12-25', 'end_date' => '2024-12-26', 'reason' => 'Christmas holiday', 'status' => 'Pending', 'submitted_at' => '2024-12-10'],
-            ['id' => 2, 'employee' => 'Sarah Lee', 'type' => 'Sick', 'start_date' => '2024-12-15', 'end_date' => '2024-12-15', 'reason' => 'Medical appointment', 'status' => 'Pending', 'submitted_at' => '2024-12-09'],
-        ];
+        $user = Auth::user();
+        
+        // Get real leave requests from team members
+        $leaveRequests = \App\Models\LeaveRequest::where('status', 'pending')
+            ->whereHas('user.teamMemberships', function($q) use ($user) {
+                $q->where('manager_id', $user->id);
+            })
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($request) {
+                return [
+                    'id' => $request->id,
+                    'employee' => $request->user->name,
+                    'type' => ucfirst($request->leave_type),
+                    'start_date' => $request->start_date->format('Y-m-d'),
+                    'end_date' => $request->end_date->format('Y-m-d'),
+                    'reason' => $request->reason,
+                    'status' => ucfirst($request->status),
+                    'submitted_at' => $request->created_at->format('Y-m-d')
+                ];
+            })
+            ->toArray();
 
         return view('manager.leave-requests', compact('leaveRequests'));
     }
@@ -71,16 +152,33 @@ class ManagerController extends Controller
     public function handleLeaveRequest(Request $request): RedirectResponse
     {
         $request->validate([
-            'request_id' => 'required|integer',
+            'request_id' => 'required|integer|exists:leave_requests,id',
             'action' => 'required|in:approve,reject',
             'comments' => 'nullable|string|max:500'
         ]);
 
         $action = $request->input('action');
         $requestId = $request->input('request_id');
+        $comments = $request->input('comments');
         
-        // Here you would update the leave request in database
+        // Update the leave request in database
+        $leaveRequest = \App\Models\LeaveRequest::findOrFail($requestId);
+        $leaveRequest->update([
+            'status' => $action === 'approve' ? 'approved' : 'rejected',
+            'manager_comments' => $comments,
+            'processed_by' => Auth::id(),
+            'processed_at' => now()
+        ]);
         
+        // Create notification for employee
+        Notification::createForUser(
+            $leaveRequest->user_id,
+            'Leave Request ' . ucfirst($action === 'approve' ? 'approved' : 'rejected'),
+            "Your leave request from {$leaveRequest->start_date->format('M d')} to {$leaveRequest->end_date->format('M d')} has been {$action}d.",
+            'leave_request',
+            ['leave_request_id' => $requestId, 'action' => $action]
+        );
+            
         $message = $action === 'approve' ? 
             'Leave request approved successfully!' : 
             'Leave request rejected.';
@@ -94,12 +192,24 @@ class ManagerController extends Controller
      */
     public function showPerformance(): View
     {
-        // Mock performance data
-        $performanceData = [
-            ['employee' => 'John Smith', 'score' => 85, 'completed_tasks' => 42, 'on_time_rate' => 95, 'rating' => 'Excellent'],
-            ['employee' => 'Sarah Lee', 'score' => 92, 'completed_tasks' => 38, 'on_time_rate' => 98, 'rating' => 'Outstanding'],
-            ['employee' => 'Mike Davis', 'score' => 78, 'completed_tasks' => 35, 'on_time_rate' => 89, 'rating' => 'Good'],
-        ];
+        $user = Auth::user();
+        
+        // Get real performance data
+        $performanceData = PerformanceReview::byReviewer($user->id)
+            ->with('employee')
+            ->completed()
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->map(function($review) {
+                return [
+                    'employee' => $review->employee->name,
+                    'score' => $review->score ?? 0,
+                    'completed_tasks' => $review->completed_tasks,
+                    'on_time_rate' => $review->on_time_rate,
+                    'rating' => ucfirst($review->rating)
+                ];
+            })
+            ->toArray();
 
         return view('manager.performance', compact('performanceData'));
     }
@@ -173,5 +283,94 @@ class ManagerController extends Controller
         
         return redirect()->route('manager.dashboard')
             ->with('success', 'Message sent to team members successfully!');
+    }
+
+    /**
+     * Show team messages
+     */
+    public function showMessages(): View
+    {
+        // Mock messages data
+        $messages = [
+            ['id' => 1, 'subject' => 'Team Meeting Tomorrow', 'from' => 'HR Department', 'date' => '2024-12-10', 'read' => false],
+            ['id' => 2, 'subject' => 'Project Deadline Update', 'from' => 'Project Manager', 'date' => '2024-12-09', 'read' => true],
+            ['id' => 3, 'subject' => 'Holiday Schedule', 'from' => 'Admin', 'date' => '2024-12-08', 'read' => true],
+        ];
+
+        return view('manager.messages', compact('messages'));
+    }
+
+    /**
+     * Show notifications
+     */
+    public function showNotifications(): View
+    {
+        $user = Auth::user();
+        
+        // Get real notifications
+        $notifications = Notification::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($notification) {
+                return [
+                    'id' => $notification->id,
+                    'type' => $notification->type,
+                    'message' => $notification->message,
+                    'time' => $notification->created_at->diffForHumans(),
+                    'read' => $notification->is_read
+                ];
+            })
+            ->toArray();
+
+        return view('manager.notifications', compact('notifications'));
+    }
+
+    /**
+     * Show manager settings
+     */
+    public function showSettings(): View
+    {
+        $user = Auth::user();
+        
+        // Get or create settings for the user
+        $managerSettings = ManagerSetting::getOrCreateForUser($user->id);
+        
+        $settings = [
+            'email_notifications' => $managerSettings->email_notifications,
+            'push_notifications' => $managerSettings->push_notifications,
+            'weekly_reports' => $managerSettings->weekly_reports,
+            'auto_approve_leaves' => $managerSettings->auto_approve_leaves,
+            'team_size_limit' => $managerSettings->team_size_limit,
+        ];
+
+        return view('manager.settings', compact('settings', 'user'));
+    }
+
+    /**
+     * Update manager settings
+     */
+    public function updateSettings(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'email_notifications' => 'boolean',
+            'push_notifications' => 'boolean',
+            'weekly_reports' => 'boolean',
+            'auto_approve_leaves' => 'boolean',
+            'team_size_limit' => 'integer|min:1|max:100'
+        ]);
+
+        $user = Auth::user();
+        $settings = ManagerSetting::getOrCreateForUser($user->id);
+        
+        $settings->update([
+            'email_notifications' => $request->boolean('email_notifications'),
+            'push_notifications' => $request->boolean('push_notifications'),
+            'weekly_reports' => $request->boolean('weekly_reports'),
+            'auto_approve_leaves' => $request->boolean('auto_approve_leaves'),
+            'team_size_limit' => $request->input('team_size_limit', 20)
+        ]);
+
+        return redirect()->route('manager.settings')
+            ->with('success', 'Settings updated successfully!');
     }
 }
