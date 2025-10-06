@@ -271,37 +271,15 @@
         </div>
         <ul class="nav flex-column">
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}" href="{{ route('superadmin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.employees') ? 'active' : '' }}" href="{{ route('superadmin.employees') }}"><i class="bi bi-people"></i> All Employees</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.employees') ? 'active' : '' }}" href="{{ route('superadmin.employees') }}"><i class="bi bi-people"></i> Employees</a></li>
+
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.designations') ? 'active' : '' }}" href="{{ route('superadmin.designations') }}"><i class="bi bi-award"></i> Designations</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.departments') ? 'active' : '' }}" href="{{ route('superadmin.departments') }}"><i class="bi bi-building"></i> Departments</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.user-roles') ? 'active' : '' }}" href="{{ route('superadmin.user-roles') }}"><i class="bi bi-person-badge"></i> User Roles</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.payroll') ? 'active' : '' }}" href="{{ route('superadmin.payroll') }}"><i class="bi bi-cash-stack"></i> Payroll Management</a></li>
-<<<<<<< HEAD
-            
-            <!-- HRM Dropdown -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-workspace"></i>
-                    HRM
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{ route('hrm.designations.index') }}">Designations</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.admin.index') }}">Admin Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.employee.index') }}">Employee Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.biometric.index') }}">Biometric Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.loans.office.index') }}">Office Loan</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.loans.personal.index') }}">Personal Loan</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.leaves.employee.index') }}">Employee Leaves</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.leaves.admin.index') }}">Admin Leaves</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.holidays.index') }}">Holidays</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.timesheets.index') }}">Time Sheet</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.schedules.index') }}">Schedule</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.overtime.index') }}">Overtime</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.warnings.index') }}">Warnings</a></li>
-                </ul>
-            </li>
-            
-=======
->>>>>>> f37dbbf8b1009745044820acded90aff98423c3f
+
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.attendance.index') ? 'active' : '' }}" href="{{ route('superadmin.attendance.index') }}"><i class="bi bi-calendar-check"></i> Attendance</a></li>
+
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.analytics') ? 'active' : '' }}" href="{{ route('superadmin.analytics') }}"><i class="bi bi-graph-up"></i> Analytics</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.security') ? 'active' : '' }}" href="{{ route('superadmin.security') }}"><i class="bi bi-shield-check"></i> System Security</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.settings') ? 'active' : '' }}" href="{{ route('superadmin.settings') }}"><i class="bi bi-gear"></i> System Settings</a></li>
@@ -316,6 +294,7 @@
             <h2><i class="bi bi-shield-fill-check text-primary"></i> Super Admin Dashboard</h2>
             <div class="d-flex align-items-center">
                 <span class="me-3 d-none d-md-inline">Welcome, {{ Auth::user()->name }}!</span>
+                <span class="me-3 d-none d-xl-inline">{{ now()->format('l, F j, Y') }}</span>
                 <div class="dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle"></i>
@@ -376,9 +355,236 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-white-50 mb-1">Monthly Payroll</h6>
-                            <h2>${{ $stats['payroll_today'] ?? '485K' }}</h2>
+                            <h2>BDT {{ $stats['payroll_today'] ?? '485K' }}</h2>
                         </div>
                         <i class="bi bi-cash fs-1 opacity-50 d-none d-md-block"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Tabs -->
+        <ul class="nav nav-tabs mb-4" id="attendanceTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">
+                    <i class="bi bi-speedometer2"></i> Overview
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="admin-attendance-tab" data-bs-toggle="tab" data-bs-target="#admin-attendance" type="button" role="tab" aria-controls="admin-attendance" aria-selected="false">
+                    <i class="bi bi-person-badge"></i> Admin Attendance
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="employee-attendance-tab" data-bs-toggle="tab" data-bs-target="#employee-attendance" type="button" role="tab" aria-controls="employee-attendance" aria-selected="false">
+                    <i class="bi bi-people"></i> Employee Attendance
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="manager-attendance-tab" data-bs-toggle="tab" data-bs-target="#manager-attendance" type="button" role="tab" aria-controls="manager-attendance" aria-selected="false">
+                    <i class="bi bi-person-check"></i> Manager Attendance
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content mb-4" id="attendanceTabContent">
+            <!-- Overview Tab -->
+            <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                <div class="row g-3 g-md-4">
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Total Attendance</h6>
+                                    <h2>{{ $attendanceStats['total_employees'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-people fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-2 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Present Today</h6>
+                                    <h2>{{ $attendanceStats['employee_present_today'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-calendar-check fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-3 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Absent Today</h6>
+                                    <h2>{{ $attendanceStats['employee_absent_today'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-calendar-x fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-4 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Attendance Rate</h6>
+                                    <h2>{{ $attendanceStats['employee_attendance_rate'] ?? 0 }}%</h2>
+                                </div>
+                                <i class="bi bi-graph-up fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Attendance Tab -->
+            <div class="tab-pane fade" id="admin-attendance" role="tabpanel" aria-labelledby="admin-attendance-tab">
+                <div class="row g-3 g-md-4">
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Total Admins</h6>
+                                    <h2>{{ $attendanceStats['total_admins'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-person-badge fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-2 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Present Today</h6>
+                                    <h2>{{ $attendanceStats['admin_present_today'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-calendar-check fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-3 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Absent Today</h6>
+                                    <h2>{{ $attendanceStats['admin_absent_today'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-calendar-x fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-4 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Attendance Rate</h6>
+                                    <h2>{{ $attendanceStats['admin_attendance_rate'] ?? 0 }}%</h2>
+                                </div>
+                                <i class="bi bi-graph-up fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee Attendance Tab -->
+            <div class="tab-pane fade" id="employee-attendance" role="tabpanel" aria-labelledby="employee-attendance-tab">
+                <div class="row g-3 g-md-4">
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Total Employees</h6>
+                                    <h2>{{ $attendanceStats['total_employees'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-people fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-2 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Present Today</h6>
+                                    <h2>{{ $attendanceStats['employee_present_today'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-calendar-check fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-3 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Absent Today</h6>
+                                    <h2>{{ $attendanceStats['employee_absent_today'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-calendar-x fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-4 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Attendance Rate</h6>
+                                    <h2>{{ $attendanceStats['employee_attendance_rate'] ?? 0 }}%</h2>
+                                </div>
+                                <i class="bi bi-graph-up fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manager Attendance Tab -->
+            <div class="tab-pane fade" id="manager-attendance" role="tabpanel" aria-labelledby="manager-attendance-tab">
+                <div class="row g-3 g-md-4">
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Total Managers</h6>
+                                    <h2>{{ $attendanceStats['total_managers'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-person-check fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-2 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Present Today</h6>
+                                    <h2>{{ $attendanceStats['manager_present_today'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-calendar-check fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-3 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Absent Today</h6>
+                                    <h2>{{ $attendanceStats['manager_absent_today'] ?? 0 }}</h2>
+                                </div>
+                                <i class="bi bi-calendar-x fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-4 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Attendance Rate</h6>
+                                    <h2>{{ $attendanceStats['manager_attendance_rate'] ?? 0 }}%</h2>
+                                </div>
+                                <i class="bi bi-graph-up fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -510,10 +716,21 @@
                 <div class="card">
                     <div class="card-header"><h5><i class="bi bi-clock-history"></i> System Activity</h5></div>
                     <div class="card-body recent-activity">
-                        <div class="activity-item"><i class="bi bi-person-plus text-success me-3"></i> New manager <strong>Alex Johnson</strong> added to IT Department <small class="text-muted d-block">2 hours ago</small></div>
-                        <div class="activity-item"><i class="bi bi-building text-info me-3"></i> New department <strong>Digital Marketing</strong> created <small class="text-muted d-block">4 hours ago</small></div>
-                        <div class="activity-item"><i class="bi bi-cash-stack text-warning me-3"></i> Monthly payroll processed: <strong>$485,000</strong> <small class="text-muted d-block">6 hours ago</small></div>
-                        <div class="activity-item"><i class="bi bi-shield-check text-primary me-3"></i> System backup completed successfully <small class="text-muted d-block">Yesterday</small></div>
+                        @if(isset($recentActivities) && count($recentActivities) > 0)
+                            @foreach($recentActivities as $activity)
+                                <div class="activity-item">
+                                    <i class="bi bi-{{ $activity['icon'] }} text-{{ $activity['color'] }} me-3"></i> 
+                                    {!! $activity['message'] !!} 
+                                    <small class="text-muted d-block">{{ $activity['time'] }}</small>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="activity-item">
+                                <i class="bi bi-info-circle text-info me-3"></i> 
+                                No recent activities to display 
+                                <small class="text-muted d-block">Just now</small>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -522,7 +739,7 @@
                     <div class="card-header"><h5><i class="bi bi-graph-up"></i> System Overview</h5></div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3"><span>System Health</span><span class="badge bg-success">Excellent</span></div>
-                        <div class="d-flex justify-content-between mb-3"><span>Active Users</span><span class="badge bg-info">142/150</span></div>
+                        <div class="d-flex justify-content-between mb-3"><span>Active Users</span><span class="badge bg-info">{{ $stats['employees'] ?? 0 }}/150</span></div>
                         <div class="d-flex justify-content-between mb-3"><span>Pending Approvals</span><span class="badge bg-warning">7</span></div>
                         <div class="d-flex justify-content-between"><span>Database Size</span><span class="text-success fw-bold">2.4 GB</span></div>
                     </div>
@@ -561,6 +778,33 @@
         
         const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
         const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+        
+        // Handle attendance tab navigation
+        const tabTriggerList = [].slice.call(document.querySelectorAll('#attendanceTabs button'))
+        tabTriggerList.forEach(function (tabTrigger) {
+            tabTrigger.addEventListener('click', function (event) {
+                event.preventDefault();
+                const tabTriggerEl = event.target;
+                const tabPaneId = tabTriggerEl.getAttribute('data-bs-target');
+                
+                // Remove active class from all tabs and panes
+                document.querySelectorAll('#attendanceTabs button').forEach(function(tab) {
+                    tab.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-pane').forEach(function(pane) {
+                    pane.classList.remove('show', 'active');
+                });
+                
+                // Add active class to clicked tab
+                tabTriggerEl.classList.add('active');
+                
+                // Show the corresponding pane
+                const tabPane = document.querySelector(tabPaneId);
+                if (tabPane) {
+                    tabPane.classList.add('show', 'active');
+                }
+            });
+        });
     });
 </script>
 </body>

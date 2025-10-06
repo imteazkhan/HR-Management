@@ -6,6 +6,8 @@
     <title>User Roles Management - HR Management</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"></noscript>
     <style>
@@ -43,7 +45,6 @@
             width: 20px; 
             margin-right: 10px;
         }
-<<<<<<< HEAD
         .sidebar .dropdown-menu {
             background: #34495e;
             border: none;
@@ -67,8 +68,6 @@
             top: 50%;
             transform: translateY(-50%);
         }
-=======
->>>>>>> f37dbbf8b1009745044820acded90aff98423c3f
         .main-content { 
             margin-left: 250px; 
             padding: 20px;
@@ -168,9 +167,10 @@
             }
             .mobile-header {
                 display: flex;
-                justify-content: between;
+                justify-content: space-between; /* ✅ valid */
                 align-items: center;
             }
+
             .sidebar-overlay.show {
                 display: block;
             }
@@ -225,29 +225,6 @@
         .fade-in-up {
             animation: fadeInUp 0.6s ease-out;
         }
-        
-        /* Modal accessibility improvements */
-        .modal.show {
-            /* Ensure visible modals never have aria-hidden */
-        }
-        .modal.show[aria-hidden="true"] {
-            /* Force remove aria-hidden on visible modals */
-            aria-hidden: false !important;
-        }
-        
-        /* Focus management for better accessibility */
-        .modal .btn-close:focus {
-            outline: 2px solid #0d6efd;
-            outline-offset: 2px;
-        }
-        
-        /* Ensure proper contrast for focus indicators */
-        .btn:focus,
-        .form-control:focus,
-        .form-select:focus {
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-            border-color: #86b7fe;
-        }
     </style>
 </head>
 <body>
@@ -284,37 +261,14 @@
         </div>
         <ul class="nav flex-column">
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}" href="{{ route('superadmin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.employees') ? 'active' : '' }}" href="{{ route('superadmin.employees') }}"><i class="bi bi-people"></i> All Employees</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.employees') ? 'active' : '' }}" href="{{ route('superadmin.employees') }}"><i class="bi bi-people"></i> Employees</a></li>
+
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.designations') ? 'active' : '' }}" href="{{ route('superadmin.designations') }}"><i class="bi bi-award"></i> Designations</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.departments') ? 'active' : '' }}" href="{{ route('superadmin.departments') }}"><i class="bi bi-building"></i> Departments</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.user-roles') ? 'active' : '' }}" href="{{ route('superadmin.user-roles') }}"><i class="bi bi-person-badge"></i> User Roles</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.payroll') ? 'active' : '' }}" href="{{ route('superadmin.payroll') }}"><i class="bi bi-cash-stack"></i> Payroll Management</a></li>
-<<<<<<< HEAD
-            
-            <!-- HRM Dropdown -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-workspace"></i>
-                    HRM
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{ route('hrm.designations.index') }}">Designations</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.admin.index') }}">Admin Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.employee.index') }}">Employee Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.biometric.index') }}">Biometric Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.loans.office.index') }}">Office Loan</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.loans.personal.index') }}">Personal Loan</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.leaves.employee.index') }}">Employee Leaves</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.leaves.admin.index') }}">Admin Leaves</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.holidays.index') }}">Holidays</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.timesheets.index') }}">Time Sheet</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.schedules.index') }}">Schedule</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.overtime.index') }}">Overtime</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.warnings.index') }}">Warnings</a></li>
-                </ul>
-            </li>
-            
-=======
->>>>>>> f37dbbf8b1009745044820acded90aff98423c3f
+
+                        <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.attendance.index') ? 'active' : '' }}" href="{{ route('superadmin.attendance.index') }}"><i class="bi bi-calendar-check"></i> Attendance</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.analytics') ? 'active' : '' }}" href="{{ route('superadmin.analytics') }}"><i class="bi bi-graph-up"></i> Analytics</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.security') ? 'active' : '' }}" href="{{ route('superadmin.security') }}"><i class="bi bi-shield-check"></i> System Security</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.settings') ? 'active' : '' }}" href="{{ route('superadmin.settings') }}"><i class="bi bi-gear"></i> System Settings</a></li>
@@ -444,14 +398,19 @@
                                     <div class="btn-group" role="group" aria-label="User actions for {{ $user->name }}">
                                         <button type="button" class="btn btn-sm btn-outline-primary" 
                                             data-bs-toggle="modal" 
-                                            data-bs-target="#changeRoleModal{{ $user->id }}"
+                                            data-bs-target="#changeRoleModal"
+                                            data-user-id="{{ $user->id }}"
+                                            data-user-name="{{ $user->name }}"
+                                            data-user-role="{{ $user->role }}"
                                             aria-label="Change role for {{ $user->name }}">
                                             <i class="bi bi-arrow-repeat"></i> Change Role
                                         </button>
                                         @if($user->role !== 'superadmin')
                                         <button type="button" class="btn btn-sm btn-outline-danger" 
                                             data-bs-toggle="modal" 
-                                            data-bs-target="#deleteUserModal{{ $user->id }}"
+                                            data-bs-target="#deleteUserModal"
+                                            data-user-id="{{ $user->id }}"
+                                            data-user-name="{{ $user->name }}"
                                             aria-label="Delete user {{ $user->name }}">
                                             <i class="bi bi-trash"></i>
                                         </button>
@@ -459,70 +418,6 @@
                                     </div>
                                 </td>
                             </tr>
-
-                            <!-- Change Role Modal -->
-                            <div class="modal fade" id="changeRoleModal{{ $user->id }}" tabindex="-1"
-                                aria-labelledby="changeRoleModalLabel{{ $user->id }}">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-primary text-white">
-                                            <h5 class="modal-title" id="changeRoleModalLabel{{ $user->id }}">Change User Role</h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <form action="{{ route('superadmin.users.role') }}" method="POST">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                        <div class="modal-body">
-                                            <p>Change role for <strong>{{ $user->name }}</strong></p>
-                                            <div class="mb-3">
-                                                <label for="role{{ $user->id }}" class="form-label">New Role</label>
-                                                <select class="form-select" id="role{{ $user->id }}" name="role" required aria-describedby="roleHelp{{ $user->id }}">
-                                                    <option value="employee" {{ $user->role === 'employee' ? 'selected' : '' }}>Employee</option>
-                                                    <option value="manager" {{ $user->role === 'manager' ? 'selected' : '' }}>Manager</option>
-                                                    <option value="superadmin" {{ $user->role === 'superadmin' ? 'selected' : '' }}>Super Admin</option>
-                                                </select>
-                                                <div id="roleHelp{{ $user->id }}" class="form-text">Select the new role for this user.</div>
-                                            </div>
-                                        </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-primary">Update Role</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Delete User Modal -->
-                           <div class="modal fade" id="deleteUserModal{{ $user->id }}" tabindex="-1" 
-                                aria-labelledby="deleteUserModalLabel{{ $user->id }}">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-danger text-white">
-                                            <h5 class="modal-title" id="deleteUserModalLabel{{ $user->id }}">Delete User</h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>Are you sure you want to delete the user <strong>{{ $user->name }}</strong>?</p>
-                                            <p class="text-muted">This action cannot be undone and will permanently remove all user data.</p>
-                                            <div class="alert alert-warning" role="alert">
-                                                <i class="bi bi-exclamation-triangle"></i> 
-                                                This will delete all associated records for this user.
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <form action="{{ route('superadmin.users.delete') }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you absolutely sure you want to delete {{ $user->name }}? This cannot be undone.')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                                <button type="submit" class="btn btn-danger" aria-describedby="deleteWarning{{ $user->id }}">Delete User</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             @endforeach
                         </tbody>
                     </table>
@@ -535,7 +430,7 @@
         </div>
 
         <!-- Add User Modal -->
-        <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel">
+        <div class="modal fade" id="addUserModal" aria-labelledby="addUserModalLabel">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
@@ -576,6 +471,68 @@
                             <button type="submit" class="btn btn-primary">Add User</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Role Modal (Single instance) -->
+        <div class="modal fade" id="changeRoleModal" tabindex="-1" aria-labelledby="changeRoleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="changeRoleModalLabel">Change User Role</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('superadmin.users.role') }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="user_id" id="changeRoleUserId">
+                        <div class="modal-body">
+                            <p>Change role for <strong id="changeRoleUserName"></strong></p>
+                            <div class="mb-3">
+                                <label for="role" class="form-label">New Role</label>
+                                <select class="form-select" id="role" name="role" required aria-describedby="roleHelp">
+                                    <option value="employee">Employee</option>
+                                    <option value="manager">Manager</option>
+                                    <option value="superadmin">Super Admin</option>
+                                </select>
+                                <div id="roleHelp" class="form-text">Select the new role for this user.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update Role</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete User Modal (Single instance) -->
+        <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="deleteUserModalLabel">Delete User</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete the user <strong id="deleteUserName"></strong>?</p>
+                        <p class="text-muted">This action cannot be undone and will permanently remove all user data.</p>
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i> 
+                            This will delete all associated records for this user.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <form action="{{ route('superadmin.users.delete') }}" method="POST" style="display: inline;" id="deleteUserForm">
+                            @csrf
+                            @method('DELETE')
+                            <input type="hidden" name="user_id" id="deleteUserId">
+                            <button type="submit" class="btn btn-danger">Delete User</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -743,7 +700,35 @@
                 }
             });
 
-            
+            // Handle change role modal population
+            const changeRoleModal = document.getElementById('changeRoleModal');
+            if (changeRoleModal) {
+                changeRoleModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget; // Button that triggered the modal
+                    const userId = button.getAttribute('data-user-id');
+                    const userName = button.getAttribute('data-user-name');
+                    const userRole = button.getAttribute('data-user-role');
+                    
+                    // Update the modal's content
+                    document.getElementById('changeRoleUserId').value = userId;
+                    document.getElementById('changeRoleUserName').textContent = userName;
+                    document.getElementById('role').value = userRole;
+                });
+            }
+
+            // Handle delete user modal population
+            const deleteUserModal = document.getElementById('deleteUserModal');
+            if (deleteUserModal) {
+                deleteUserModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget; // Button that triggered the modal
+                    const userId = button.getAttribute('data-user-id');
+                    const userName = button.getAttribute('data-user-name');
+                    
+                    // Update the modal's content
+                    document.getElementById('deleteUserId').value = userId;
+                    document.getElementById('deleteUserName').textContent = userName;
+                });
+            }
 
         });
     </script>

@@ -58,6 +58,7 @@
             <h2><i class="bi bi-briefcase-fill text-primary"></i> HR Dashboard</h2>
             <div class="d-flex align-items-center">
                 <span class="me-3">Welcome, {{ Auth::user()->name }}!</span>
+                <span class="me-3 d-none d-xl-inline">{{ now()->format('l, F j, Y') }}</span>
                 <div class="dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle"></i>
@@ -184,7 +185,7 @@
                         <div class="activity-item"><i class="bi bi-person-plus text-success me-3"></i> New employee added: <strong>Jane Doe</strong> <small class="text-muted d-block">2 hours ago</small></div>
                         <div class="activity-item"><i class="bi bi-calendar-event text-info me-3"></i> Leave request submitted by <strong>John Smith</strong> <small class="text-muted d-block">4 hours ago</small></div>
                         <div class="activity-item"><i class="bi bi-award text-warning me-3"></i> Performance review completed for <strong>Sarah Lee</strong> <small class="text-muted d-block">6 hours ago</small></div>
-                        <div class="activity-item"><i class="bi bi-cash-stack text-primary me-3"></i> Payroll processed: <strong>$4,500</strong> for Finance Dept. <small class="text-muted d-block">8 hours ago</small></div>
+                        <div class="activity-item"><i class="bi bi-cash-stack text-primary me-3"></i> Payroll processed: <strong>BDT 4,500</strong> for Finance Dept. <small class="text-muted d-block">8 hours ago</small></div>
                     </div>
                 </div>
             </div>
@@ -195,7 +196,7 @@
                         <div class="d-flex justify-content-between mb-3"><span>Pending Applications</span><span class="badge bg-warning">7</span></div>
                         <div class="d-flex justify-content-between mb-3"><span>Active Employees</span><span class="badge bg-success">120</span></div>
                         <div class="d-flex justify-content-between mb-3"><span>Leave Requests</span><span class="badge bg-danger">3</span></div>
-                        <div class="d-flex justify-content-between"><span>Payroll Today</span><span class="text-success fw-bold">$15,200</span></div>
+                        <div class="d-flex justify-content-between"><span>Payroll Today</span><span class="text-success fw-bold">BDT 15,200</span></div>
                     </div>
                 </div>
             </div>

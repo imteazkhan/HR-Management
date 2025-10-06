@@ -42,7 +42,7 @@ class LeaveController extends Controller
             ['employee' => 'Robert Johnson', 'type' => 'Personal Leave', 'start_date' => '2024-02-01', 'end_date' => '2024-02-02', 'status' => 'Rejected'],
         ];
         
-        return view('dashboards.Admin.leave.index', compact('leaveRequests'));
+        return view('dashboards.Admin.leaves.index', compact('leaveRequests'));
     }
 
     /**

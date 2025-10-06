@@ -459,7 +459,7 @@
                         <div class="d-flex justify-content-between mb-3"><span>Pending Tasks</span><span class="badge bg-warning">3</span></div>
                         <div class="d-flex justify-content-between mb-3"><span>Completed This Week</span><span class="badge bg-success">12</span></div>
                         <div class="d-flex justify-content-between mb-3"><span>Leave Balance</span><span class="badge bg-info">12 days</span></div>
-                        <div class="d-flex justify-content-between"><span>This Month Salary</span><span class="text-success fw-bold">$3,200</span></div>
+                        <div class="d-flex justify-content-between"><span>This Month Salary</span><span class="text-success fw-bold">BDT 3,200</span></div>
                     </div>
                 </div>
             </div>

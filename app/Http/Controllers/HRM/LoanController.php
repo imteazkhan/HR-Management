@@ -4,6 +4,9 @@ namespace App\Http\Controllers\HRM;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\OfficeLoan;
+use App\Models\PersonalLoan;
+use App\Models\User;
 
 class LoanController extends Controller
 {
@@ -12,7 +15,7 @@ class LoanController extends Controller
      */
     public function index()
     {
-        //
+        return view('hrm.loans.index');
     }
 
     /**
@@ -20,14 +23,8 @@ class LoanController extends Controller
      */
     public function officeIndex()
     {
-        // Dummy data for office loans
-        $loanData = [
-            ['employee' => 'John Doe', 'amount' => '$5,000', 'date' => '2024-01-15', 'status' => 'Approved'],
-            ['employee' => 'Jane Smith', 'amount' => '$3,000', 'date' => '2024-01-10', 'status' => 'Pending'],
-            ['employee' => 'Robert Johnson', 'amount' => '$7,500', 'date' => '2024-01-05', 'status' => 'Rejected'],
-        ];
-        
-        return view('dashboards.Admin.loan.office', compact('loanData'));
+        $loanData = OfficeLoan::with('user')->get();
+        return view('hrm.loans.office.index', compact('loanData'));
     }
 
     /**
@@ -35,14 +32,8 @@ class LoanController extends Controller
      */
     public function personalIndex()
     {
-        // Dummy data for personal loans
-        $loanData = [
-            ['employee' => 'John Doe', 'amount' => '$2,000', 'date' => '2024-01-12', 'status' => 'Approved'],
-            ['employee' => 'Jane Smith', 'amount' => '$1,500', 'date' => '2024-01-08', 'status' => 'Pending'],
-            ['employee' => 'Robert Johnson', 'amount' => '$3,000', 'date' => '2024-01-03', 'status' => 'Rejected'],
-        ];
-        
-        return view('dashboards.Admin.loan.personal', compact('loanData'));
+        $loanData = PersonalLoan::with('user')->get();
+        return view('hrm.loans.personal.index', compact('loanData'));
     }
 
     /**
@@ -50,7 +41,8 @@ class LoanController extends Controller
      */
     public function createOffice()
     {
-        return view('dashboards.Admin.loan.create-office');
+        $employees = User::all();
+        return view('hrm.loans.office.create', compact('employees'));
     }
 
     /**
@@ -58,7 +50,8 @@ class LoanController extends Controller
      */
     public function createPersonal()
     {
-        return view('dashboards.Admin.loan.create-personal');
+        $employees = User::all();
+        return view('hrm.loans.personal.create', compact('employees'));
     }
 
     /**
@@ -66,8 +59,21 @@ class LoanController extends Controller
      */
     public function storeOffice(Request $request)
     {
-        // Process office loan storage logic here
-        return redirect()->back()->with('success', 'Office loan created successfully!');
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:0',
+            'application_date' => 'required|date',
+            'repayment_term' => 'required|integer|min:1',
+            'interest_rate' => 'nullable|numeric|min:0',
+            'purpose' => 'required|string',
+            'notes' => 'nullable|string',
+            'status' => 'required|in:pending,approved,rejected,completed'
+        ]);
+
+        OfficeLoan::create($request->all());
+
+        return redirect()->route('hrm.loans.office.index')
+            ->with('success', 'Office loan created successfully!');
     }
 
     /**
@@ -75,61 +81,60 @@ class LoanController extends Controller
      */
     public function storePersonal(Request $request)
     {
-        // Process personal loan storage logic here
-        return redirect()->back()->with('success', 'Personal loan created successfully!');
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:0',
+            'application_date' => 'required|date',
+            'repayment_term' => 'required|integer|min:1',
+            'interest_rate' => 'nullable|numeric|min:0',
+            'purpose' => 'required|string',
+            'notes' => 'nullable|string',
+            'status' => 'required|in:pending,approved,rejected,completed'
+        ]);
+
+        PersonalLoan::create($request->all());
+
+        return redirect()->route('hrm.loans.personal.index')
+            ->with('success', 'Personal loan created successfully!');
     }
 
     /**
      * Display office loan details.
      */
-    public function showOffice($loan)
+    public function showOffice($id)
     {
-        // Dummy data for office loan details
-        $loanDetails = [
-            'employee' => 'John Doe',
-            'amount' => '$5,000',
-            'date' => '2024-01-15',
-            'status' => 'Approved',
-            'purpose' => 'Home renovation',
-            'repayment_term' => '12 months',
-        ];
-        
-        return view('dashboards.Admin.loan.show-office', compact('loanDetails'));
+        $loanDetails = OfficeLoan::with('user')->findOrFail($id);
+        return view('hrm.loans.office.show', compact('loanDetails'));
     }
 
     /**
      * Display personal loan details.
      */
-    public function showPersonal($loan)
+    public function showPersonal($id)
     {
-        // Dummy data for personal loan details
-        $loanDetails = [
-            'employee' => 'John Doe',
-            'amount' => '$2,000',
-            'date' => '2024-01-12',
-            'status' => 'Approved',
-            'purpose' => 'Medical expenses',
-            'repayment_term' => '6 months',
-        ];
-        
-        return view('dashboards.Admin.loan.show-personal', compact('loanDetails'));
+        $loanDetails = PersonalLoan::with('user')->findOrFail($id);
+        return view('hrm.loans.personal.show', compact('loanDetails'));
     }
 
     /**
      * Approve office loan.
      */
-    public function approveOffice($loan)
+    public function approveOffice($id)
     {
-        // Process office loan approval logic here
+        $loan = OfficeLoan::findOrFail($id);
+        $loan->update(['status' => 'approved']);
+
         return redirect()->back()->with('success', 'Office loan approved successfully!');
     }
 
     /**
      * Approve personal loan.
      */
-    public function approvePersonal($loan)
+    public function approvePersonal($id)
     {
-        // Process personal loan approval logic here
+        $loan = PersonalLoan::findOrFail($id);
+        $loan->update(['status' => 'approved']);
+
         return redirect()->back()->with('success', 'Personal loan approved successfully!');
     }
 
@@ -162,7 +167,9 @@ class LoanController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $loan = OfficeLoan::findOrFail($id);
+        $employees = User::all();
+        return view('hrm.loans.office.edit', compact('loan', 'employees'));
     }
 
     /**
@@ -170,7 +177,22 @@ class LoanController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:0',
+            'application_date' => 'required|date',
+            'repayment_term' => 'required|integer|min:1',
+            'interest_rate' => 'nullable|numeric|min:0',
+            'purpose' => 'required|string',
+            'notes' => 'nullable|string',
+            'status' => 'required|in:pending,approved,rejected,completed'
+        ]);
+
+        $loan = OfficeLoan::findOrFail($id);
+        $loan->update($request->all());
+
+        return redirect()->route('hrm.loans.office.index')
+            ->with('success', 'Office loan updated successfully!');
     }
 
     /**
@@ -178,6 +200,10 @@ class LoanController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $loan = OfficeLoan::findOrFail($id);
+        $loan->delete();
+
+        return redirect()->route('hrm.loans.office.index')
+            ->with('success', 'Office loan deleted successfully!');
     }
 }

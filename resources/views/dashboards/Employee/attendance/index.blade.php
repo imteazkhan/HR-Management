@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My Attendance - HR Management</title>
+    <title>Employee Attendance - HR Management</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
@@ -136,6 +136,49 @@
         .progress-bar {
             transition: width 1s ease-in-out;
         }
+        .clock-card {
+            background: linear-gradient(135deg, #4e73df, #2e59d9);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .clock-display {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+        .date-display {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .clock-btn {
+            font-size: 1.2rem;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .clock-in-btn {
+            background: #1cc88a;
+            border-color: #1cc88a;
+        }
+        .clock-in-btn:hover {
+            background: #17a673;
+            border-color: #17a673;
+            transform: translateY(-2px);
+        }
+        .clock-out-btn {
+            background: #f6c23e;
+            border-color: #f6c23e;
+            color: #000;
+        }
+        .clock-out-btn:hover {
+            background: #f4b619;
+            border-color: #f4b619;
+            transform: translateY(-2px);
+        }
         @media (max-width: 991.98px) {
             .sidebar { 
                 transform: translateX(-100%); 
@@ -166,6 +209,9 @@
             }
             .col-lg-3 {
                 margin-bottom: 15px;
+            }
+            .clock-display {
+                font-size: 2rem;
             }
         }
         @media (max-width: 575.98px) {
@@ -249,47 +295,34 @@
             </li>
             
             <!-- Attendance Management -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ route('employee.attendance') }}">
                     <i class="bi bi-calendar-check"></i>
                     Attendance
                 </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item active" href="{{ route('employee.attendance') }}">My Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('employee.clock') }}">Clock In/Out</a></li>
-                </ul>
             </li>
             
             <!-- Leave Management -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('employee.leave-request') }}">
                     <i class="bi bi-calendar-x"></i>
-                    Leave Management
+                    Leave Request
                 </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{ route('hrm.leaves.employee.index') }}">My Leave Requests</a></li>
-                    <li><a class="dropdown-item" href="{{ route('employee.leave-request') }}">Request Leave</a></li>
-                </ul>
             </li>
             
-            <!-- Payroll Management -->
+            <!-- Payroll -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('employee.payslips') }}">
-                    <i class="bi bi-currency-dollar"></i> My Payslips
+                    <i class="bi bi-cash-stack"></i>
+                    Payslips
                 </a>
             </li>
             
-            <!-- Performance Management -->
+            <!-- Profile -->
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-graph-up"></i> Performance
-                </a>
-            </li>
-            
-            <!-- Time Management -->
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-clock"></i> Time Sheet
+                <a class="nav-link" href="{{ route('employee.profile') }}">
+                    <i class="bi bi-person"></i>
+                    My Profile
                 </a>
             </li>
         </ul>
@@ -322,6 +355,48 @@
             <p class="text-muted mb-0">Employee Dashboard</p>
         </div>
 
+        <!-- Clock In/Out Card -->
+        <div class="row g-3 g-md-4 mb-4">
+            <div class="col-12">
+                <div class="clock-card">
+                    <h3>Today's Attendance</h3>
+                    <div class="clock-display" id="currentTime">00:00:00</div>
+                    <div class="date-display" id="currentDate">January 15, 2024</div>
+                    <div class="mt-4">
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
+
+                        @if(session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                                {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
+
+                        <form method="POST" action="{{ route('hrm.attendance.clock-in') }}" id="clockInForm" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-lg clock-in-btn me-3 clock-btn">
+                                <i class="bi bi-box-arrow-in-right"></i> Clock In
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ route('hrm.attendance.clock-out') }}" id="clockOutForm" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-lg clock-out-btn clock-btn">
+                                <i class="bi bi-box-arrow-right"></i> Clock Out
+                            </button>
+                        </form>
+                    </div>
+                    <div class="mt-3">
+                        <span class="badge bg-light text-dark">Last Clock In: 09:00 AM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Attendance Stats -->
         <div class="row g-3 g-md-4 mb-4">
             <div class="col-6 col-lg-3">
@@ -329,7 +404,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-white-50 mb-1">This Month</h6>
-                            <h2>18</h2>
+                            <h2>22</h2>
                         </div>
                         <i class="bi bi-calendar-check fs-1 opacity-50 d-none d-md-block"></i>
                     </div>
@@ -339,10 +414,10 @@
                 <div class="card stat-card-2 p-3 p-md-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 mb-1">Late Arrivals</h6>
-                            <h2>2</h2>
+                            <h6 class="text-white-50 mb-1">On Time</h6>
+                            <h2>18</h2>
                         </div>
-                        <i class="bi bi-clock-history fs-1 opacity-50 d-none d-md-block"></i>
+                        <i class="bi bi-alarm fs-1 opacity-50 d-none d-md-block"></i>
                     </div>
                 </div>
             </div>
@@ -350,10 +425,10 @@
                 <div class="card stat-card-3 p-3 p-md-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 mb-1">Early Leaves</h6>
-                            <h2>1</h2>
+                            <h6 class="text-white-50 mb-1">Late</h6>
+                            <h2>4</h2>
                         </div>
-                        <i class="bi bi-door-open fs-1 opacity-50 d-none d-md-block"></i>
+                        <i class="bi bi-clock-history fs-1 opacity-50 d-none d-md-block"></i>
                     </div>
                 </div>
             </div>
@@ -370,53 +445,73 @@
             </div>
         </div>
 
-        <!-- Filters and Actions -->
-        <div class="row g-3 g-md-4 mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5><i class="bi bi-funnel"></i> Filter & Actions</h5>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label for="dateFilter" class="form-label">Date Range</label>
-                                <input type="date" class="form-control" id="dateFilter" value="{{ date('Y-m-d') }}">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="statusFilter" class="form-label">Status</label>
-                                <select class="form-select" id="statusFilter">
-                                    <option value="">All Statuses</option>
-                                    <option value="present">Present</option>
-                                    <option value="absent">Absent</option>
-                                    <option value="late">Late</option>
-                                    <option value="leave">On Leave</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 d-flex align-items-end">
-                                <a href="{{ route('employee.clock') }}" class="btn btn-primary w-100">
-                                    <i class="bi bi-clock"></i> Clock In/Out
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Attendance Records Table -->
+        <!-- My Attendance Records -->
         <div class="row g-3 g-md-4">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header bg-primary text-white">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5><i class="bi bi-table"></i> Attendance Records</h5>
-                            <span class="badge bg-light text-dark">Showing 10 of 186 records</span>
+                            <h5><i class="bi bi-table"></i> My Attendance Records</h5>
+                            <div>
+                                <button class="btn btn-sm btn-light me-2">
+                                    <i class="bi bi-download"></i> Export
+                                </button>
+                                <button class="btn btn-sm btn-light">
+                                    <i class="bi bi-printer"></i> Print
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
+                        <!-- Filters -->
+                        <form method="GET" action="{{ route('hrm.attendance.employee.index') }}">
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <label for="monthFilter" class="form-label">Month</label>
+                                    <select class="form-select" id="monthFilter" name="month">
+                                        <option value="">All Months</option>
+                                        <option value="1" {{ request('month') == '1' ? 'selected' : '' }}>January</option>
+                                        <option value="2" {{ request('month') == '2' ? 'selected' : '' }}>February</option>
+                                        <option value="3" {{ request('month') == '3' ? 'selected' : '' }}>March</option>
+                                        <option value="4" {{ request('month') == '4' ? 'selected' : '' }}>April</option>
+                                        <option value="5" {{ request('month') == '5' ? 'selected' : '' }}>May</option>
+                                        <option value="6" {{ request('month') == '6' ? 'selected' : '' }}>June</option>
+                                        <option value="7" {{ request('month') == '7' ? 'selected' : '' }}>July</option>
+                                        <option value="8" {{ request('month') == '8' ? 'selected' : '' }}>August</option>
+                                        <option value="9" {{ request('month') == '9' ? 'selected' : '' }}>September</option>
+                                        <option value="10" {{ request('month') == '10' ? 'selected' : '' }}>October</option>
+                                        <option value="11" {{ request('month') == '11' ? 'selected' : '' }}>November</option>
+                                        <option value="12" {{ request('month') == '12' ? 'selected' : '' }}>December</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="yearFilter" class="form-label">Year</label>
+                                    <select class="form-select" id="yearFilter" name="year">
+                                        <option value="">All Years</option>
+                                        <option value="2024" {{ request('year') == '2024' ? 'selected' : '' }}>2024</option>
+                                        <option value="2023" {{ request('year') == '2023' ? 'selected' : '' }}>2023</option>
+                                        <option value="2022" {{ request('year') == '2022' ? 'selected' : '' }}>2022</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="statusFilter" class="form-label">Status</label>
+                                    <select class="form-select" id="statusFilter" name="status">
+                                        <option value="">All Statuses</option>
+                                        <option value="present" {{ request('status') == 'present' ? 'selected' : '' }}>Present</option>
+                                        <option value="absent" {{ request('status') == 'absent' ? 'selected' : '' }}>Absent</option>
+                                        <option value="late" {{ request('status') == 'late' ? 'selected' : '' }}>Late</option>
+                                        <option value="half_day" {{ request('status') == 'half_day' ? 'selected' : '' }}>Half Day</option>
+                                        <option value="on_leave" {{ request('status') == 'on_leave' ? 'selected' : '' }}>On Leave</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <button class="btn btn-primary w-100" type="submit">
+                                        <i class="bi bi-search"></i> Filter
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
@@ -431,114 +526,119 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Jan 15, 2024</td>
-                                        <td>Monday</td>
-                                        <td><span class="badge bg-success">Present</span></td>
-                                        <td>09:00 AM</td>
-                                        <td>05:00 PM</td>
-                                        <td>8.0 hrs</td>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jan 14, 2024</td>
-                                        <td>Sunday</td>
-                                        <td><span class="badge bg-secondary">Weekend</span></td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jan 13, 2024</td>
-                                        <td>Saturday</td>
-                                        <td><span class="badge bg-secondary">Weekend</span></td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jan 12, 2024</td>
-                                        <td>Friday</td>
-                                        <td><span class="badge bg-success">Present</span></td>
-                                        <td>09:15 AM</td>
-                                        <td>05:30 PM</td>
-                                        <td>8.25 hrs</td>
-                                        <td>Late arrival</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jan 11, 2024</td>
-                                        <td>Thursday</td>
-                                        <td><span class="badge bg-success">Present</span></td>
-                                        <td>08:45 AM</td>
-                                        <td>04:45 PM</td>
-                                        <td>8.0 hrs</td>
-                                        <td>Early leave</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jan 10, 2024</td>
-                                        <td>Wednesday</td>
-                                        <td><span class="badge bg-success">Present</span></td>
-                                        <td>09:00 AM</td>
-                                        <td>05:00 PM</td>
-                                        <td>8.0 hrs</td>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jan 9, 2024</td>
-                                        <td>Tuesday</td>
-                                        <td><span class="badge bg-danger">Absent</span></td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>Personal leave</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jan 8, 2024</td>
-                                        <td>Monday</td>
-                                        <td><span class="badge bg-success">Present</span></td>
-                                        <td>09:00 AM</td>
-                                        <td>05:00 PM</td>
-                                        <td>8.0 hrs</td>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jan 7, 2024</td>
-                                        <td>Sunday</td>
-                                        <td><span class="badge bg-secondary">Weekend</span></td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jan 6, 2024</td>
-                                        <td>Saturday</td>
-                                        <td><span class="badge bg-secondary">Weekend</span></td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                    </tr>
+                                    @if(isset($attendanceRecords))
+                                        @foreach($attendanceRecords as $record)
+                                            <tr>
+                                                <td>{{ \Carbon\Carbon::parse($record->date)->format('M d, Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($record->date)->format('l') }}</td>
+                                                <td>
+                                                    @if($record->status == 'present')
+                                                        <span class="badge bg-success">Present</span>
+                                                    @elseif($record->status == 'absent')
+                                                        <span class="badge bg-danger">Absent</span>
+                                                    @elseif($record->status == 'late')
+                                                        <span class="badge bg-warning">Late</span>
+                                                    @elseif($record->status == 'half_day')
+                                                        <span class="badge bg-info">Half Day</span>
+                                                    @elseif($record->status == 'on_leave')
+                                                        <span class="badge bg-secondary">On Leave</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $record->check_in ? \Carbon\Carbon::parse($record->check_in)->format('h:i A') : '-' }}</td>
+                                                <td>{{ $record->check_out ? \Carbon\Carbon::parse($record->check_out)->format('h:i A') : '-' }}</td>
+                                                <td>{{ $record->total_hours ? round($record->total_hours / 60, 2) . ' hrs' : '-' }}</td>
+                                                <td>{{ $record->notes ?? '-' }}</td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td>Jan 15, 2024</td>
+                                            <td>Monday</td>
+                                            <td><span class="badge bg-success">Present</span></td>
+                                            <td>09:00 AM</td>
+                                            <td>05:00 PM</td>
+                                            <td>8.0 hrs</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jan 14, 2024</td>
+                                            <td>Sunday</td>
+                                            <td><span class="badge bg-info">Weekend</span></td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>0 hrs</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jan 13, 2024</td>
+                                            <td>Saturday</td>
+                                            <td><span class="badge bg-info">Weekend</span></td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>0 hrs</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jan 12, 2024</td>
+                                            <td>Friday</td>
+                                            <td><span class="badge bg-success">Present</span></td>
+                                            <td>08:45 AM</td>
+                                            <td>05:30 PM</td>
+                                            <td>8.75 hrs</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jan 11, 2024</td>
+                                            <td>Thursday</td>
+                                            <td><span class="badge bg-warning">Late</span></td>
+                                            <td>10:15 AM</td>
+                                            <td>06:45 PM</td>
+                                            <td>8.5 hrs</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jan 10, 2024</td>
+                                            <td>Wednesday</td>
+                                            <td><span class="badge bg-success">Present</span></td>
+                                            <td>09:00 AM</td>
+                                            <td>05:00 PM</td>
+                                            <td>8.0 hrs</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jan 9, 2024</td>
+                                            <td>Tuesday</td>
+                                            <td><span class="badge bg-success">Present</span></td>
+                                            <td>09:05 AM</td>
+                                            <td>05:05 PM</td>
+                                            <td>8.0 hrs</td>
+                                            <td>-</td>
+                                        </tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <!-- Pagination -->
-                        <nav aria-label="Attendance records pagination">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
+                        @if(isset($attendanceRecords))
+                            <div class="d-flex justify-content-center mt-4">
+                                {{ $attendanceRecords->links() }}
+                            </div>
+                        @else
+                            <nav aria-label="Attendance records pagination">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -568,6 +668,25 @@
                     overlay.classList.remove('show');
                 });
             }
+            
+            // Update clock display
+            function updateClock() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                const dateString = now.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                document.getElementById('currentTime').textContent = timeString;
+                document.getElementById('currentDate').textContent = dateString;
+            }
+            
+            // Update clock every second
+            setInterval(updateClock, 1000);
+            updateClock(); // Initial call
         });
     </script>
 </body>

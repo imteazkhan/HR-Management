@@ -11,15 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('departments', function (Blueprint $table) {
-            $table->string('name')->after('id');
-            $table->text('description')->nullable()->after('name');
-            $table->foreignId('manager_id')->nullable()->constrained('users')->onDelete('set null')->after('description');
-            $table->boolean('is_active')->default(true)->after('manager_id');
-            $table->integer('max_employees')->default(50)->after('is_active');
-            $table->string('location')->nullable()->after('max_employees');
-            $table->string('budget')->nullable()->after('location');
-        });
+        // This migration was trying to add columns that already exist
+        // We'll leave this empty since the columns are already in the base departments table
     }
 
     /**
@@ -27,17 +20,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('departments', function (Blueprint $table) {
-            $table->dropForeign(['manager_id']);
-            $table->dropColumn([
-                'name',
-                'description', 
-                'manager_id',
-                'is_active',
-                'max_employees',
-                'location',
-                'budget'
-            ]);
-        });
+        // We don't need to do anything here since we didn't add any columns
     }
 };

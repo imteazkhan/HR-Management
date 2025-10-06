@@ -42,7 +42,6 @@
             width: 20px; 
             margin-right: 10px;
         }
-<<<<<<< HEAD
         .sidebar .dropdown-menu {
             background: #34495e;
             border: none;
@@ -66,8 +65,6 @@
             top: 50%;
             transform: translateY(-50%);
         }
-=======
->>>>>>> f37dbbf8b1009745044820acded90aff98423c3f
         .main-content { 
             margin-left: 250px; 
             padding: 20px;
@@ -166,6 +163,65 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+        }
+        
+        .id-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .id-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #3498db, #2980b9, #e74c3c, #c0392b);
+        }
+        .qr-code-container {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 15px auto;
+            width: fit-content;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .employee-info {
+            text-align: left;
+            margin-top: 15px;
+        }
+        .employee-info p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+        .employee-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .employee-role {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .company-header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .company-header h5 {
+            margin: 0;
+            font-size: 1.1rem;
         }
         
         .table-row-hover:hover {
@@ -307,37 +363,13 @@
         </div>
         <ul class="nav flex-column">
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}" href="{{ route('superadmin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.employees') ? 'active' : '' }}" href="{{ route('superadmin.employees') }}"><i class="bi bi-people"></i> All Employees</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.employees') ? 'active' : '' }}" href="{{ route('superadmin.employees') }}"><i class="bi bi-people"></i> Employees</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.designations') ? 'active' : '' }}" href="{{ route('superadmin.designations') }}"><i class="bi bi-award"></i> Designations</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.departments') ? 'active' : '' }}" href="{{ route('superadmin.departments') }}"><i class="bi bi-building"></i> Departments</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.user-roles') ? 'active' : '' }}" href="{{ route('superadmin.user-roles') }}"><i class="bi bi-person-badge"></i> User Roles</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.payroll') ? 'active' : '' }}" href="{{ route('superadmin.payroll') }}"><i class="bi bi-cash-stack"></i> Payroll Management</a></li>
-<<<<<<< HEAD
-            
-            <!-- HRM Dropdown -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-workspace"></i>
-                    HRM
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{ route('hrm.designations.index') }}">Designations</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.admin.index') }}">Admin Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.employee.index') }}">Employee Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.biometric.index') }}">Biometric Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.loans.office.index') }}">Office Loan</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.loans.personal.index') }}">Personal Loan</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.leaves.employee.index') }}">Employee Leaves</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.leaves.admin.index') }}">Admin Leaves</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.holidays.index') }}">Holidays</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.timesheets.index') }}">Time Sheet</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.schedules.index') }}">Schedule</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.overtime.index') }}">Overtime</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.warnings.index') }}">Warnings</a></li>
-                </ul>
-            </li>
-            
-=======
->>>>>>> f37dbbf8b1009745044820acded90aff98423c3f
+
+                        <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.attendance.index') ? 'active' : '' }}" href="{{ route('superadmin.attendance.index') }}"><i class="bi bi-calendar-check"></i> Attendance</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.analytics') ? 'active' : '' }}" href="{{ route('superadmin.analytics') }}"><i class="bi bi-graph-up"></i> Analytics</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.security') ? 'active' : '' }}" href="{{ route('superadmin.security') }}"><i class="bi bi-shield-check"></i> System Security</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.settings') ? 'active' : '' }}" href="{{ route('superadmin.settings') }}"><i class="bi bi-gear"></i> System Settings</a></li>
@@ -399,144 +431,448 @@
             </div>
         @endif
 
-        <!-- Key Metrics -->
-        <div class="row g-3 g-md-4 mb-4">
-            <div class="col-6 col-lg-3">
-                <div class="card stat-card p-3 p-md-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-white-50 mb-1">Total Employees</h6>
-                            <h2>{{ $employees->total() }}</h2>
-                        </div>
-                        <i class="bi bi-people fs-1 opacity-50 d-none d-md-block"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="card stat-card-2 p-3 p-md-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-white-50 mb-1">Managers</h6>
-                            <h2>{{ $employees->where('role', 'manager')->count() }}</h2>
-                        </div>
-                        <i class="bi bi-person-check fs-1 opacity-50 d-none d-md-block"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="card stat-card-3 p-3 p-md-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-white-50 mb-1">Staff</h6>
-                            <h2>{{ $employees->where('role', 'employee')->count() }}</h2>
-                        </div>
-                        <i class="bi bi-person-workspace fs-1 opacity-50 d-none d-md-block"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="card stat-card-4 p-3 p-md-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-white-50 mb-1">New This Month</h6>
-                            <h2>{{ $employees->where('created_at', '>=', now()->startOfMonth())->count() }}</h2>
-                        </div>
-                        <i class="bi bi-clock-history fs-1 opacity-50 d-none d-md-block"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Employee Tabs -->
+        <ul class="nav nav-tabs mb-4" id="employeeTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="all-employees-tab" data-bs-toggle="tab" data-bs-target="#all-employees" type="button" role="tab" aria-controls="all-employees" aria-selected="true">
+                    <i class="bi bi-people"></i> All Employees
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="managers-tab" data-bs-toggle="tab" data-bs-target="#managers" type="button" role="tab" aria-controls="managers" aria-selected="false">
+                    <i class="bi bi-person-check"></i> Managers
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="staff-tab" data-bs-toggle="tab" data-bs-target="#staff" type="button" role="tab" aria-controls="staff" aria-selected="false">
+                    <i class="bi bi-person-workspace"></i> Staff
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="new-employees-tab" data-bs-toggle="tab" data-bs-target="#new-employees" type="button" role="tab" aria-controls="new-employees" aria-selected="false">
+                    <i class="bi bi-person-plus"></i> New Employees
+                </button>
+            </li>
+        </ul>
 
-        <!-- Employee Actions -->
-        <div class="row g-3 g-md-4 mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5><i class="bi bi-person-plus"></i> Employee Management</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex">
-                                <input type="text" class="form-control me-2" placeholder="Search employees..." id="searchEmployees" style="max-width: 300px;">
-                                <button class="btn btn-outline-secondary me-2">
-                                    <i class="bi bi-filter"></i> Filter
-                                </button>
+        <!-- Tab Content -->
+        <div class="tab-content" id="employeeTabContent">
+            <!-- All Employees Tab -->
+            <div class="tab-pane fade show active" id="all-employees" role="tabpanel" aria-labelledby="all-employees-tab">
+                <!-- Key Metrics -->
+                <div class="row g-3 g-md-4 mb-4">
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Total Employees</h6>
+                                    <h2>{{ $employees->total() }}</h2>
+                                </div>
+                                <i class="bi bi-people fs-1 opacity-50 d-none d-md-block"></i>
                             </div>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-                                <i class="bi bi-person-plus"></i> Add Employee
-                            </button>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-2 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Managers</h6>
+                                    <h2>{{ $employees->where('role', 'manager')->count() }}</h2>
+                                </div>
+                                <i class="bi bi-person-check fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-3 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">Staff</h6>
+                                    <h2>{{ $employees->where('role', 'employee')->count() }}</h2>
+                                </div>
+                                <i class="bi bi-person-workspace fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card stat-card-4 p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">New This Month</h6>
+                                    <h2>{{ $employees->where('created_at', '>=', now()->startOfMonth())->count() }}</h2>
+                                </div>
+                                <i class="bi bi-clock-history fs-1 opacity-50 d-none d-md-block"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employee Actions -->
+                <div class="row g-3 g-md-4 mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5><i class="bi bi-person-plus"></i> Employee Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <input type="text" class="form-control me-2" placeholder="Search employees..." id="searchEmployees" style="max-width: 300px;">
+                                        <button class="btn btn-outline-secondary me-2">
+                                            <i class="bi bi-filter"></i> Filter
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('superadmin.employees.id-cards') }}" class="btn btn-info me-2">
+                                            <i class="bi bi-card-heading"></i> ID Cards
+                                        </a>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                                            <i class="bi bi-person-plus"></i> Add Employee
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employees Table -->
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Department</th>
+                                        <th>Joined</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($employees as $employee)
+                                    <tr class="table-row-hover">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-circle me-3">{{ substr($employee->name, 0, 1) }}</div>
+                                                <div>
+                                                    <h6 class="mb-0">{{ $employee->name }}</h6>
+                                                    <small class="text-muted">ID: #{{ $employee->id }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ $employee->email }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ $employee->role === 'manager' ? 'primary' : 'secondary' }}">
+                                                {{ ucfirst($employee->role) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if($employee->department)
+                                                <span class="text-muted">{{ $employee->department->name }}</span>
+                                            @else
+                                                <span class="text-muted">No Department</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $employee->created_at->format('M d, Y') }}</td>
+                                        <td>
+                                            <span class="badge bg-success">Active</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="showEmployeeIdCard({{ $employee->id }}, '{{ $employee->name }}', '{{ $employee->email }}', '{{ $employee->role }}', '{{ $employee->created_at->format('M d, Y') }}', '{{ $employee->department ? $employee->department->name : 'No Department' }}', {{ $employee->department_id ?? 'null' }})" title="View ID Card">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <a href="{{ route('superadmin.employees.edit', $employee) }}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteEmployee({{ $employee->id }}, '{{ $employee->name }}')" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        {{ $employees->links() }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Managers Tab -->
+            <div class="tab-pane fade" id="managers" role="tabpanel" aria-labelledby="managers-tab">
+                <div class="row g-3 g-md-4 mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5><i class="bi bi-person-check"></i> Manager Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <input type="text" class="form-control me-2" placeholder="Search managers..." id="searchManagers" style="max-width: 300px;">
+                                        <button class="btn btn-outline-secondary me-2">
+                                            <i class="bi bi-filter"></i> Filter
+                                        </button>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                                        <i class="bi bi-person-plus"></i> Add Manager
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Department</th>
+                                        <th>Team Size</th>
+                                        <th>Joined</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($employees->where('role', 'manager') as $manager)
+                                    <tr class="table-row-hover">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-circle me-3">{{ substr($manager->name, 0, 1) }}</div>
+                                                <div>
+                                                    <h6 class="mb-0">{{ $manager->name }}</h6>
+                                                    <small class="text-muted">ID: #{{ $manager->id }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ $manager->email }}</td>
+                                        <td>
+                                            @if($manager->department)
+                                                <span class="text-muted">{{ $manager->department->name }}</span>
+                                            @else
+                                                <span class="text-muted">No Department</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">5</span>
+                                        </td>
+                                        <td>{{ $manager->created_at->format('M d, Y') }}</td>
+                                        <td>
+                                            <span class="badge bg-success">Active</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="showEmployeeIdCard({{ $manager->id }}, '{{ $manager->name }}', '{{ $manager->email }}', '{{ $manager->role }}', '{{ $manager->created_at->format('M d, Y') }}', '{{ $manager->department ? $manager->department->name : 'No Department' }}', {{ $manager->department_id ?? 'null' }})" title="View ID Card">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <a href="{{ route('superadmin.employees.edit', $manager) }}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteEmployee({{ $manager->id }}, '{{ $manager->name }}')" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Employees Table -->
-        <div class="card">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Department</th>
-                                <th>Joined</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($employees as $employee)
-                            <tr class="table-row-hover">
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-circle me-3">{{ substr($employee->name, 0, 1) }}</div>
-                                        <div>
-                                            <h6 class="mb-0">{{ $employee->name }}</h6>
-                                            <small class="text-muted">ID: #{{ $employee->id }}</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{{ $employee->email }}</td>
-                                <td>
-                                    <span class="badge bg-{{ $employee->role === 'manager' ? 'primary' : 'secondary' }}">
-                                        {{ ucfirst($employee->role) }}
-                                    </span>
-                                </td>
-                                <td>
-                                    @if($employee->department)
-                                        <span class="text-muted">{{ $employee->department->name }}</span>
-                                    @else
-                                        <span class="text-muted">No Department</span>
-                                    @endif
-                                </td>
-                                <td>{{ $employee->created_at->format('M d, Y') }}</td>
-                                <td>
-                                    <span class="badge bg-success">Active</span>
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewEmployee({{ $employee->id }}, '{{ $employee->name }}', '{{ $employee->email }}', '{{ $employee->role }}', '{{ $employee->created_at->format('M d, Y') }}', '{{ $employee->department ? $employee->department->name : 'No Department' }}', {{ $employee->department_id ?? 'null' }})" title="View">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editEmployee({{ $employee->id }}, '{{ $employee->name }}', '{{ $employee->email }}', '{{ $employee->role }}', {{ $employee->department_id ?? 'null' }})" title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteEmployee({{ $employee->id }}, '{{ $employee->name }}')" title="Delete">
-                                            <i class="bi bi-trash"></i>
+            <!-- Staff Tab -->
+            <div class="tab-pane fade" id="staff" role="tabpanel" aria-labelledby="staff-tab">
+                <div class="row g-3 g-md-4 mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5><i class="bi bi-person-workspace"></i> Staff Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <input type="text" class="form-control me-2" placeholder="Search staff..." id="searchStaff" style="max-width: 300px;">
+                                        <button class="btn btn-outline-secondary me-2">
+                                            <i class="bi bi-filter"></i> Filter
                                         </button>
                                     </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                                        <i class="bi bi-person-plus"></i> Add Staff
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Department</th>
+                                        <th>Position</th>
+                                        <th>Joined</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($employees->where('role', 'employee') as $staff)
+                                    <tr class="table-row-hover">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-circle me-3">{{ substr($staff->name, 0, 1) }}</div>
+                                                <div>
+                                                    <h6 class="mb-0">{{ $staff->name }}</h6>
+                                                    <small class="text-muted">ID: #{{ $staff->id }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ $staff->email }}</td>
+                                        <td>
+                                            @if($staff->department)
+                                                <span class="text-muted">{{ $staff->department->name }}</span>
+                                            @else
+                                                <span class="text-muted">No Department</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <span class="text-muted">Staff Member</span>
+                                        </td>
+                                        <td>{{ $staff->created_at->format('M d, Y') }}</td>
+                                        <td>
+                                            <span class="badge bg-success">Active</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="showEmployeeIdCard({{ $staff->id }}, '{{ $staff->name }}', '{{ $staff->email }}', '{{ $staff->role }}', '{{ $staff->created_at->format('M d, Y') }}', '{{ $staff->department ? $staff->department->name : 'No Department' }}', {{ $staff->department_id ?? 'null' }})" title="View ID Card">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <a href="{{ route('superadmin.employees.edit', $staff) }}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteEmployee({{ $staff->id }}, '{{ $staff->name }}')" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-footer">
-                {{ $employees->links() }}
+
+            <!-- New Employees Tab -->
+            <div class="tab-pane fade" id="new-employees" role="tabpanel" aria-labelledby="new-employees-tab">
+                <div class="row g-3 g-md-4 mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5><i class="bi bi-person-plus"></i> New Employees (This Month)</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <input type="text" class="form-control me-2" placeholder="Search new employees..." id="searchNewEmployees" style="max-width: 300px;">
+                                        <button class="btn btn-outline-secondary me-2">
+                                            <i class="bi bi-filter"></i> Filter
+                                        </button>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                                        <i class="bi bi-person-plus"></i> Add Employee
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Department</th>
+                                        <th>Joined</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($employees->where('created_at', '>=', now()->startOfMonth()) as $newEmployee)
+                                    <tr class="table-row-hover">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-circle me-3">{{ substr($newEmployee->name, 0, 1) }}</div>
+                                                <div>
+                                                    <h6 class="mb-0">{{ $newEmployee->name }}</h6>
+                                                    <small class="text-muted">ID: #{{ $newEmployee->id }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ $newEmployee->email }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ $newEmployee->role === 'manager' ? 'primary' : 'secondary' }}">
+                                                {{ ucfirst($newEmployee->role) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if($newEmployee->department)
+                                                <span class="text-muted">{{ $newEmployee->department->name }}</span>
+                                            @else
+                                                <span class="text-muted">No Department</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $newEmployee->created_at->format('M d, Y') }}</td>
+                                        <td>
+                                            <span class="badge bg-success">Active</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="showEmployeeIdCard({{ $newEmployee->id }}, '{{ $newEmployee->name }}', '{{ $newEmployee->email }}', '{{ $newEmployee->role }}', '{{ $newEmployee->created_at->format('M d, Y') }}', '{{ $newEmployee->department ? $newEmployee->department->name : 'No Department' }}', {{ $newEmployee->department_id ?? 'null' }})" title="View ID Card">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <a href="{{ route('superadmin.employees.edit', $newEmployee) }}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteEmployee({{ $newEmployee->id }}, '{{ $newEmployee->name }}')" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -565,6 +901,10 @@
                             <input type="password" class="form-control" id="employeePassword" name="password" required minlength="8">
                         </div>
                         <div class="mb-3">
+                            <label for="employeeJoined" class="form-label">Joined</label>
+                            <input type="date" class="form-control" id="employeeJoined" name="joined" required value="{{ old('joined', now()->format('Y-m-d')) }}">
+                        </div>
+                        <div class="mb-3">
                             <label for="employeeRole" class="form-label">Role</label>
                             <select class="form-select" id="employeeRole" name="role" required>
                                 <option value="">Select Role</option>
@@ -585,57 +925,6 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary">Add Employee</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Employee Modal -->
-    <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editEmployeeModalLabel">Edit Employee</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="editEmployeeForm" method="POST">
-                    @csrf
-                    @method('PATCH')
-                    <input type="hidden" id="editEmployeeId" name="id">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="editEmployeeName" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="editEmployeeName" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editEmployeeEmail" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="editEmployeeEmail" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editEmployeeRole" class="form-label">Role</label>
-                            <select class="form-select" id="editEmployeeRole" name="role" required>
-                                <option value="employee">Employee</option>
-                                <option value="manager">Manager</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editEmployeeDepartment" class="form-label">Department</label>
-                            <select class="form-select" id="editEmployeeDepartment" name="department_id">
-                                <option value="">Select Department</option>
-                                @foreach($departments ?? [] as $department)
-                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editEmployeePassword" class="form-label">New Password (leave blank to keep current)</label>
-                            <input type="password" class="form-control" id="editEmployeePassword" name="password" minlength="8">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" onclick="console.log('Form submission URL:', document.getElementById('editEmployeeForm').action)">Update Employee</button>
                     </div>
                 </form>
             </div>
@@ -673,6 +962,54 @@
         </div>
     </div>
 
+    <!-- Employee ID Card Modal -->
+    <div class="modal fade" id="employeeIdCardModal" tabindex="-1" aria-labelledby="employeeIdCardModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="employeeIdCardModalLabel">Employee ID Card</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="id-card">
+                        <div class="company-header">
+                            <h5>iK soft</h5>
+                            <small>Employee ID Card</small>
+                        </div>
+                        
+                        <div class="avatar-circle mx-auto" id="idCardAvatar">
+                            A
+                        </div>
+                        
+                        <div class="employee-name mt-3" id="idCardName">-</div>
+                        
+                        <span class="badge bg-primary employee-role" id="idCardRole">
+                            Employee
+                        </span>
+                        
+                        <div class="qr-code-container mx-auto mt-3">
+                            <div id="idCardQRCode" class="qrcode"></div>
+                        </div>
+                        
+                        <div class="employee-info mt-3">
+                            <p class="mb-1"><strong>ID:</strong> #<span id="idCardId">-</span></p>
+                            <p class="mb-1"><strong>Email:</strong> <span id="idCardEmail">-</span></p>
+                            <p class="mb-1">
+                                <strong>Department:</strong> 
+                                <span id="idCardDepartment">-</span>
+                            </p>
+                            <p class="mb-0"><strong>Joined:</strong> <span id="idCardJoined">-</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="window.printIdCard()">Print ID Card</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Delete Employee Modal -->
     <div class="modal fade" id="deleteEmployeeModal" tabindex="-1" aria-labelledby="deleteEmployeeModalLabel">
         <div class="modal-dialog">
@@ -698,198 +1035,297 @@
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-    // Ensure Bootstrap is loaded before executing
-    document.addEventListener('DOMContentLoaded', function() {
-        // Mobile sidebar toggle
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('show');
-                overlay.classList.toggle('show');
-            });
-        }
-        
-        // Close sidebar when overlay is clicked
-        if (overlay) {
-            overlay.addEventListener('click', function() {
-                sidebar.classList.remove('show');
-                overlay.classList.remove('show');
-            });
-        }
-        
-        // View Employee Function
-        window.viewEmployee = function(id, name, email, role, joined, departmentName, departmentId) {
-            document.getElementById('viewEmployeeName').textContent = name;
-            document.getElementById('viewEmployeeEmail').textContent = email;
-            document.getElementById('viewEmployeeRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
-            document.getElementById('viewEmployeeDepartment').textContent = departmentName || 'No Department';
-            document.getElementById('viewEmployeeJoined').textContent = joined;
-            document.getElementById('viewEmployeeAvatar').textContent = name.charAt(0).toUpperCase();
+        // Ensure Bootstrap is loaded before executing
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile sidebar toggle
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
             
-            // Store ID and department ID for edit function
-            document.getElementById('viewEmployeeModal').setAttribute('data-employee-id', id);
-            document.getElementById('viewEmployeeModal').setAttribute('data-department-id', departmentId);
-            
-            var viewModal = new bootstrap.Modal(document.getElementById('viewEmployeeModal'));
-            viewModal.show();
-        }
-
-        // Edit Employee Function
-        window.editEmployee = function(id, name, email, role, departmentId) {
-            console.log('Edit Employee called with ID:', id);
-            document.getElementById('editEmployeeName').value = name;
-            document.getElementById('editEmployeeEmail').value = email;
-            document.getElementById('editEmployeeRole').value = role;
-            
-            // Set department selection
-            const departmentSelect = document.getElementById('editEmployeeDepartment');
-            if (departmentSelect && departmentId) {
-                departmentSelect.value = departmentId;
-            } else if (departmentSelect) {
-                departmentSelect.value = '';
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                    overlay.classList.toggle('show');
+                });
             }
             
-            // Update form action with correct Laravel route
-            const actionUrl = '{{ url("superadmin/employees") }}/' + id;
-            console.log('Setting form action to:', actionUrl);
-            document.getElementById('editEmployeeForm').action = actionUrl;
+            // Close sidebar when overlay is clicked
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('show');
+                    overlay.classList.remove('show');
+                });
+            }
             
-            var editModal = new bootstrap.Modal(document.getElementById('editEmployeeModal'));
-            editModal.show();
-        }
-
-        // Edit from View Modal
-        window.editFromView = function() {
-            const viewModal = bootstrap.Modal.getInstance(document.getElementById('viewEmployeeModal'));
-            const employeeId = document.getElementById('viewEmployeeModal').getAttribute('data-employee-id');
-            const departmentId = document.getElementById('viewEmployeeModal').getAttribute('data-department-id');
-            const name = document.getElementById('viewEmployeeName').textContent;
-            const email = document.getElementById('viewEmployeeEmail').textContent;
-            const role = document.getElementById('viewEmployeeRole').textContent.toLowerCase();
+            // Tab navigation handling
+            const tabTriggerList = [].slice.call(document.querySelectorAll('#employeeTabs button'))
+            tabTriggerList.forEach(function (tabTrigger) {
+                tabTrigger.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const tabTriggerEl = event.target;
+                    const tabPaneId = tabTriggerEl.getAttribute('data-bs-target');
+                    
+                    // Remove active class from all tabs and panes
+                    document.querySelectorAll('#employeeTabs button').forEach(function(tab) {
+                        tab.classList.remove('active');
+                    });
+                    document.querySelectorAll('.tab-pane').forEach(function(pane) {
+                        pane.classList.remove('show', 'active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    tabTriggerEl.classList.add('active');
+                    
+                    // Show the corresponding pane
+                    const tabPane = document.querySelector(tabPaneId);
+                    if (tabPane) {
+                        tabPane.classList.add('show', 'active');
+                    }
+                });
+            });
             
-            viewModal.hide();
-            
-            setTimeout(() => {
-                editEmployee(employeeId, name, email, role, departmentId === 'null' ? null : departmentId);
-            }, 300);
-        }
-
-        // Delete Employee Function
-        window.deleteEmployee = function(id, name) {
-            console.log('Delete Employee called with ID:', id);
-            document.getElementById('deleteEmployeeName').textContent = name;
-            const actionUrl = '{{ url("superadmin/employees") }}/' + id;
-            console.log('Setting delete form action to:', actionUrl);
-            document.getElementById('deleteEmployeeForm').action = actionUrl;
-            
-            var deleteModal = new bootstrap.Modal(document.getElementById('deleteEmployeeModal'));
-            deleteModal.show();
-        }
-
-        // Search Functionality
-        document.getElementById('searchEmployees').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const tableRows = document.querySelectorAll('tbody tr');
-            
-            tableRows.forEach(row => {
-                const name = row.querySelector('h6').textContent.toLowerCase();
-                const email = row.cells[1].textContent.toLowerCase();
-                const role = row.cells[2].textContent.toLowerCase();
+            // Search functionality for each tab
+            document.getElementById('searchEmployees').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const tableRows = document.querySelectorAll('#all-employees tbody tr');
                 
-                if (name.includes(searchTerm) || email.includes(searchTerm) || role.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+                tableRows.forEach(row => {
+                    const name = row.querySelector('h6').textContent.toLowerCase();
+                    const email = row.cells[1].textContent.toLowerCase();
+                    const role = row.cells[2].textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || email.includes(searchTerm) || role.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
             });
-        });
 
-        // Success/Error Messages Auto-hide
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
-            if (!alert.classList.contains('alert-permanent')) {
-                setTimeout(function() {
-                    alert.style.transition = 'opacity 0.5s';
-                    alert.style.opacity = '0';
-                    setTimeout(function() {
-                        alert.remove();
-                    }, 500);
-                }, 5000);
+            document.getElementById('searchManagers').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const tableRows = document.querySelectorAll('#managers tbody tr');
+                
+                tableRows.forEach(row => {
+                    const name = row.querySelector('h6').textContent.toLowerCase();
+                    const email = row.cells[1].textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            document.getElementById('searchStaff').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const tableRows = document.querySelectorAll('#staff tbody tr');
+                
+                tableRows.forEach(row => {
+                    const name = row.querySelector('h6').textContent.toLowerCase();
+                    const email = row.cells[1].textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            document.getElementById('searchNewEmployees').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const tableRows = document.querySelectorAll('#new-employees tbody tr');
+                
+                tableRows.forEach(row => {
+                    const name = row.querySelector('h6').textContent.toLowerCase();
+                    const email = row.cells[1].textContent.toLowerCase();
+                    const role = row.cells[2].textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || email.includes(searchTerm) || role.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+            
+            // View Employee Function
+            window.viewEmployee = function(id, name, email, role, joined, departmentName, departmentId) {
+                document.getElementById('viewEmployeeName').textContent = name;
+                document.getElementById('viewEmployeeEmail').textContent = email;
+                document.getElementById('viewEmployeeRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+                document.getElementById('viewEmployeeDepartment').textContent = departmentName || 'No Department';
+                document.getElementById('viewEmployeeJoined').textContent = joined;
+                document.getElementById('viewEmployeeAvatar').textContent = name.charAt(0).toUpperCase();
+                
+                // Store ID and department ID for edit function
+                document.getElementById('viewEmployeeModal').setAttribute('data-employee-id', id);
+                document.getElementById('viewEmployeeModal').setAttribute('data-department-id', departmentId);
+                
+                var viewModal = new bootstrap.Modal(document.getElementById('viewEmployeeModal'));
+                viewModal.show();
             }
-        });
 
-        // Modal Focus Management for Better Accessibility
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => {
-            modal.addEventListener('show.bs.modal', function () {
-                // Remove aria-hidden when modal is being shown
-                modal.removeAttribute('aria-hidden');
-            });
-            
-            modal.addEventListener('shown.bs.modal', function () {
-                // Ensure aria-hidden is removed and focus on the first focusable element
-                modal.removeAttribute('aria-hidden');
-                const firstFocusable = modal.querySelector('input, select, textarea, button:not([data-bs-dismiss])');
-                if (firstFocusable) {
-                    firstFocusable.focus();
+            // Show Employee ID Card Function
+            window.showEmployeeIdCard = function(id, name, email, role, joined, departmentName, departmentId) {
+                // Set employee data in the ID card
+                document.getElementById('idCardName').textContent = name;
+                document.getElementById('idCardEmail').textContent = email;
+                document.getElementById('idCardRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+                document.getElementById('idCardRole').className = 'badge bg-' + (role === 'manager' ? 'primary' : 'secondary') + ' employee-role';
+                document.getElementById('idCardDepartment').textContent = departmentName || 'No Department';
+                document.getElementById('idCardJoined').textContent = joined;
+                document.getElementById('idCardId').textContent = id;
+                document.getElementById('idCardAvatar').textContent = name.charAt(0).toUpperCase();
+                
+                // Clear previous QR code
+                document.getElementById('idCardQRCode').innerHTML = '';
+                
+                // Generate QR code
+                try {
+                    new QRCode(document.getElementById('idCardQRCode'), {
+                        text: "Employee ID: " + id + "\nName: " + name + "\nEmail: " + email + "\nRole: " + role.charAt(0).toUpperCase() + role.slice(1) + "\nDepartment: " + (departmentName || 'No Department'),
+                        width: 128,
+                        height: 128,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                } catch (e) {
+                    console.error("Failed to generate QR code:", e);
+                    document.getElementById('idCardQRCode').innerHTML = "<div class='text-center p-3'><small>QR Code: " + id + "</small></div>";
+                }
+                
+                // Show the ID card modal
+                var idCardModal = new bootstrap.Modal(document.getElementById('employeeIdCardModal'));
+                idCardModal.show();
+            }
+
+            // Print ID Card Function
+            window.printIdCard = function() {
+                var printContents = document.querySelector('#employeeIdCardModal .modal-body').innerHTML;
+                var originalContents = document.body.innerHTML;
+                
+                document.body.innerHTML = '<div class="container">' + printContents + '</div>';
+                window.print();
+                document.body.innerHTML = originalContents;
+                location.reload();
+            }
+
+            // Edit from View Modal
+            window.editFromView = function() {
+                const viewModal = bootstrap.Modal.getInstance(document.getElementById('viewEmployeeModal'));
+                const employeeId = document.getElementById('viewEmployeeModal').getAttribute('data-employee-id');
+                const departmentId = document.getElementById('viewEmployeeModal').getAttribute('data-department-id');
+                const name = document.getElementById('viewEmployeeName').textContent;
+                const email = document.getElementById('viewEmployeeEmail').textContent;
+                const role = document.getElementById('viewEmployeeRole').textContent.toLowerCase();
+                
+                viewModal.hide();
+                
+                setTimeout(() => {
+                    window.location.href = '/superadmin/employees/' + employeeId + '/edit';
+                }, 300);
+            }
+
+            // Delete Employee Function
+            window.deleteEmployee = function(id, name) {
+                console.log('Delete Employee called with ID:', id);
+                document.getElementById('deleteEmployeeName').textContent = name;
+                const actionUrl = '{{ url("superadmin/employees") }}/' + id;
+                console.log('Setting delete form action to:', actionUrl);
+                document.getElementById('deleteEmployeeForm').action = actionUrl;
+                
+                var deleteModal = new bootstrap.Modal(document.getElementById('deleteEmployeeModal'));
+                deleteModal.show();
+            }
+
+            // Success/Error Messages Auto-hide
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                if (!alert.classList.contains('alert-permanent')) {
+                    setTimeout(function() {
+                        alert.style.transition = 'opacity 0.5s';
+                        alert.style.opacity = '0';
+                        setTimeout(function() {
+                            alert.remove();
+                        }, 500);
+                    }, 5000);
                 }
             });
-            
-            modal.addEventListener('hide.bs.modal', function () {
+
+            // Modal Focus Management for Better Accessibility
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.addEventListener('show.bs.modal', function () {
+                    // Remove aria-hidden when modal is being shown
+                    modal.removeAttribute('aria-hidden');
+                });
+                
+                modal.addEventListener('shown.bs.modal', function () {
+                    // Ensure aria-hidden is removed and focus on the first focusable element
+                    modal.removeAttribute('aria-hidden');
+                    const firstFocusable = modal.querySelector('input, select, textarea, button:not([data-bs-dismiss])');
+                    if (firstFocusable) {
+                        firstFocusable.focus();
+                    }
+                });
+                
+                modal.addEventListener('hide.bs.modal', function () {
+                    // Remove aria-hidden before hiding
+                    modal.removeAttribute('aria-hidden');
+                });
+                
+                modal.addEventListener('hidden.bs.modal', function () {
+                    // Only add aria-hidden after modal is completely hidden
+                    setTimeout(() => {
+                        modal.setAttribute('aria-hidden', 'true');
+                    }, 100);
+                });
+            });
+
+            // Override Bootstrap's default modal behavior
+            const originalModalShow = bootstrap.Modal.prototype.show;
+            bootstrap.Modal.prototype.show = function() {
+                // Remove aria-hidden before calling original show
+                this._element.removeAttribute('aria-hidden');
+                return originalModalShow.call(this);
+            };
+
+            const originalModalHide = bootstrap.Modal.prototype.hide;
+            bootstrap.Modal.prototype.hide = function() {
                 // Remove aria-hidden before hiding
-                modal.removeAttribute('aria-hidden');
-            });
-            
-            modal.addEventListener('hidden.bs.modal', function () {
-                // Only add aria-hidden after modal is completely hidden
-                setTimeout(() => {
-                    modal.setAttribute('aria-hidden', 'true');
-                }, 100);
-            });
-        });
+                this._element.removeAttribute('aria-hidden');
+                return originalModalHide.call(this);
+            };
 
-        // Override Bootstrap's default modal behavior
-        const originalModalShow = bootstrap.Modal.prototype.show;
-        bootstrap.Modal.prototype.show = function() {
-            // Remove aria-hidden before calling original show
-            this._element.removeAttribute('aria-hidden');
-            return originalModalShow.call(this);
-        };
-
-        const originalModalHide = bootstrap.Modal.prototype.hide;
-        bootstrap.Modal.prototype.hide = function() {
-            // Remove aria-hidden before hiding
-            this._element.removeAttribute('aria-hidden');
-            return originalModalHide.call(this);
-        };
-
-        // MutationObserver to prevent Bootstrap from adding aria-hidden on visible modals
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
-                    const target = mutation.target;
-                    if (target.classList.contains('modal') && target.style.display === 'block') {
-                        // If modal is visible but aria-hidden was added, remove it
-                        if (target.getAttribute('aria-hidden') === 'true') {
-                            target.removeAttribute('aria-hidden');
+            // MutationObserver to prevent Bootstrap from adding aria-hidden on visible modals
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+                        const target = mutation.target;
+                        if (target.classList.contains('modal') && target.style.display === 'block') {
+                            // If modal is visible but aria-hidden was added, remove it
+                            if (target.getAttribute('aria-hidden') === 'true') {
+                                target.removeAttribute('aria-hidden');
+                            }
                         }
                     }
-                }
+                });
             });
-        });
 
-        // Observe all modals for attribute changes
-        modals.forEach(modal => {
-            observer.observe(modal, {
-                attributes: true,
-                attributeFilter: ['aria-hidden', 'style', 'class']
+            // Observe all modals for attribute changes
+            modals.forEach(modal => {
+                observer.observe(modal, {
+                    attributes: true,
+                    attributeFilter: ['aria-hidden', 'style', 'class']
+                });
             });
         });
-    });
-</script>
+    </script>
 </body>
 </html>

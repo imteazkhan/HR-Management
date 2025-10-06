@@ -4,6 +4,8 @@ namespace App\Http\Controllers\HRM;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\TimeSheet;
+use App\Models\User;
 
 class TimeSheetController extends Controller
 {
@@ -12,7 +14,8 @@ class TimeSheetController extends Controller
      */
     public function index()
     {
-        //
+        $timesheets = TimeSheet::with('user')->get();
+        return view('hrm.timesheets.index', compact('timesheets'));
     }
 
     /**
@@ -20,7 +23,8 @@ class TimeSheetController extends Controller
      */
     public function create()
     {
-        //
+        $employees = User::all();
+        return view('hrm.timesheets.create', compact('employees'));
     }
 
     /**
@@ -28,7 +32,20 @@ class TimeSheetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'date' => 'required|date',
+            'project' => 'required|string|max:255',
+            'task' => 'required|string|max:255',
+            'hours' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'status' => 'required|in:pending,approved,rejected'
+        ]);
+
+        TimeSheet::create($request->all());
+
+        return redirect()->route('hrm.timesheets.index')
+            ->with('success', 'Timesheet created successfully.');
     }
 
     /**
@@ -36,7 +53,8 @@ class TimeSheetController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $timesheet = TimeSheet::with('user')->findOrFail($id);
+        return view('hrm.timesheets.show', compact('timesheet'));
     }
 
     /**
@@ -44,7 +62,9 @@ class TimeSheetController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $timesheet = TimeSheet::findOrFail($id);
+        $employees = User::all();
+        return view('hrm.timesheets.edit', compact('timesheet', 'employees'));
     }
 
     /**
@@ -52,7 +72,21 @@ class TimeSheetController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'date' => 'required|date',
+            'project' => 'required|string|max:255',
+            'task' => 'required|string|max:255',
+            'hours' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'status' => 'required|in:pending,approved,rejected'
+        ]);
+
+        $timesheet = TimeSheet::findOrFail($id);
+        $timesheet->update($request->all());
+
+        return redirect()->route('hrm.timesheets.index')
+            ->with('success', 'Timesheet updated successfully.');
     }
 
     /**
@@ -60,6 +94,10 @@ class TimeSheetController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $timesheet = TimeSheet::findOrFail($id);
+        $timesheet->delete();
+
+        return redirect()->route('hrm.timesheets.index')
+            ->with('success', 'Timesheet deleted successfully.');
     }
 }

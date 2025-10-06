@@ -411,6 +411,14 @@
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.9rem;
         }
+        
+        .auth-footer {
+            margin-top: 1rem;
+        }
+        
+        .auth-footer .btn {
+            margin: 0 0.5rem;
+        }
 
         /* Mobile Navigation */
         .mobile-toggle {
@@ -475,7 +483,7 @@
                 display: block;
             }
             
-            .nav-links, .auth-buttons {
+            .nav-links {
                 display: none;
             }
             
@@ -489,9 +497,30 @@
                 background: white;
                 padding: 1rem;
                 box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
             }
             
             .nav-links.active li {
+                margin: 0.5rem 0;
+            }
+            
+            .auth-buttons {
+                display: none;
+            }
+            
+            .auth-buttons.active {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                background: white;
+                padding: 1rem;
+                /* box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1); */
+                z-index: 1000;
+            }
+            
+            .auth-buttons.active .btn {
                 margin: 0.5rem 0;
             }
             
@@ -831,6 +860,12 @@
             
             <div class="footer-bottom">
                 <p>&copy; {{ date('Y') }} ik HR Management System. All rights reserved.</p>
+                @guest
+                    <div class="auth-footer">
+                        <a href="{{ route('login') }}" class="btn btn-outline">Login</a>
+                        <a href="{{ route('register') }}" class="btn btn-primary">Sign Up</a>
+                    </div>
+                @endguest
             </div>
         </div>
     </footer>
@@ -839,6 +874,7 @@
         // Mobile navigation toggle
         document.querySelector('.mobile-toggle').addEventListener('click', function() {
             document.querySelector('.nav-links').classList.toggle('active');
+            document.querySelector('.auth-buttons').classList.toggle('active');
         });
         
         // Simple animation on scroll

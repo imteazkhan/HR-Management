@@ -23,10 +23,7 @@ class User extends Authenticatable
         'password',
         'role',
         'department_id',
-<<<<<<< HEAD
         'designation_id',
-=======
->>>>>>> f37dbbf8b1009745044820acded90aff98423c3f
     ];
 
     /**
@@ -176,7 +173,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Department::class, 'manager_id');
     }
-<<<<<<< HEAD
 
     /**
      * Employee profile relationship
@@ -289,6 +285,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(LeaveBalance::class);
     }
-=======
->>>>>>> f37dbbf8b1009745044820acded90aff98423c3f
+
+    /**
+     * Payroll records for user
+     */
+    public function payrolls()
+    {
+        return $this->hasMany(Payroll::class);
+    }
 }

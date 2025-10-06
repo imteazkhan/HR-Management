@@ -35,6 +35,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('role:superadmin')->prefix('superadmin')->name('superadmin.')->group(function () {
         Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/employees', [SuperAdminController::class, 'showEmployees'])->name('employees');
+        Route::get('/employees/id-cards', [SuperAdminController::class, 'showEmployeeIdCards'])->name('employees.id-cards');
+        Route::get('/employees/{employee}/edit', [SuperAdminController::class, 'editEmployee'])->name('employees.edit');
+        Route::post('/employees/{employee}/documents', [SuperAdminController::class, 'uploadEmployeeDocument'])->name('employees.documents.upload');
         Route::post('/employees', [SuperAdminController::class, 'createEmployee'])->name('employees.create');
         Route::patch('/employees/{employee}', [SuperAdminController::class, 'updateEmployee'])->name('employees.update');
         Route::delete('/employees/{employee}', [SuperAdminController::class, 'deleteEmployee'])->name('employees.delete');
@@ -57,6 +60,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/security', [SuperAdminController::class, 'showSecurity'])->name('security');
         Route::get('/database', [SuperAdminController::class, 'showDatabase'])->name('database');
         Route::post('/backup', [SuperAdminController::class, 'backupSystem'])->name('backup');
+        
+        // Designations Management Routes
+        Route::get('/designations', [SuperAdminController::class, 'showDesignations'])->name('designations');
+        Route::post('/designations', [SuperAdminController::class, 'createDesignation'])->name('designations.store');
+        Route::get('/designations/{designation}', [SuperAdminController::class, 'showDesignation'])->name('designations.show');
+        Route::patch('/designations/{designation}', [SuperAdminController::class, 'updateDesignation'])->name('designations.update');
+        Route::delete('/designations/{designation}', [SuperAdminController::class, 'deleteDesignation'])->name('designations.delete');
+        
+        // Attendance Management Routes
+        Route::prefix('attendance')->name('attendance.')->group(function () {
+            Route::get('/', [SuperAdminController::class, 'showAttendance'])->name('index');
+            Route::get('/admin', [SuperAdminController::class, 'showAdminAttendance'])->name('admin.index');
+            Route::get('/employee', [SuperAdminController::class, 'showEmployeeAttendance'])->name('employee.index');
+            Route::get('/leave-count', [SuperAdminController::class, 'showLeaveCount'])->name('leave-count');
+            Route::post('/clock-in', [SuperAdminController::class, 'clockIn'])->name('clock-in');
+            Route::post('/clock-out', [SuperAdminController::class, 'clockOut'])->name('clock-out');
+            Route::post('/manual-entry', [SuperAdminController::class, 'manualEntry'])->name('manual-entry');
+            Route::post('/update-leave-balance', [SuperAdminController::class, 'updateLeaveBalance'])->name('update-leave-balance');
+            Route::put('/update-entry/{id}', [SuperAdminController::class, 'updateEntry'])->name('update-entry');
+            Route::delete('/delete-entry/{id}', [SuperAdminController::class, 'deleteEntry'])->name('delete-entry');
+        });
         
         // Manager Data Management Routes
         Route::prefix('manager-data')->name('manager-data.')->group(function () {
@@ -141,6 +165,8 @@ Route::middleware(['auth'])->prefix('hrm')->name('hrm.')->group(function () {
         Route::post('/clock-in', [\App\Http\Controllers\HRM\AttendanceController::class, 'clockIn'])->name('clock-in');
         Route::post('/clock-out', [\App\Http\Controllers\HRM\AttendanceController::class, 'clockOut'])->name('clock-out');
         Route::post('/manual-entry', [\App\Http\Controllers\HRM\AttendanceController::class, 'manualEntry'])->name('manual-entry');
+        Route::put('/update-entry/{id}', [\App\Http\Controllers\HRM\AttendanceController::class, 'updateEntry'])->name('update-entry');
+        Route::delete('/delete-entry/{id}', [\App\Http\Controllers\HRM\AttendanceController::class, 'deleteEntry'])->name('delete-entry');
     });
     
     // Leave Management
@@ -191,4 +217,3 @@ Route::middleware(['auth'])->prefix('hrm')->name('hrm.')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-

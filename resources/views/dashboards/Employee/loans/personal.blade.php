@@ -376,7 +376,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-white-50 mb-1">Total Repaid</h6>
-                            <h2>$12,500</h2>
+                            <h2>BDT 12,500</h2>
                         </div>
                         <i class="bi bi-currency-dollar fs-1 opacity-50 d-none d-md-block"></i>
                     </div>
@@ -474,7 +474,7 @@
                                 <tbody>
                                     <tr>
                                         <td>LN-00125</td>
-                                        <td>$15,000</td>
+                                        <td>BDT 15,000</td>
                                         <td>Home Improvement</td>
                                         <td>2023-05-15</td>
                                         <td>36 months</td>
@@ -493,7 +493,7 @@
                                     </tr>
                                     <tr>
                                         <td>LN-00089</td>
-                                        <td>$8,000</td>
+                                        <td>BDT 8,000</td>
                                         <td>Education</td>
                                         <td>2022-01-10</td>
                                         <td>24 months</td>
@@ -512,7 +512,7 @@
                                     </tr>
                                     <tr>
                                         <td>LN-00156</td>
-                                        <td>$5,000</td>
+                                        <td>BDT 5,000</td>
                                         <td>Medical Expenses</td>
                                         <td>2024-03-01</td>
                                         <td>12 months</td>

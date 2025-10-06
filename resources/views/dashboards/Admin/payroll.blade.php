@@ -44,7 +44,6 @@
             width: 20px; 
             margin-right: 10px;
         }
-<<<<<<< HEAD
         .sidebar .dropdown-menu {
             background: #34495e;
             border: none;
@@ -68,8 +67,6 @@
             top: 50%;
             transform: translateY(-50%);
         }
-=======
->>>>>>> f37dbbf8b1009745044820acded90aff98423c3f
         .main-content { 
             margin-left: 250px; 
             padding: 20px;
@@ -234,6 +231,71 @@
         .fade-in-up {
             animation: fadeInUp 0.6s ease-out;
         }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        @media print {
+            /* Hide elements that shouldn't be printed */
+            .sidebar, .mobile-header, .sidebar-overlay, .btn, select, .nav, .dropdown, .modal, .chart-container {
+                display: none !important;
+            }
+            
+            /* Show print-only elements */
+            .print-title, .print-summary {
+                display: block !important;
+            }
+            
+            /* Adjust layout for printing */
+            .main-content {
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* Ensure the card takes full width */
+            .card {
+                box-shadow: none;
+                border: none;
+            }
+            
+            /* Improve table appearance for printing */
+            .table {
+                font-size: 12px;
+            }
+            
+            .table th, .table td {
+                padding: 8px;
+                vertical-align: top;
+                border-top: 1px solid #dee2e6;
+            }
+            
+            /* Ensure badges are visible in print */
+            .badge {
+                color: #000 !important;
+                background-color: #fff !important;
+                border: 1px solid #000;
+            }
+            
+            /* Print the page title */
+            .print-title {
+                text-align: center;
+                margin-bottom: 20px;
+                font-size: 24px;
+                font-weight: bold;
+            }
+            
+            /* Print summary information */
+            .print-summary {
+                margin-bottom: 20px;
+                font-size: 14px;
+            }
+            
+            /* Ensure footer is visible */
+            tfoot {
+                display: table-footer-group;
+            }
+        }
     </style>
 </head>
 <body>
@@ -270,37 +332,14 @@
         </div>
         <ul class="nav flex-column">
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}" href="{{ route('superadmin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.employees') ? 'active' : '' }}" href="{{ route('superadmin.employees') }}"><i class="bi bi-people"></i> All Employees</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.employees') ? 'active' : '' }}" href="{{ route('superadmin.employees') }}"><i class="bi bi-people"></i> Employees</a></li>
+
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.designations') ? 'active' : '' }}" href="{{ route('superadmin.designations') }}"><i class="bi bi-award"></i> Designations</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.departments') ? 'active' : '' }}" href="{{ route('superadmin.departments') }}"><i class="bi bi-building"></i> Departments</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.user-roles') ? 'active' : '' }}" href="{{ route('superadmin.user-roles') }}"><i class="bi bi-person-badge"></i> User Roles</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.payroll') ? 'active' : '' }}" href="{{ route('superadmin.payroll') }}"><i class="bi bi-cash-stack"></i> Payroll Management</a></li>
-<<<<<<< HEAD
-            
-            <!-- HRM Dropdown -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-workspace"></i>
-                    HRM
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{ route('hrm.designations.index') }}">Designations</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.admin.index') }}">Admin Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.employee.index') }}">Employee Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.attendance.biometric.index') }}">Biometric Attendance</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.loans.office.index') }}">Office Loan</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.loans.personal.index') }}">Personal Loan</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.leaves.employee.index') }}">Employee Leaves</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.leaves.admin.index') }}">Admin Leaves</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.holidays.index') }}">Holidays</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.timesheets.index') }}">Time Sheet</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.schedules.index') }}">Schedule</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.overtime.index') }}">Overtime</a></li>
-                    <li><a class="dropdown-item" href="{{ route('hrm.warnings.index') }}">Warnings</a></li>
-                </ul>
-            </li>
-            
-=======
->>>>>>> f37dbbf8b1009745044820acded90aff98423c3f
+
+                        <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.attendance.index') ? 'active' : '' }}" href="{{ route('superadmin.attendance.index') }}"><i class="bi bi-calendar-check"></i> Attendance</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.analytics') ? 'active' : '' }}" href="{{ route('superadmin.analytics') }}"><i class="bi bi-graph-up"></i> Analytics</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.security') ? 'active' : '' }}" href="{{ route('superadmin.security') }}"><i class="bi bi-shield-check"></i> System Security</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('superadmin.settings') ? 'active' : '' }}" href="{{ route('superadmin.settings') }}"><i class="bi bi-gear"></i> System Settings</a></li>
@@ -342,7 +381,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-white-50 mb-1">Total Payroll</h6>
-                            <h2>${{ number_format(array_sum(array_column($payrollData, 'net_salary')), 0) }}</h2>
+                            <h2>BDT {{ number_format(array_sum(array_column($payrollData, 'net_salary')), 0) }}</h2>
                         </div>
                         <i class="bi bi-cash-stack fs-1 opacity-50 d-none d-md-block"></i>
                     </div>
@@ -364,7 +403,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-white-50 mb-1">Total Bonuses</h6>
-                            <h2>${{ number_format(array_sum(array_column($payrollData, 'bonuses')), 0) }}</h2>
+                            <h2>BDT {{ number_format(array_sum(array_column($payrollData, 'bonuses')), 0) }}</h2>
                         </div>
                         <i class="bi bi-star-fill fs-1 opacity-50 d-none d-md-block"></i>
                     </div>
@@ -375,7 +414,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-white-50 mb-1">Total Deductions</h6>
-                            <h2>${{ number_format(array_sum(array_column($payrollData, 'deductions')), 0) }}</h2>
+                            <h2>BDT {{ number_format(array_sum(array_column($payrollData, 'deductions')), 0) }}</h2>
                         </div>
                         <i class="bi bi-calculator fs-1 opacity-50 d-none d-md-block"></i>
                     </div>
@@ -385,6 +424,18 @@
 
         <!-- Payroll Table -->
         <div class="card">
+            <!-- Print Title (only visible when printing) -->
+            <div class="print-title d-none">
+                Employee Payroll Report - {{ date('F Y') }}
+            </div>
+            
+            <!-- Print Summary (only visible when printing) -->
+            <div class="print-summary d-none">
+                <p><strong>Report Generated:</strong> {{ date('F j, Y') }}</p>
+                <p><strong>Total Employees:</strong> {{ count($payrollData) }}</p>
+                <p><strong>Total Payroll:</strong> BDT {{ number_format(array_sum(array_column($payrollData, 'net_salary')), 0) }}</p>
+            </div>
+            
             <div class="card-header bg-primary text-white">
                 <div class="row align-items-center">
                     <div class="col">
@@ -396,6 +447,11 @@
                             <option value="{{ date('F Y', strtotime('-1 month')) }}">{{ date('F Y', strtotime('-1 month')) }}</option>
                             <option value="{{ date('F Y', strtotime('-2 months')) }}">{{ date('F Y', strtotime('-2 months')) }}</option>
                         </select>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-sm btn-light" id="printPayrollBtn">
+                            <i class="bi bi-printer"></i> Print
+                        </button>
                     </div>
                 </div>
             </div>
@@ -410,6 +466,8 @@
                                 <th>Bonuses</th>
                                 <th>Deductions</th>
                                 <th>Net Salary</th>
+                                <th>Attendance</th>
+                                <th>Leave</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -429,100 +487,48 @@
                                     </div>
                                 </td>
                                 <td>{{ $payroll['position'] }}</td>
-                                <td>${{ number_format($payroll['base_salary'], 0) }}</td>
+                                <td>BDT {{ number_format($payroll['base_salary'], 0) }}</td>
                                 <td>
-                                    <span class="badge bg-success">${{ number_format($payroll['bonuses'], 0) }}</span>
+                                    <span class="badge bg-success">BDT {{ number_format($payroll['bonuses'], 0) }}</span>
                                 </td>
                                 <td>
-                                    <span class="badge bg-warning">${{ number_format($payroll['deductions'], 0) }}</span>
+                                    <span class="badge bg-warning">BDT {{ number_format($payroll['deductions'], 0) }}</span>
                                 </td>
                                 <td>
-                                    <strong>${{ number_format($payroll['net_salary'], 0) }}</strong>
+                                    <strong>BDT {{ number_format($payroll['net_salary'], 0) }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ $payroll['attendance_rate'] ?? 'N/A' }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ $payroll['leave_balance'] ?? 'N/A' }}</span>
                                 </td>
                                 <td>
                                     <span class="badge bg-success">Processed</span>
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewPayrollModal{{ $index }}">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="showViewPayrollModal({{ json_encode($payroll) }})">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-success" onclick="downloadPayroll({{ $index }})">
                                             <i class="bi bi-download"></i>
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editPayrollModal{{ $index }}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="showEditPayrollModal({{ json_encode($payroll) }})">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
-
-                            <!-- View Payroll Modal -->
-                            <div class="modal fade" id="viewPayrollModal{{ $index }}" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-primary text-white">
-                                            <h5 class="modal-title">Payroll Details - {{ $payroll['employee'] }}</h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p><strong>Employee:</strong> {{ $payroll['employee'] }}</p>
-                                            <p><strong>Position:</strong> {{ $payroll['position'] }}</p>
-                                            <p><strong>Base Salary:</strong> ${{ number_format($payroll['base_salary'], 0) }}</p>
-                                            <p><strong>Bonuses:</strong> ${{ number_format($payroll['bonuses'], 0) }}</p>
-                                            <p><strong>Deductions:</strong> ${{ number_format($payroll['deductions'], 0) }}</p>
-                                            <p><strong>Net Salary:</strong> ${{ number_format($payroll['net_salary'], 0) }}</p>
-                                            <p><strong>Status:</strong> Processed</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Edit Payroll Modal -->
-                            <div class="modal fade" id="editPayrollModal{{ $index }}" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-primary text-white">
-                                            <h5 class="modal-title">Edit Payroll - {{ $payroll['employee'] }}</h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <form action="{{ route('superadmin.payroll.update', $index) }}" method="POST">
-                                            @csrf
-                                            @method('PATCH')
-                                            <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label for="baseSalary{{ $index }}" class="form-label">Base Salary</label>
-                                                    <input type="number" class="form-control" id="baseSalary{{ $index }}" name="base_salary" value="{{ $payroll['base_salary'] }}" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="bonuses{{ $index }}" class="form-label">Bonuses</label>
-                                                    <input type="number" class="form-control" id="bonuses{{ $index }}" name="bonuses" value="{{ $payroll['bonuses'] }}" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="deductions{{ $index }}" class="form-label">Deductions</label>
-                                                    <input type="number" class="form-control" id="deductions{{ $index }}" name="deductions" value="{{ $payroll['deductions'] }}" required>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-primary">Update Payroll</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
                             @endforeach
                         </tbody>
                         <tfoot class="table-light">
                             <tr>
                                 <th colspan="2">TOTAL</th>
-                                <th>${{ number_format(array_sum(array_column($payrollData, 'base_salary')), 0) }}</th>
-                                <th>${{ number_format(array_sum(array_column($payrollData, 'bonuses')), 0) }}</th>
-                                <th>${{ number_format(array_sum(array_column($payrollData, 'deductions')), 0) }}</th>
-                                <th>${{ number_format(array_sum(array_column($payrollData, 'net_salary')), 0) }}</th>
+                                <th>BDT {{ number_format(array_sum(array_column($payrollData, 'base_salary')), 0) }}</th>
+                                <th>BDT {{ number_format(array_sum(array_column($payrollData, 'bonuses')), 0) }}</th>
+                                <th>BDT {{ number_format(array_sum(array_column($payrollData, 'deductions')), 0) }}</th>
+                                <th>BDT {{ number_format(array_sum(array_column($payrollData, 'net_salary')), 0) }}</th>
                                 <th colspan="2"></th>
                             </tr>
                         </tfoot>
@@ -566,20 +572,79 @@
                     <form action="{{ route('superadmin.payroll.process') }}" method="POST">
                         @csrf
                         <div class="modal-body">
-                            <p>Process payroll for <strong>{{ date('F Y') }}</strong>?</p>
                             <div class="mb-3">
                                 <label for="payrollMonth" class="form-label">Select Month</label>
-                                <select class="form-select" id="payrollMonth" name="month" required>
-                                    <option value="{{ date('F Y') }}">{{ date('F Y') }}</option>
-                                    <option value="{{ date('F Y', strtotime('-1 month')) }}">{{ date('F Y', strtotime('-1 month')) }}</option>
-                                    <option value="{{ date('F Y', strtotime('-2 months')) }}">{{ date('F Y', strtotime('-2 months')) }}</option>
-                                </select>
+                                <input type="month" class="form-control" id="payrollMonth" name="month" value="{{ date('Y-m') }}" required>
                             </div>
                             <p class="text-muted">This will calculate and distribute salaries for all employees.</p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-success">Process Payroll</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- View Payroll Modal -->
+        <div class="modal fade" id="viewPayrollModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Payroll Details</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Employee:</strong> <span id="viewEmployeeName"></span></p>
+                        <p><strong>Position:</strong> <span id="viewPosition"></span></p>
+                        <p><strong>Base Salary:</strong> BDT <span id="viewBaseSalary"></span></p>
+                        <p><strong>Bonuses:</strong> BDT <span id="viewBonuses"></span></p>
+                        <p><strong>Deductions:</strong> BDT <span id="viewDeductions"></span></p>
+                        <p><strong>Net Salary:</strong> BDT <span id="viewNetSalary"></span></p>
+                        <p><strong>Status:</strong> <span id="viewStatus"></span></p>
+                        <p><strong>Attendance Rate:</strong> <span id="viewAttendanceRate">N/A</span></p>
+                        <p><strong>Leave Balance:</strong> <span id="viewLeaveBalance">N/A</span></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Payroll Modal -->
+        <div class="modal fade" id="editPayrollModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Edit Payroll</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form id="editPayrollForm" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="editEmployeeName" class="form-label">Employee</label>
+                                <input type="text" class="form-control" id="editEmployeeName" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editBaseSalary" class="form-label">Base Salary</label>
+                                <input type="number" class="form-control" id="editBaseSalary" name="base_salary" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editBonuses" class="form-label">Bonuses</label>
+                                <input type="number" class="form-control" id="editBonuses" name="bonuses" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editDeductions" class="form-label">Deductions</label>
+                                <input type="number" class="form-control" id="editDeductions" name="deductions" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update Payroll</button>
                         </div>
                     </form>
                 </div>
@@ -641,10 +706,66 @@
                 }
             });
 
-            // Download Payroll Function (Placeholder)
+            // Download Payroll Function
             window.downloadPayroll = function(index) {
-                console.log('Downloading payroll for index:', index);
-                // Implement download logic (e.g., generate PDF or CSV)
+                // Create a simple payroll report
+                const payroll = @json($payrollData);
+                const payrollData = payroll[index];
+                
+                // Create CSV content
+                let csvContent = "Employee,Position,Base Salary,Bonuses,Deductions,Net Salary,Month,Status\n";
+                csvContent += `"${payrollData.employee}","${payrollData.position}","${payrollData.base_salary}","${payrollData.bonuses}","${payrollData.deductions}","${payrollData.net_salary}","{{ date('F Y') }}","Processed"\n`;
+                
+                // Create blob and download
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', `payroll_${payrollData.employee.replace(/\s+/g, '_')}_${Date.now()}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+            
+            // Print Payroll Function
+            window.printPayroll = function() {
+                window.print();
+            };
+            
+            // Add event listener for print button
+            document.getElementById('printPayrollBtn').addEventListener('click', printPayroll);
+            
+            // Show View Payroll Modal
+            window.showViewPayrollModal = function(payroll) {
+                document.getElementById('viewEmployeeName').textContent = payroll.employee;
+                document.getElementById('viewPosition').textContent = payroll.position;
+                document.getElementById('viewBaseSalary').textContent = parseFloat(payroll.base_salary).toLocaleString();
+                document.getElementById('viewBonuses').textContent = parseFloat(payroll.bonuses).toLocaleString();
+                document.getElementById('viewDeductions').textContent = parseFloat(payroll.deductions).toLocaleString();
+                document.getElementById('viewNetSalary').textContent = parseFloat(payroll.net_salary).toLocaleString();
+                document.getElementById('viewStatus').textContent = 'Processed';
+                document.getElementById('viewAttendanceRate').textContent = payroll.attendance_rate || 'N/A';
+                document.getElementById('viewLeaveBalance').textContent = payroll.leave_balance || 'N/A';
+                
+                const viewModal = new bootstrap.Modal(document.getElementById('viewPayrollModal'));
+                viewModal.show();
+            };
+            
+            // Show Edit Payroll Modal
+            window.showEditPayrollModal = function(payroll) {
+                // Set form action
+                const form = document.getElementById('editPayrollForm');
+                form.action = '/superadmin/payroll/' + payroll.id;
+                
+                // Populate form fields
+                document.getElementById('editEmployeeName').value = payroll.employee;
+                document.getElementById('editBaseSalary').value = payroll.base_salary;
+                document.getElementById('editBonuses').value = payroll.bonuses;
+                document.getElementById('editDeductions').value = payroll.deductions;
+                
+                const editModal = new bootstrap.Modal(document.getElementById('editPayrollModal'));
+                editModal.show();
             };
 
             // Chart.js for Payroll Breakdown
