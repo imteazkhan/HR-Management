@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Employees Dashboard</title>
+    <title>Employee Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
@@ -40,14 +40,10 @@
         </div>
         <ul class="nav flex-column">
             <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-people"></i> Employees</a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-badge"></i> Departments</a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-calendar-event"></i> Attendance</a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-badge"></i> My Profile</a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-clock-history"></i> Attendance</a></li>
             <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-cash-stack"></i> Payroll</a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-award"></i> Performance</a></li>
             <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-journal-text"></i> Leave Requests</a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-graph-up"></i> Reports</a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-bell"></i> Notifications</a></li>
         </ul>
     </nav>
 
@@ -55,7 +51,7 @@
     <div class="main-content">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="bi bi-briefcase-fill text-primary"></i> Empolyee Dashboard</h2>
+            <h2><i class="bi bi-briefcase-fill text-primary"></i> Employee Dashboard</h2>
             <div class="d-flex align-items-center">
                 <span class="me-3">Welcome, {{ Auth::user()->name }}!</span>
                 <div class="dropdown">
@@ -78,10 +74,10 @@
                 <div class="card stat-card p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 mb-1">Total Employees</h6>
-                            <h2>{{ $stats['employees'] }}</h2>
+                            <h6 class="text-white-50 mb-1">Leave Balance</h6>
+                            <h2>{{ $stats['leave_balance'] ?? 12 }} days</h2>
                         </div>
-                        <i class="bi bi-people fs-1 opacity-50"></i>
+                        <i class="bi bi-calendar-check fs-1 opacity-50"></i>
                     </div>
                 </div>
             </div>
@@ -89,10 +85,10 @@
                 <div class="card stat-card-2 p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 mb-1">Departments</h6>
-                            <h2>{{ $stats['departments'] }}</h2>
+                            <h6 class="text-white-50 mb-1">This Month Salary</h6>
+                            <h2>BDT {{ $stats['salary_this_month'] ?? '3,200' }}</h2>
                         </div>
-                        <i class="bi bi-building fs-1 opacity-50"> </i>
+                        <i class="bi bi-cash fs-1 opacity-50"></i>
                     </div>
                 </div>
             </div>
@@ -100,10 +96,10 @@
                 <div class="card stat-card-3 p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 mb-1">Active Attendance</h6>
-                            <h2>{{ $stats['attendance_today'] ?? 15 }}</h2>
+                            <h6 class="text-white-50 mb-1">Pending Tasks</h6>
+                            <h2>{{ $stats['pending_tasks'] ?? 3 }}</h2>
                         </div>
-                        <i class="bi bi-calendar-check fs-1 opacity-50"></i>
+                        <i class="bi bi-list-check fs-1 opacity-50"></i>
                     </div>
                 </div>
             </div>
@@ -111,10 +107,10 @@
                 <div class="card stat-card-4 p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 mb-1">Payroll Processed</h6>
-                            <h2>${{ $stats['payroll_today'] ?? '3,200' }}</h2>
+                            <h6 class="text-white-50 mb-1">Worked This Week</h6>
+                            <h2>{{ $stats['hours_this_week'] ?? 40 }} hrs</h2>
                         </div>
-                        <i class="bi bi-cash fs-1 opacity-50"></i>
+                        <i class="bi bi-clock-history fs-1 opacity-50"></i>
                     </div>
                 </div>
             </div>
@@ -207,22 +203,5 @@
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Mobile sidebar toggle
-    document.getElementById('sidebarToggle').addEventListener('click', function() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        sidebar.classList.toggle('show');
-        overlay.classList.toggle('show');
-    });
-    
-    // Close sidebar when overlay is clicked
-    document.getElementById('sidebarOverlay').addEventListener('click', function() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        sidebar.classList.remove('show');
-        overlay.classList.remove('show');
-    });
-</script>
 </body>
 </html>

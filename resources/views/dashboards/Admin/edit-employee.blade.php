@@ -223,6 +223,13 @@
 
     <!-- Main Content -->
     <div class="main-content">
+        <!-- Back Button -->
+        <div class="mb-3">
+            <a href="{{ route('superadmin.employees') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Employees
+            </a>
+        </div>
+
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4 d-none d-lg-flex">
             <h2><i class="bi bi-person-badge text-primary"></i> Edit Employee</h2>
@@ -370,7 +377,7 @@
                                             <div class="col-md-6 mb-3">
                                                 <label for="date_of_birth" class="form-label">Date of Birth</label>
                                                 <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" 
-                                                       value="{{ old('date_of_birth', $employee->employeeProfile->date_of_birth ?? '') }}">
+                                                       value="{{ old('date_of_birth', $employee->employeeProfile && $employee->employeeProfile->date_of_birth ? $employee->employeeProfile->date_of_birth->format('Y-m-d') : '') }}">
                                             </div>
                                             
                                             <div class="col-md-6 mb-3">
@@ -453,14 +460,14 @@
                                             <div class="col-md-6 mb-3">
                                                 <label for="joining_date" class="form-label">Joining Date</label>
                                                 <input type="date" class="form-control" id="joining_date" name="joining_date" 
-                                                       value="{{ old('joining_date', $employee->employeeProfile->joining_date ?? '') }}">
+                                                       value="{{ old('joining_date', $employee->employeeProfile && $employee->employeeProfile->joining_date ? $employee->employeeProfile->joining_date->format('Y-m-d') : '') }}">
                                             </div>
                                             
                                             <div class="col-md-6 mb-3">
-                                                <label for="employment_type" class="form-label">Employment Type</label>
-                                                <select class="form-select" id="employment_type" name="employment_type">
+                                                <label for="employment_type" class="form-label">Employment Type <span class="text-danger">*</span></label>
+                                                <select class="form-select" id="employment_type" name="employment_type" required>
                                                     <option value="">Select Type</option>
-                                                    <option value="full_time" {{ old('employment_type', $employee->employeeProfile->employment_type ?? '') == 'full_time' ? 'selected' : '' }}>Full Time</option>
+                                                    <option value="full_time" {{ old('employment_type', $employee->employeeProfile->employment_type ?? 'full_time') == 'full_time' ? 'selected' : '' }}>Full Time</option>
                                                     <option value="part_time" {{ old('employment_type', $employee->employeeProfile->employment_type ?? '') == 'part_time' ? 'selected' : '' }}>Part Time</option>
                                                     <option value="contract" {{ old('employment_type', $employee->employeeProfile->employment_type ?? '') == 'contract' ? 'selected' : '' }}>Contract</option>
                                                     <option value="intern" {{ old('employment_type', $employee->employeeProfile->employment_type ?? '') == 'intern' ? 'selected' : '' }}>Intern</option>
@@ -535,6 +542,52 @@
                                 <div class="form-section">
                                     <h5 class="section-title">Attendance Records</h5>
                                     
+                                    <!-- Filter Form -->
+                                    <form method="GET" action="{{ route('superadmin.employees.edit', $employee->id) }}" class="mb-4">
+                                        <div class="row g-3">
+                                            <div class="col-md-3">
+                                                <label for="monthFilter" class="form-label">Month</label>
+                                                <select class="form-select" id="monthFilter" name="month">
+                                                    <option value="">All Months</option>
+                                                    <option value="1" {{ request('month') == '1' ? 'selected' : '' }}>January</option>
+                                                    <option value="2" {{ request('month') == '2' ? 'selected' : '' }}>February</option>
+                                                    <option value="3" {{ request('month') == '3' ? 'selected' : '' }}>March</option>
+                                                    <option value="4" {{ request('month') == '4' ? 'selected' : '' }}>April</option>
+                                                    <option value="5" {{ request('month') == '5' ? 'selected' : '' }}>May</option>
+                                                    <option value="6" {{ request('month') == '6' ? 'selected' : '' }}>June</option>
+                                                    <option value="7" {{ request('month') == '7' ? 'selected' : '' }}>July</option>
+                                                    <option value="8" {{ request('month') == '8' ? 'selected' : '' }}>August</option>
+                                                    <option value="9" {{ request('month') == '9' ? 'selected' : '' }}>September</option>
+                                                    <option value="10" {{ request('month') == '10' ? 'selected' : '' }}>October</option>
+                                                    <option value="11" {{ request('month') == '11' ? 'selected' : '' }}>November</option>
+                                                    <option value="12" {{ request('month') == '12' ? 'selected' : '' }}>December</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label for="yearFilter" class="form-label">Year</label>
+                                                <select class="form-select" id="yearFilter" name="year">
+                                                    <option value="">All Years</option>
+                                                    <option value="2025" {{ request('year') == '2025' ? 'selected' : '' }}>2025</option>
+                                                    <option value="2024" {{ request('year') == '2024' ? 'selected' : '' }}>2024</option>
+                                                    <option value="2023" {{ request('year') == '2023' ? 'selected' : '' }}>2023</option>
+                                                    <option value="2022" {{ request('year') == '2022' ? 'selected' : '' }}>2022</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 d-flex align-items-end">
+                                                <button class="btn btn-primary w-100" type="submit">
+                                                    <i class="bi bi-funnel"></i> Filter
+                                                </button>
+                                            </div>
+                                            @if(request('month') || request('year'))
+                                            <div class="col-md-3 d-flex align-items-end">
+                                                <a href="{{ route('superadmin.employees.edit', $employee->id) }}" class="btn btn-outline-secondary w-100">
+                                                    <i class="bi bi-x-circle"></i> Clear
+                                                </a>
+                                            </div>
+                                            @endif
+                                        </div>
+                                    </form>
+                                    
                                     @if($employee->employeeAttendances->count() > 0)
                                         <div class="table-responsive">
                                             <table class="table table-striped">
@@ -549,7 +602,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach($employee->employeeAttendances->sortByDesc('date')->take(10) as $attendance)
+                                                    @foreach($employee->employeeAttendances as $attendance)
                                                         <tr>
                                                             <td>{{ $attendance->date->format('M d, Y') }}</td>
                                                             <td>{{ $attendance->check_in ? $attendance->check_in->format('H:i') : '-' }}</td>
@@ -570,11 +623,65 @@
                                         <div class="text-center py-5">
                                             <i class="bi bi-calendar-x fs-1 text-muted"></i>
                                             <p class="mt-3">No attendance records found for this employee.</p>
+                                            @if(request('month') || request('year'))
+                                            <p class="text-muted">Try adjusting your filter criteria.</p>
+                                            @endif
                                         </div>
                                     @endif
                                 </div>
                             </div>
-                            
+
+                            <!-- Add JavaScript to activate the attendance tab when filters are applied -->
+                            <script>
+                                // Function to activate the attendance tab
+                                function activateAttendanceTab() {
+                                    const attendanceTab = document.querySelector('#attendance-tab');
+                                    const attendancePane = document.querySelector('#attendance');
+                                    
+                                    if (attendanceTab && attendancePane) {
+                                        // Remove active classes from other tabs
+                                        document.querySelectorAll('.nav-link').forEach(tab => {
+                                            tab.classList.remove('active');
+                                        });
+                                        document.querySelectorAll('.tab-pane').forEach(pane => {
+                                            pane.classList.remove('show', 'active');
+                                        });
+                                        
+                                        // Add active classes to attendance tab
+                                        attendanceTab.classList.add('active');
+                                        attendancePane.classList.add('show', 'active');
+                                        
+                                        // Scroll to the attendance section
+                                        attendancePane.scrollIntoView({ behavior: 'smooth' });
+                                    }
+                                }
+                                
+                                // Activate tab on page load if filters are present
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const urlParams = new URLSearchParams(window.location.search);
+                                    const month = urlParams.get('month');
+                                    const year = urlParams.get('year');
+                                    
+                                    if (month || year) {
+                                        // Small delay to ensure DOM is fully loaded
+                                        setTimeout(activateAttendanceTab, 100);
+                                    }
+                                });
+                                
+                                // Also handle form submission to ensure tab stays active
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const filterForm = document.querySelector('form[action*="employees"]');
+                                    if (filterForm) {
+                                        filterForm.addEventListener('submit', function(e) {
+                                            // Add a small delay to ensure the page reloads with the correct tab
+                                            setTimeout(function() {
+                                                activateAttendanceTab();
+                                            }, 100);
+                                        });
+                                    }
+                                });
+                            </script>
+
                             <!-- Leaves Tab -->
                             <div class="tab-pane fade" id="leaves" role="tabpanel" aria-labelledby="leaves-tab">
                                 <div class="form-section">
@@ -591,6 +698,7 @@
                                                         <th>Total Days</th>
                                                         <th>Status</th>
                                                         <th>Reason</th>
+                                                        <th>Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -606,6 +714,42 @@
                                                                 </span>
                                                             </td>
                                                             <td>{{ Str::limit($leave->reason, 30) }}</td>
+                                                            <td>
+                                                                @if($leave->status === 'pending')
+                                                                    <div class="btn-group" role="group">
+                                                                        <form action="{{ route('superadmin.leaves.approve', $leave->id) }}" method="POST" class="d-inline">
+                                                                            @csrf
+                                                                            @method('PATCH')
+                                                                            <button type="submit" class="btn btn-sm btn-success" 
+                                                                                    onclick="return confirm('Are you sure you want to approve this leave?')"
+                                                                                    title="Approve Leave">
+                                                                                <i class="bi bi-check-circle"></i>
+                                                                            </button>
+                                                                        </form>
+                                                                        <form action="{{ route('superadmin.leaves.reject', $leave->id) }}" method="POST" class="d-inline">
+                                                                            @csrf
+                                                                            @method('PATCH')
+                                                                            <button type="submit" class="btn btn-sm btn-danger" 
+                                                                                    onclick="return confirm('Are you sure you want to reject this leave?')"
+                                                                                    title="Reject Leave">
+                                                                                <i class="bi bi-x-circle"></i>
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
+                                                                @elseif($leave->status === 'approved')
+                                                                    <form action="{{ route('superadmin.leaves.cancel', $leave->id) }}" method="POST" class="d-inline">
+                                                                        @csrf
+                                                                        @method('PATCH')
+                                                                        <button type="submit" class="btn btn-sm btn-warning" 
+                                                                                onclick="return confirm('Are you sure you want to cancel this approved leave?')"
+                                                                                title="Cancel Leave">
+                                                                            <i class="bi bi-x-circle"></i> Cancel
+                                                                        </button>
+                                                                    </form>
+                                                                @else
+                                                                    <span class="text-muted">No actions available</span>
+                                                                @endif
+                                                            </td>
                                                         </tr>
                                                     @endforeach
                                                 </tbody>

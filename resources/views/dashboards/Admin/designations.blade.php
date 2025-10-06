@@ -235,6 +235,23 @@
         .fade-in-up {
             animation: fadeInUp 0.6s ease-out;
         }
+        
+        /* Avatar circle for modals */
+        .avatar-circle {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Spinner animation */
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -763,14 +780,239 @@
 
         // View Employees Function
         function viewEmployees(designationId) {
-            // Redirect to employees page with designation filter
-            window.location.href = `/superadmin/employees?designation=${designationId}`;
+            // Show loading state
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="bi bi-spinner-border spinner-border-sm me-1"></i>Loading...';
+            button.disabled = true;
+            
+            // Fetch employees for this designation
+            fetch(`/superadmin/designations/${designationId}/employees`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showEmployeesModal(data.employees, data.designation);
+                    } else {
+                        // Fallback to employees page with filter
+                        window.location.href = `{{ route('superadmin.employees') }}?designation_id=${designationId}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Fallback to employees page
+                    window.location.href = `{{ route('superadmin.employees') }}?designation_id=${designationId}`;
+                })
+                .finally(() => {
+                    // Restore button state
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                });
         }
 
         // View Reports Function
         function viewReports(designationId) {
-            // Redirect to analytics page with designation filter
-            window.location.href = `/superadmin/analytics?designation=${designationId}`;
+            // Show loading state
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="bi bi-spinner-border spinner-border-sm me-1"></i>Loading...';
+            button.disabled = true;
+            
+            // Fetch reports for this designation
+            fetch(`/superadmin/designations/${designationId}/reports`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showReportsModal(data.reports, data.designation);
+                    } else {
+                        // Fallback to analytics page
+                        window.location.href = `{{ route('superadmin.analytics') }}?designation_id=${designationId}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Fallback to analytics page
+                    window.location.href = `{{ route('superadmin.analytics') }}?designation_id=${designationId}`;
+                })
+                .finally(() => {
+                    // Restore button state
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                });
+        }
+
+        // Show Employees Modal
+        function showEmployeesModal(employees, designation) {
+            const modalHtml = `
+                <div class="modal fade" id="employeesModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title">
+                                    <i class="bi bi-people me-2"></i>Employees in ${designation.title}
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                ${employees.length > 0 ? `
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>Department</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${employees.map(employee => `
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="avatar-circle me-2" style="width: 30px; height: 30px; font-size: 12px;">
+                                                                    ${employee.name.charAt(0)}
+                                                                </div>
+                                                                ${employee.name}
+                                                            </div>
+                                                        </td>
+                                                        <td>${employee.email}</td>
+                                                        <td>${employee.department || 'Not Assigned'}</td>
+                                                        <td><span class="badge bg-success">Active</span></td>
+                                                        <td>
+                                                            <a href="/superadmin/employees/${employee.id}/edit" class="btn btn-sm btn-outline-primary">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                ` : `
+                                    <div class="text-center py-4">
+                                        <i class="bi bi-people fs-1 text-muted"></i>
+                                        <h5 class="text-muted mt-3">No Employees Found</h5>
+                                        <p class="text-muted">No employees are currently assigned to this designation.</p>
+                                        <a href="{{ route('superadmin.employees') }}" class="btn btn-primary">
+                                            <i class="bi bi-person-plus"></i> Add Employee
+                                        </a>
+                                    </div>
+                                `}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <a href="{{ route('superadmin.employees') }}?designation_id=${designation.id}" class="btn btn-primary">
+                                    <i class="bi bi-eye"></i> View All Employees
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('employeesModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('employeesModal'));
+            modal.show();
+            
+            // Clean up modal after hiding
+            document.getElementById('employeesModal').addEventListener('hidden.bs.modal', function() {
+                this.remove();
+            });
+        }
+
+        // Show Reports Modal
+        function showReportsModal(reports, designation) {
+            const modalHtml = `
+                <div class="modal fade" id="reportsModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title">
+                                    <i class="bi bi-graph-up me-2"></i>Reports for ${designation.title}
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-3">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <h3 class="text-primary">${reports.total_employees || 0}</h3>
+                                                <small class="text-muted">Total Employees</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <h3 class="text-success">${reports.avg_salary || 0}</h3>
+                                                <small class="text-muted">Avg. Salary</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <h3 class="text-info">${reports.attendance_rate || 0}%</h3>
+                                                <small class="text-muted">Attendance Rate</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card text-center">
+                                            <div class="card-body">
+                                                <h3 class="text-warning">${reports.performance_score || 0}</h3>
+                                                <small class="text-muted">Performance</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <strong>Department:</strong> ${designation.department || 'Not Assigned'}<br>
+                                    <strong>Salary Range:</strong> BDT ${designation.min_salary || 0} - ${designation.max_salary || 0}<br>
+                                    <strong>Status:</strong> ${designation.is_active ? 'Active' : 'Inactive'}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <a href="{{ route('superadmin.analytics') }}?designation_id=${designation.id}" class="btn btn-success">
+                                    <i class="bi bi-graph-up"></i> View Detailed Analytics
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('reportsModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('reportsModal'));
+            modal.show();
+            
+            // Clean up modal after hiding
+            document.getElementById('reportsModal').addEventListener('hidden.bs.modal', function() {
+                this.remove();
+            });
         }
 
         // Search and Filter Functions

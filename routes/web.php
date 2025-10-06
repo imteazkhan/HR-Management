@@ -67,6 +67,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/designations/{designation}', [SuperAdminController::class, 'showDesignation'])->name('designations.show');
         Route::patch('/designations/{designation}', [SuperAdminController::class, 'updateDesignation'])->name('designations.update');
         Route::delete('/designations/{designation}', [SuperAdminController::class, 'deleteDesignation'])->name('designations.delete');
+        Route::get('/designations/{designation}/employees', [SuperAdminController::class, 'getDesignationEmployees'])->name('designations.employees');
+        Route::get('/designations/{designation}/reports', [SuperAdminController::class, 'getDesignationReports'])->name('designations.reports');
         
         // Attendance Management Routes
         Route::prefix('attendance')->name('attendance.')->group(function () {
@@ -80,6 +82,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/update-leave-balance', [SuperAdminController::class, 'updateLeaveBalance'])->name('update-leave-balance');
             Route::put('/update-entry/{id}', [SuperAdminController::class, 'updateEntry'])->name('update-entry');
             Route::delete('/delete-entry/{id}', [SuperAdminController::class, 'deleteEntry'])->name('delete-entry');
+        });
+        
+        // Leave Management Routes
+        Route::prefix('leaves')->name('leaves.')->group(function () {
+            Route::patch('/{leave}/approve', [SuperAdminController::class, 'approveLeave'])->name('approve');
+            Route::patch('/{leave}/reject', [SuperAdminController::class, 'rejectLeave'])->name('reject');
+            Route::patch('/{leave}/cancel', [SuperAdminController::class, 'cancelLeave'])->name('cancel');
         });
         
         // Manager Data Management Routes

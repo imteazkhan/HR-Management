@@ -158,25 +158,144 @@
         
         /* Print styles */
         @media print {
+            @page {
+                size: A4;
+                margin: 0.5in;
+            }
+            
+            body {
+                background: white !important;
+                font-size: 12px !important;
+            }
+            
             .sidebar, .mobile-header, .print-btn, .no-print {
                 display: none !important;
             }
+            
             .main-content {
                 margin-left: 0 !important;
                 padding: 0 !important;
+                width: 100% !important;
             }
+            
             .row.print-cards {
-                display: block !important;
+                display: flex !important;
+                flex-wrap: wrap !important;
+                margin: 0 !important;
             }
+            
             .col-print {
-                width: 33.33% !important;
-                float: left !important;
+                width: 3.375in !important; /* Standard ID card width */
+                height: 2.125in !important; /* Standard ID card height */
+                margin: 0.125in !important; /* Small margin between cards */
+                padding: 0 !important;
+                float: none !important;
                 page-break-inside: avoid;
+                display: inline-block !important;
             }
+            
             .id-card {
-                margin-bottom: 20px !important;
+                width: 3.375in !important;
+                height: 2.125in !important;
+                margin: 0 !important;
+                padding: 8px !important;
                 box-shadow: none !important;
-                border: 1px solid #ccc !important;
+                border: 1px solid #000 !important;
+                border-radius: 8px !important;
+                background: white !important;
+                font-size: 10px !important;
+                overflow: hidden !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+            }
+            
+            .company-header {
+                background: #2c3e50 !important;
+                color: white !important;
+                padding: 4px 6px !important;
+                border-radius: 4px !important;
+                margin-bottom: 6px !important;
+                text-align: center !important;
+            }
+            
+            .company-header h5 {
+                font-size: 12px !important;
+                margin: 0 !important;
+                font-weight: bold !important;
+            }
+            
+            .company-header small {
+                font-size: 8px !important;
+            }
+            
+            .avatar-circle {
+                width: 40px !important;
+                height: 40px !important;
+                font-size: 16px !important;
+                margin: 4px auto !important;
+                background: #3498db !important;
+                color: white !important;
+            }
+            
+            .employee-name {
+                font-size: 11px !important;
+                font-weight: bold !important;
+                margin: 2px 0 !important;
+                color: #2c3e50 !important;
+                text-align: center !important;
+            }
+            
+            .employee-role {
+                font-size: 8px !important;
+                padding: 2px 6px !important;
+                margin: 2px auto !important;
+                display: block !important;
+                width: fit-content !important;
+                background: #6c757d !important;
+                color: white !important;
+                border-radius: 10px !important;
+            }
+            
+            .qr-code-container {
+                background: white !important;
+                padding: 2px !important;
+                border-radius: 4px !important;
+                margin: 4px auto !important;
+                width: fit-content !important;
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+            
+            .qrcode canvas {
+                width: 50px !important;
+                height: 50px !important;
+            }
+            
+            .employee-info {
+                text-align: left !important;
+                margin-top: 4px !important;
+                flex-grow: 1 !important;
+            }
+            
+            .employee-info p {
+                margin: 1px 0 !important;
+                font-size: 8px !important;
+                line-height: 1.2 !important;
+            }
+            
+            .employee-info strong {
+                font-weight: bold !important;
+            }
+            
+            /* Ensure proper card layout */
+            .id-card::before {
+                height: 2px !important;
+            }
+            
+            /* Force page breaks after every 6 cards (2 rows of 3) */
+            .col-print:nth-child(6n) {
+                page-break-after: always;
             }
         }
         

@@ -1368,11 +1368,39 @@
                             </div>
                             <div class="card-body">
                                 <!-- Filters -->
-                                <form method="GET" action="{{ route('hrm.attendance.index') }}">
+                                <form method="GET" action="{{ route('superadmin.attendance.index') }}">
                                     <div class="row g-3 mb-4">
                                         <div class="col-md-2">
                                             <label for="recordsDateFilter" class="form-label">Date</label>
                                             <input type="date" class="form-control" id="recordsDateFilter" name="date" value="{{ request('date') }}">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="recordsMonthFilter" class="form-label">Month</label>
+                                            <select class="form-select" id="recordsMonthFilter" name="month">
+                                                <option value="">All Months</option>
+                                                <option value="1" {{ request('month') == '1' ? 'selected' : '' }}>January</option>
+                                                <option value="2" {{ request('month') == '2' ? 'selected' : '' }}>February</option>
+                                                <option value="3" {{ request('month') == '3' ? 'selected' : '' }}>March</option>
+                                                <option value="4" {{ request('month') == '4' ? 'selected' : '' }}>April</option>
+                                                <option value="5" {{ request('month') == '5' ? 'selected' : '' }}>May</option>
+                                                <option value="6" {{ request('month') == '6' ? 'selected' : '' }}>June</option>
+                                                <option value="7" {{ request('month') == '7' ? 'selected' : '' }}>July</option>
+                                                <option value="8" {{ request('month') == '8' ? 'selected' : '' }}>August</option>
+                                                <option value="9" {{ request('month') == '9' ? 'selected' : '' }}>September</option>
+                                                <option value="10" {{ request('month') == '10' ? 'selected' : '' }}>October</option>
+                                                <option value="11" {{ request('month') == '11' ? 'selected' : '' }}>November</option>
+                                                <option value="12" {{ request('month') == '12' ? 'selected' : '' }}>December</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="recordsYearFilter" class="form-label">Year</label>
+                                            <select class="form-select" id="recordsYearFilter" name="year">
+                                                <option value="">All Years</option>
+                                                <option value="2025" {{ request('year') == '2025' ? 'selected' : '' }}>2025</option>
+                                                <option value="2024" {{ request('year') == '2024' ? 'selected' : '' }}>2024</option>
+                                                <option value="2023" {{ request('year') == '2023' ? 'selected' : '' }}>2023</option>
+                                                <option value="2022" {{ request('year') == '2022' ? 'selected' : '' }}>2022</option>
+                                            </select>
                                         </div>
                                         <div class="col-md-3">
                                             <label for="recordsDepartmentFilter" class="form-label">Department</label>

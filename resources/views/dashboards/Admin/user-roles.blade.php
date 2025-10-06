@@ -713,7 +713,54 @@
                     document.getElementById('changeRoleUserId').value = userId;
                     document.getElementById('changeRoleUserName').textContent = userName;
                     document.getElementById('role').value = userRole;
+                    
+                    // Add warning for superadmin role changes
+                    const roleSelect = document.getElementById('role');
+                    const currentUserId = {{ Auth::id() }};
+                    
+                    roleSelect.addEventListener('change', function() {
+                        const warningDiv = document.getElementById('roleWarning');
+                        if (warningDiv) {
+                            warningDiv.remove();
+                        }
+                        
+                        if (userId == currentUserId && this.value !== 'superadmin') {
+                            const warning = document.createElement('div');
+                            warning.id = 'roleWarning';
+                            warning.className = 'alert alert-warning mt-2';
+                            warning.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Warning: You cannot change your own role from Super Admin!';
+                            this.parentNode.appendChild(warning);
+                        }
+                    });
                 });
+                
+                // Form validation
+                const changeRoleForm = changeRoleModal.querySelector('form');
+                if (changeRoleForm) {
+                    changeRoleForm.addEventListener('submit', function(e) {
+                        const userId = document.getElementById('changeRoleUserId').value;
+                        const newRole = document.getElementById('role').value;
+                        const currentUserId = {{ Auth::id() }};
+                        
+                        if (userId == currentUserId && newRole !== 'superadmin') {
+                            e.preventDefault();
+                            alert('You cannot change your own role from Super Admin!');
+                            return false;
+                        }
+                        
+                        // Show loading state
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.innerHTML = '<i class="bi bi-spinner-border spinner-border-sm me-1"></i>Updating...';
+                        submitBtn.disabled = true;
+                        
+                        // Re-enable button after a delay in case of errors
+                        setTimeout(() => {
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                        }, 5000);
+                    });
+                }
             }
 
             // Handle delete user modal population

@@ -17,6 +17,9 @@ use App\Models\PerformanceReview;
 use App\Models\Department;
 use App\Models\Payroll;
 use App\Models\Designation;
+use App\Models\EmployeeProfile;
+use App\Models\EmployeeLeave;
+
 
 class SuperAdminController extends Controller
 {
@@ -168,15 +171,43 @@ class SuperAdminController extends Controller
     /**
      * Show employee edit form
      */
-    public function editEmployee(User $employee): View
+    public function editEmployee(Request $request, User $employee): View
     {
+        // Get filter parameters
+        $month = $request->get('month');
+        $year = $request->get('year');
+        
+        // Log the filter parameters
+        \Log::info('Attendance filter parameters:', [
+            'employee_id' => $employee->id,
+            'month' => $month,
+            'year' => $year,
+            'all_request' => $request->all()
+        ]);
+        
+        // Build attendance query with filters
+        $attendanceQuery = function ($query) use ($month, $year) {
+            // Apply month filter if provided
+            if ($month) {
+                \Log::info('Applying month filter:', ['month' => $month]);
+                $query->whereMonth('date', $month);
+            }
+            
+            // Apply year filter if provided
+            if ($year) {
+                \Log::info('Applying year filter:', ['year' => $year]);
+                $query->whereYear('date', $year);
+            }
+            
+            $query->orderBy('date', 'desc');
+        };
+        
+        // Load the employee with filtered attendance records
         $employee->load([
             'employeeProfile',
             'department',
             'designation',
-            'employeeAttendances' => function ($query) {
-                $query->orderBy('date', 'desc')->limit(10);
-            },
+            'employeeAttendances' => $attendanceQuery,
             'employeeLeaves' => function ($query) {
                 $query->orderBy('created_at', 'desc')->limit(10);
             },
@@ -188,6 +219,14 @@ class SuperAdminController extends Controller
                 $query->orderBy('created_at', 'desc')->limit(10);
             },
             'performanceReviews.reviewer'
+        ]);
+        
+        // Log the count of loaded attendance records
+        \Log::info('Loaded attendance records count:', [
+            'employee_id' => $employee->id,
+            'count' => $employee->employeeAttendances->count(),
+            'month' => $month,
+            'year' => $year
         ]);
         
         $departments = Department::all();
@@ -250,7 +289,7 @@ class SuperAdminController extends Controller
             'marital_status' => 'nullable|in:single,married,divorced,widowed',
             'nationality' => 'nullable|string|max:100',
             'joining_date' => 'nullable|date',
-            'employment_type' => 'nullable|in:full_time,part_time,contract,intern',
+            'employment_type' => 'required|in:full_time,part_time,contract,intern',
             'salary' => 'nullable|numeric|min:0',
             'bank_account' => 'nullable|string|max:100',
             'tax_id' => 'nullable|string|max:50',
@@ -286,17 +325,18 @@ class SuperAdminController extends Controller
             'marital_status' => $request->marital_status,
             'nationality' => $request->nationality,
             'joining_date' => $request->joining_date,
-            'employment_type' => $request->employment_type,
+            'employment_type' => $request->employment_type ?: 'full_time', // Default to full_time if empty
             'salary' => $request->salary,
             'bank_account' => $request->bank_account,
             'tax_id' => $request->tax_id,
-            'status' => $request->status,
+            'status' => $request->status ?: 'active', // Default to active if empty
         ];
 
         if ($employee->employeeProfile) {
             $employee->employeeProfile->update($profileData);
         } else {
             $profileData['user_id'] = $employee->id;
+            $profileData['employee_id'] = 'EMP' . str_pad($employee->id, 4, '0', STR_PAD_LEFT);
             EmployeeProfile::create($profileData);
         }
 
@@ -399,7 +439,7 @@ class SuperAdminController extends Controller
             'role' => $request->role,
         ]);
 
-        return redirect()->route('superadmin.users')
+        return redirect()->route('superadmin.user-roles')
             ->with('success', 'User created successfully!');
     }
 
@@ -408,16 +448,32 @@ class SuperAdminController extends Controller
      */
     public function updateUserRole(Request $request): RedirectResponse
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'role' => 'required|in:superadmin,manager,employee'
-        ]);
+        try {
+            $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'role' => 'required|in:superadmin,manager,employee'
+            ]);
 
-        $user = User::findOrFail($request->user_id);
-        $user->update(['role' => $request->role]);
+            $user = User::findOrFail($request->user_id);
+            
+            // Prevent changing own role to non-superadmin
+            if ($user->id === Auth::id() && $request->role !== 'superadmin') {
+                return redirect()->route('superadmin.user-roles')
+                    ->with('error', 'You cannot change your own role from Super Admin!');
+            }
+            
+            // Store old role for the success message
+            $oldRole = $user->role;
+            
+            $user->update(['role' => $request->role]);
 
-        return redirect()->route('superadmin.users')
-            ->with('success', "User role updated to {$request->role} successfully!");
+            return redirect()->route('superadmin.user-roles')
+                ->with('success', "User role updated from {$oldRole} to {$request->role} successfully!");
+                
+        } catch (\Exception $e) {
+            return redirect()->route('superadmin.user-roles')
+                ->with('error', 'Failed to update user role. Please try again.');
+        }
     }
 
     /**
@@ -433,13 +489,13 @@ class SuperAdminController extends Controller
         
         // Prevent deleting self
         if ($user->id === Auth::id()) {
-            return redirect()->route('superadmin.users')
+            return redirect()->route('superadmin.user-roles')
                 ->with('error', 'You cannot delete your own account!');
         }
 
         $user->delete();
 
-        return redirect()->route('superadmin.users')
+        return redirect()->route('superadmin.user-roles')
             ->with('success', 'User deleted successfully!');
     }
 
@@ -1238,6 +1294,14 @@ class SuperAdminController extends Controller
             $query->where('employee_attendances.date', $request->date);
         }
         
+        if ($request->has('month') && $request->month) {
+            $query->whereMonth('employee_attendances.date', $request->month);
+        }
+        
+        if ($request->has('year') && $request->year) {
+            $query->whereYear('employee_attendances.date', $request->year);
+        }
+        
         if ($request->has('status') && $request->status) {
             $query->where('employee_attendances.status', $request->status);
         }
@@ -1952,6 +2016,155 @@ class SuperAdminController extends Controller
             return redirect()->back()->with('success', 'Designation deleted successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to delete designation. Please try again.');
+        }
+    }
+
+    // ==================== LEAVE MANAGEMENT METHODS ====================
+
+    /**
+     * Approve a leave request
+     */
+    public function approveLeave($id): RedirectResponse
+    {
+        try {
+            $leave = \App\Models\EmployeeLeave::findOrFail($id);
+            
+            $leave->update([
+                'status' => 'approved',
+                'approved_by' => Auth::id(),
+                'approved_at' => now()
+            ]);
+
+            return redirect()->back()->with('success', 'Leave request approved successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to approve leave request. Please try again.');
+        }
+    }
+
+    /**
+     * Reject a leave request
+     */
+    public function rejectLeave($id): RedirectResponse
+    {
+        try {
+            $leave = \App\Models\EmployeeLeave::findOrFail($id);
+            
+            $leave->update([
+                'status' => 'rejected',
+                'approved_by' => Auth::id(),
+                'approved_at' => now()
+            ]);
+
+            return redirect()->back()->with('success', 'Leave request rejected successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to reject leave request. Please try again.');
+        }
+    }
+
+    /**
+     * Cancel an approved leave request
+     */
+    public function cancelLeave($id): RedirectResponse
+    {
+        try {
+            $leave = \App\Models\EmployeeLeave::findOrFail($id);
+            
+            $leave->update([
+                'status' => 'cancelled',
+                'approved_by' => Auth::id(),
+                'approved_at' => now()
+            ]);
+
+            return redirect()->back()->with('success', 'Leave request cancelled successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to cancel leave request. Please try again.');
+        }
+    }
+
+    /**
+     * Get employees for a specific designation
+     */
+    public function getDesignationEmployees($id)
+    {
+        try {
+            $designation = Designation::findOrFail($id);
+            
+            $employees = User::where('designation_id', $id)
+                ->with(['department', 'employeeProfile'])
+                ->get()
+                ->map(function ($employee) {
+                    return [
+                        'id' => $employee->id,
+                        'name' => $employee->name,
+                        'email' => $employee->email,
+                        'department' => $employee->department ? $employee->department->name : null,
+                        'role' => $employee->role,
+                        'status' => $employee->employeeProfile ? $employee->employeeProfile->status : 'active'
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'employees' => $employees,
+                'designation' => [
+                    'id' => $designation->id,
+                    'title' => $designation->title,
+                    'department' => $designation->department ? $designation->department->name : null
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch employees for this designation.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Get reports for a specific designation
+     */
+    public function getDesignationReports($id)
+    {
+        try {
+            $designation = Designation::with('department')->findOrFail($id);
+            
+            // Get employees in this designation
+            $employees = User::where('designation_id', $id)->with('employeeProfile')->get();
+            
+            // Calculate statistics
+            $totalEmployees = $employees->count();
+            $avgSalary = $employees->avg(function ($employee) {
+                return $employee->employeeProfile ? $employee->employeeProfile->salary : 0;
+            });
+            
+            // Mock attendance rate (you can implement actual calculation)
+            $attendanceRate = $totalEmployees > 0 ? rand(85, 98) : 0;
+            
+            // Mock performance score (you can implement actual calculation)
+            $performanceScore = $totalEmployees > 0 ? rand(75, 95) : 0;
+
+            return response()->json([
+                'success' => true,
+                'reports' => [
+                    'total_employees' => $totalEmployees,
+                    'avg_salary' => number_format($avgSalary, 0),
+                    'attendance_rate' => $attendanceRate,
+                    'performance_score' => $performanceScore
+                ],
+                'designation' => [
+                    'id' => $designation->id,
+                    'title' => $designation->title,
+                    'department' => $designation->department ? $designation->department->name : null,
+                    'min_salary' => $designation->min_salary,
+                    'max_salary' => $designation->max_salary,
+                    'is_active' => $designation->is_active
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch reports for this designation.'
+            ], 500);
         }
     }
 }

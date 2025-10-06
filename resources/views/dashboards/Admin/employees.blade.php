@@ -879,7 +879,7 @@
 
     <!-- Add Employee Modal -->
     <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addEmployeeModalLabel">Add New Employee</h5>
@@ -888,38 +888,101 @@
                 <form action="{{ route('superadmin.employees.create') }}" method="POST">
                     @csrf
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="employeeName" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="employeeName" name="name" required>
+                        <!-- Personal Information -->
+                        <h6 class="text-primary mb-3"><i class="bi bi-person"></i> Personal Information</h6>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">First Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="last_name" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="employeeEmail" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="employeeEmail" name="email" required>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="phone" name="phone">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="employeePassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="employeePassword" name="password" required minlength="8">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="date_of_birth" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select class="form-select" id="gender" name="gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="employeeJoined" class="form-label">Joined</label>
-                            <input type="date" class="form-control" id="employeeJoined" name="joined" required value="{{ old('joined', now()->format('Y-m-d')) }}">
+
+                        <!-- Employment Information -->
+                        <h6 class="text-primary mb-3 mt-4"><i class="bi bi-briefcase"></i> Employment Information</h6>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
+                                <select class="form-select" id="role" name="role" required>
+                                    <option value="">Select Role</option>
+                                    <option value="employee">Employee</option>
+                                    <option value="manager">Manager</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="department_id" class="form-label">Department</label>
+                                <select class="form-select" id="department_id" name="department_id">
+                                    <option value="">Select Department</option>
+                                    @foreach($departments ?? [] as $department)
+                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="employeeRole" class="form-label">Role</label>
-                            <select class="form-select" id="employeeRole" name="role" required>
-                                <option value="">Select Role</option>
-                                <option value="employee">Employee</option>
-                                <option value="manager">Manager</option>
-                            </select>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="joining_date" class="form-label">Joining Date</label>
+                                <input type="date" class="form-control" id="joining_date" name="joining_date" value="{{ now()->format('Y-m-d') }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="employment_type" class="form-label">Employment Type <span class="text-danger">*</span></label>
+                                <select class="form-select" id="employment_type" name="employment_type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="full_time" selected>Full Time</option>
+                                    <option value="part_time">Part Time</option>
+                                    <option value="contract">Contract</option>
+                                    <option value="intern">Intern</option>
+                                </select>
+                            </div>
                         </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="salary" class="form-label">Salary (BDT)</label>
+                                <input type="number" class="form-control" id="salary" name="salary" step="0.01" min="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="password" name="password" required minlength="8">
+                            </div>
+                        </div>
+                        
                         <div class="mb-3">
-                            <label for="employeeDepartment" class="form-label">Department</label>
-                            <select class="form-select" id="employeeDepartment" name="department_id">
-                                <option value="">Select Department</option>
-                                @foreach($departments ?? [] as $department)
-                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                @endforeach
-                            </select>
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" name="address" rows="2"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
