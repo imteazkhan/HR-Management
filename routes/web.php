@@ -129,8 +129,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/performance', [ManagerController::class, 'showPerformance'])->name('performance');
         Route::get('/reports', [ManagerController::class, 'generateReports'])->name('reports');
         Route::get('/attendance', [ManagerController::class, 'showTeamAttendance'])->name('attendance');
+        Route::post('/attendance/mark-present/{employee}', [ManagerController::class, 'markEmployeePresent'])->name('attendance.mark-present');
+        Route::post('/send-message', [ManagerController::class, 'sendIndividualMessage'])->name('send-message');
         Route::post('/message', [ManagerController::class, 'sendTeamMessage'])->name('message');
         Route::get('/messages', [ManagerController::class, 'showMessages'])->name('messages');
+        Route::post('/messages/mark-read', [ManagerController::class, 'markMessageAsRead'])->name('messages.mark-read');
+        Route::delete('/messages/{message}', [ManagerController::class, 'deleteMessage'])->name('messages.delete');
         Route::get('/notifications', [ManagerController::class, 'showNotifications'])->name('notifications');
         Route::get('/settings', [ManagerController::class, 'showSettings'])->name('settings');
         Route::patch('/settings', [ManagerController::class, 'updateSettings'])->name('settings.update');

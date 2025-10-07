@@ -1,4 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.manager')
+
+@section('title', 'Team Performance - Manager Dashboard')
+@section('page-title', 'Team Performance')
+@section('page-icon', 'bi bi-graph-up')
+@section('page-description', 'Monitor and evaluate team performance')
 
 @section('content')
 <div class="container-fluid">
@@ -26,37 +31,26 @@
                                 <tr>
                                     <td>{{ $performance['employee'] }}</td>
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <span class="me-2">{{ $performance['score'] }}%</span>
-                                            <div class="progress" style="width: 100px; height: 8px;">
-                                                <div class="progress-bar" role="progressbar" 
-                                                     style="width: {{ $performance['score'] }}%"
-                                                     aria-valuenow="{{ $performance['score'] }}" 
-                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar" role="progressbar" style="width: {{ $performance['score'] }}%">
+                                                {{ $performance['score'] }}%
                                             </div>
                                         </div>
                                     </td>
                                     <td>{{ $performance['completed_tasks'] }}</td>
                                     <td>{{ $performance['on_time_rate'] }}%</td>
                                     <td>
-                                        @php
-                                            $badgeClass = match($performance['rating']) {
-                                                'Outstanding' => 'bg-success',
-                                                'Excellent' => 'bg-primary',
-                                                'Good' => 'bg-info',
-                                                default => 'bg-secondary'
-                                            };
-                                        @endphp
-                                        <span class="badge {{ $badgeClass }}">{{ $performance['rating'] }}</span>
+                                        <span class="badge bg-primary">{{ $performance['rating'] }}</span>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-primary">View Details</button>
-                                        <button class="btn btn-sm btn-outline-secondary">Review</button>
+                                        <button class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i> Details
+                                        </button>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="text-center">No performance data found</td>
+                                    <td colspan="6" class="text-center">No performance data available</td>
                                 </tr>
                                 @endforelse
                             </tbody>

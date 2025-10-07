@@ -9,23 +9,30 @@ class EmployeeLeave extends Model
 {
     protected $fillable = [
         'user_id',
-        'employee_id',
         'leave_type',
         'start_date',
         'end_date',
         'total_days',
         'reason',
         'status',
+        'application_date',
         'approved_by',
         'approved_at',
-        'created_at',
-        'updated_at'
+        'rejection_reason',
+        'admin_notes',
+        'attachments',
+        'is_half_day',
+        'half_day_period',
+        'emergency_contact'
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
+        'application_date' => 'date',
         'approved_at' => 'datetime',
+        'attachments' => 'array',
+        'is_half_day' => 'boolean',
     ];
 
     /**

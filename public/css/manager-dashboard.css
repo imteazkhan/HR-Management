@@ -1,0 +1,543 @@
+/* Manager Dashboard Styles */
+body {
+    background: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar {
+    background: #2c3e50;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link {
+    color: #ecf0f1;
+    padding: 12px 20px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 2px 8px;
+}
+
+.sidebar .nav-link:hover {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: #fff;
+    transform: translateX(5px);
+}
+
+.sidebar .nav-link.active {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: #fff;
+}
+
+.sidebar .nav-link i {
+    width: 20px;
+    margin-right: 10px;
+}
+
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.mobile-header {
+    display: none;
+    background: #2c3e50;
+    color: white;
+    padding: 15px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.mobile-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.card:hover {
+    /* transform: translateY(-8px) scale(1.02);  */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.stat-card-2 {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.stat-card-3 {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.stat-card-4 {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #fff !important;
+}
+
+.recent-activity {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+    background-color: #f8f9fa;
+    padding-left: 10px;
+    transform: translateX(5px);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/* Button Animations */
+.btn {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* Table Row Hover Effects */
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+/* Progress Bars */
+.progress {
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    transition: width 1s ease-in-out;
+}
+
+/* Badge Animations */
+.badge {
+    transition: all 0.3s ease;
+}
+
+.badge:hover {
+    transform: scale(1.1);
+}
+
+/* Quick Action Cards */
+.quick-action-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+    cursor: pointer;
+}
+
+.quick-action-card:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 991.98px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+
+    .mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .stat-card h2 {
+        font-size: 1.5rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .activity-item {
+        padding: 10px 0;
+    }
+
+    .activity-item i {
+        display: none;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .main-content {
+        padding: 10px;
+    }
+
+    .card {
+        margin-bottom: 15px;
+    }
+
+    .stat-card h6 {
+        font-size: 0.8rem;
+    }
+
+    .stat-card h2 {
+        font-size: 1.2rem;
+    }
+}
+
+/* Additional Manager-specific styles */
+.tool-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #007bff !important;
+}
+
+.stats-overview {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.team-activity-feed {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.team-activity-feed::-webkit-scrollbar {
+    width: 6px;
+}
+
+.team-activity-feed::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.team-activity-feed::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.team-activity-feed::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Manager Messages Styles */
+.message-item {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.message-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.message-priority-high {
+    border-left: 4px solid #dc3545;
+}
+
+.message-priority-normal {
+    border-left: 4px solid #0d6efd;
+}
+
+.message-priority-low {
+    border-left: 4px solid #6c757d;
+}
+
+/* Notification Styles */
+.notification-item {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.notification-item.unread {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+}
+
+.notification-icon {
+    min-width: 50px;
+    text-align: center;
+}
+
+.notification-list {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.notification-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Settings Styles */
+.form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.settings-section {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.settings-section:last-child {
+    border-bottom: none;
+}
+
+/* Team Attendance Styles */
+.avatar-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.weekly-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 150px;
+}
+
+.day-label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #6c757d;
+}
+
+.attendance-bar {
+    width: 30px;
+    background: linear-gradient(to top, #28a745, #20c997);
+    border-radius: 15px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.attendance-bar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.attendance-count {
+    font-size: 12px;
+    font-weight: bold;
+    color: #495057;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+
+/* Enhanced Table Styles */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+    transform: scale(1.005);
+}
+
+/* Card Header Enhancements */
+.card-header {
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+}
+
+.card-header.bg-primary {
+    background: linear-gradient(135deg, #0d6efd, #0b5ed7) !important;
+}
+
+.card-header.bg-success {
+    background: linear-gradient(135deg, #198754, #157347) !important;
+}
+
+.card-header.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #ffca2c) !important;
+}
+
+.card-header.bg-danger {
+    background: linear-gradient(135deg, #dc3545, #bb2d3b) !important;
+}
+
+.card-header.bg-info {
+    background: linear-gradient(135deg, #0dcaf0, #3dd5f3) !important;
+}
+
+/* Form Enhancements */
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Badge Enhancements */
+.badge {
+    font-size: 0.75em;
+    padding: 0.5em 0.75em;
+    border-radius: 0.5rem;
+}
+
+/* Button Group Enhancements */
+.btn-group .btn:hover {
+    z-index: 2;
+    transform: translateY(-2px);
+}
+
+/* Progress Bar Enhancements */
+.progress {
+    background-color: #e9ecef;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.progress-bar {
+    transition: width 1s ease-in-out, background-color 0.3s ease;
+}
+
+/* Alert Enhancements */
+.alert {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d1e7dd, #a3d9a5);
+    color: #0f5132;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da, #f1aeb5);
+    color: #842029;
+}
+
+/* Dropdown Enhancements */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 0.75rem;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+    transition: all 0.3s ease;
+}

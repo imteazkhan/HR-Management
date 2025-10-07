@@ -1,4 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.manager')
+
+@section('title', 'My Team - Manager Dashboard')
+@section('page-title', 'My Team')
+@section('page-icon', 'bi bi-people')
+@section('page-description', 'View and manage your team members')
 
 @section('content')
 <div class="container-fluid">
@@ -32,8 +37,12 @@
                                     </td>
                                     <td>{{ $member['join_date'] }}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-primary">View</button>
-                                        <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                        <button class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i> View
+                                        </button>
+                                        <button class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </button>
                                     </td>
                                 </tr>
                                 @empty

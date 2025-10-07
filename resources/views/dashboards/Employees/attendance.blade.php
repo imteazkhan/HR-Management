@@ -62,14 +62,14 @@
                                 ->first();
                         @endphp
                         
-                        @if($attendance && $attendance->clock_in)
+                        @if($attendance && $attendance->check_in)
                             <i class="bi bi-check-circle fs-1 text-success"></i>
-                            <h5 class="mt-2">Clocked In</h5>
-                            <p class="text-muted">{{ date('g:i A', strtotime($attendance->clock_in)) }}</p>
+                            <h5 class="mt-2">Checked In</h5>
+                            <p class="text-muted">{{ date('g:i A', strtotime($attendance->check_in)) }}</p>
                         @else
                             <i class="bi bi-x-circle fs-1 text-danger"></i>
-                            <h5 class="mt-2">Not Clocked In</h5>
-                            <p class="text-muted">Please clock in</p>
+                            <h5 class="mt-2">Not Checked In</h5>
+                            <p class="text-muted">Please check in</p>
                         @endif
                     </div>
                 </div>
@@ -78,14 +78,14 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body text-center">
-                        @if($attendance && $attendance->clock_out)
+                        @if($attendance && $attendance->check_out)
                             <i class="bi bi-check-circle fs-1 text-success"></i>
-                            <h5 class="mt-2">Clocked Out</h5>
-                            <p class="text-muted">{{ date('g:i A', strtotime($attendance->clock_out)) }}</p>
+                            <h5 class="mt-2">Checked Out</h5>
+                            <p class="text-muted">{{ date('g:i A', strtotime($attendance->check_out)) }}</p>
                         @else
                             <i class="bi bi-clock fs-1 text-warning"></i>
                             <h5 class="mt-2">Working</h5>
-                            <p class="text-muted">Remember to clock out</p>
+                            <p class="text-muted">Remember to check out</p>
                         @endif
                     </div>
                 </div>
@@ -96,7 +96,25 @@
                     <div class="card-body text-center">
                         <i class="bi bi-stopwatch fs-1 text-info"></i>
                         <h5 class="mt-2">Hours Today</h5>
-                        <p class="text-muted">{{ $attendance->hours_worked ?? '0' }} hours</p>
+                        @php
+                            $hoursToday = 0;
+                            if($attendance && $attendance->check_in) {
+                                if($attendance->total_hours) {
+                                    // Use total_hours from database (convert from minutes to hours)
+                                    $hoursToday = round($attendance->total_hours / 60, 1);
+                                } elseif($attendance->check_out) {
+                                    $checkIn = strtotime($attendance->check_in);
+                                    $checkOut = strtotime($attendance->check_out);
+                                    $hoursToday = round(($checkOut - $checkIn) / 3600, 1);
+                                } else {
+                                    // If still working, calculate from check_in to now
+                                    $checkIn = strtotime($attendance->check_in);
+                                    $now = time();
+                                    $hoursToday = round(($now - $checkIn) / 3600, 1);
+                                }
+                            }
+                        @endphp
+                        <p class="text-muted">{{ $hoursToday }} hours</p>
                     </div>
                 </div>
             </div>
@@ -113,8 +131,8 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Clock In</th>
-                                <th>Clock Out</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
                                 <th>Hours Worked</th>
                                 <th>Status</th>
                             </tr>
@@ -132,9 +150,22 @@
                                 @foreach($attendanceRecords as $record)
                                 <tr>
                                     <td>{{ date('M d, Y', strtotime($record->date)) }}</td>
-                                    <td>{{ $record->clock_in ? date('g:i A', strtotime($record->clock_in)) : '-' }}</td>
-                                    <td>{{ $record->clock_out ? date('g:i A', strtotime($record->clock_out)) : '-' }}</td>
-                                    <td>{{ $record->hours_worked ?? '0' }} hrs</td>
+                                    <td>{{ $record->check_in ? date('g:i A', strtotime($record->check_in)) : '-' }}</td>
+                                    <td>{{ $record->check_out ? date('g:i A', strtotime($record->check_out)) : '-' }}</td>
+                                    <td>
+                                        @php
+                                            $recordHours = 0;
+                                            if($record->total_hours) {
+                                                // Use total_hours from database (convert from minutes to hours)
+                                                $recordHours = round($record->total_hours / 60, 1);
+                                            } elseif($record->check_in && $record->check_out) {
+                                                $checkIn = strtotime($record->check_in);
+                                                $checkOut = strtotime($record->check_out);
+                                                $recordHours = round(($checkOut - $checkIn) / 3600, 1);
+                                            }
+                                        @endphp
+                                        {{ $recordHours }} hrs
+                                    </td>
                                     <td>
                                         <span class="badge bg-{{ $record->status === 'present' ? 'success' : 'danger' }}">
                                             {{ ucfirst($record->status) }}
@@ -171,10 +202,30 @@
                                 ->whereYear('date', date('Y'))
                                 ->selectRaw('
                                     COUNT(*) as total_days,
-                                    SUM(CASE WHEN status = "present" THEN 1 ELSE 0 END) as present_days,
-                                    SUM(hours_worked) as total_hours
+                                    SUM(CASE WHEN status = "present" THEN 1 ELSE 0 END) as present_days
                                 ')
                                 ->first();
+                                
+                            // Calculate total hours manually
+                            $monthlyRecords = DB::table('employee_attendances')
+                                ->where('user_id', Auth::id())
+                                ->whereMonth('date', date('m'))
+                                ->whereYear('date', date('Y'))
+                                ->whereNotNull('check_in')
+                                ->get();
+                                
+                            $totalHours = 0;
+                            foreach($monthlyRecords as $record) {
+                                if($record->total_hours) {
+                                    // Use total_hours from database (convert from minutes to hours)
+                                    $totalHours += $record->total_hours / 60;
+                                } elseif($record->check_out) {
+                                    $checkIn = strtotime($record->check_in);
+                                    $checkOut = strtotime($record->check_out);
+                                    $totalHours += ($checkOut - $checkIn) / 3600;
+                                }
+                            }
+                            $monthlyStats->total_hours = round($totalHours, 1);
                         @endphp
                         
                         <div class="row">

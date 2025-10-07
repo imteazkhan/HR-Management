@@ -75,13 +75,33 @@ class EmployeeController extends Controller
         $startOfWeek = now()->startOfWeek();
         $endOfWeek = now()->endOfWeek();
         
-        $totalHours = DB::table('employee_attendances')
+        // Get attendance records for this week
+        $attendances = DB::table('employee_attendances')
             ->where('user_id', $user->id)
             ->whereBetween('date', [$startOfWeek->format('Y-m-d'), $endOfWeek->format('Y-m-d')])
             ->where('status', 'present')
-            ->sum('hours_worked');
-            
-        return $totalHours ?: 40; // Default 40 hours if no data
+            ->whereNotNull('check_in')
+            ->get();
+        
+        $totalHours = 0;
+        
+        foreach ($attendances as $attendance) {
+            if ($attendance->total_hours) {
+                // Use total_hours from database (convert from minutes to hours)
+                $totalHours += $attendance->total_hours / 60;
+            } elseif ($attendance->check_out) {
+                // Calculate hours from check_in and check_out
+                $checkIn = strtotime($attendance->check_in);
+                $checkOut = strtotime($attendance->check_out);
+                $hours = ($checkOut - $checkIn) / 3600;
+                $totalHours += $hours;
+            } else {
+                // If only checked in, assume 8 hours for present days
+                $totalHours += 8;
+            }
+        }
+        
+        return round($totalHours, 1) ?: 0; // Return calculated hours or 0 if no data
     }
 
     /**
@@ -97,11 +117,11 @@ class EmployeeController extends Controller
             ->orderBy('date', 'desc')
             ->first();
             
-        if ($recentAttendance) {
+        if ($recentAttendance && $recentAttendance->check_in) {
             $activities[] = [
                 'icon' => 'clock',
                 'color' => 'success',
-                'message' => 'Clocked in at ' . date('g:i A', strtotime($recentAttendance->clock_in)),
+                'message' => 'Checked in at ' . date('g:i A', strtotime($recentAttendance->check_in)),
                 'time' => 'Today'
             ];
         }
@@ -151,9 +171,9 @@ class EmployeeController extends Controller
                 ->first();
             
             if ($action === 'in') {
-                if ($attendance && $attendance->clock_in) {
+                if ($attendance && $attendance->check_in) {
                     return redirect()->route('employee.dashboard')
-                        ->with('error', 'You have already clocked in today at ' . date('g:i A', strtotime($attendance->clock_in)));
+                        ->with('error', 'You have already checked in today at ' . date('g:i A', strtotime($attendance->check_in)));
                 }
                 
                 // Create or update attendance record
@@ -161,50 +181,50 @@ class EmployeeController extends Controller
                     DB::table('employee_attendances')
                         ->where('id', $attendance->id)
                         ->update([
-                            'clock_in' => $currentTime,
+                            'check_in' => $currentTime,
                             'status' => 'present',
                             'updated_at' => now()
                         ]);
                 } else {
                     DB::table('employee_attendances')->insert([
                         'user_id' => $user->id,
-                        'employee_id' => 'EMP' . str_pad($user->id, 4, '0', STR_PAD_LEFT),
                         'date' => $today,
-                        'clock_in' => $currentTime,
+                        'check_in' => $currentTime,
                         'status' => 'present',
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
                 }
                 
-                $message = 'Successfully clocked in at ' . now()->format('g:i A');
+                $message = 'Successfully checked in at ' . now()->format('g:i A');
                 
-            } else { // clock out
-                if (!$attendance || !$attendance->clock_in) {
+            } else { // check out
+                if (!$attendance || !$attendance->check_in) {
                     return redirect()->route('employee.dashboard')
-                        ->with('error', 'You need to clock in first before clocking out.');
+                        ->with('error', 'You need to check in first before checking out.');
                 }
                 
-                if ($attendance->clock_out) {
+                if ($attendance->check_out) {
                     return redirect()->route('employee.dashboard')
-                        ->with('error', 'You have already clocked out today at ' . date('g:i A', strtotime($attendance->clock_out)));
+                        ->with('error', 'You have already checked out today at ' . date('g:i A', strtotime($attendance->check_out)));
                 }
                 
                 // Calculate hours worked
-                $clockIn = strtotime($attendance->clock_in);
-                $clockOut = strtotime($currentTime);
-                $hoursWorked = round(($clockOut - $clockIn) / 3600, 2);
+                $checkIn = strtotime($attendance->check_in);
+                $checkOut = strtotime($currentTime);
+                $hoursWorked = round(($checkOut - $checkIn) / 3600, 2);
+                $totalMinutes = round(($checkOut - $checkIn) / 60);
                 
                 // Update attendance record
                 DB::table('employee_attendances')
                     ->where('id', $attendance->id)
                     ->update([
-                        'clock_out' => $currentTime,
-                        'hours_worked' => $hoursWorked,
+                        'check_out' => $currentTime,
+                        'total_hours' => $totalMinutes,
                         'updated_at' => now()
                     ]);
                 
-                $message = 'Successfully clocked out at ' . now()->format('g:i A') . '. Total hours: ' . $hoursWorked;
+                $message = 'Successfully checked out at ' . now()->format('g:i A') . '. Total hours: ' . $hoursWorked;
             }
             
             return redirect()->route('employee.dashboard')
@@ -221,7 +241,7 @@ class EmployeeController extends Controller
      */
     public function showLeaveRequest(): View
     {
-        return view('employee.leave-request');
+        return view('dashboards.Employees.leave-request');
     }
 
     /**
@@ -229,12 +249,26 @@ class EmployeeController extends Controller
      */
     public function submitLeaveRequest(Request $request): RedirectResponse
     {
-        $request->validate([
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'reason' => 'required|string|max:500',
-            'leave_type' => 'required|in:annual,sick,maternity,paternity,emergency'
+        // Add debugging
+        \Log::info('Leave request submission started', [
+            'user_id' => Auth::id(),
+            'request_data' => $request->all()
         ]);
+
+        try {
+            $request->validate([
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'reason' => 'required|string|max:500',
+                'leave_type' => 'required|in:annual,sick,maternity,paternity,emergency'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation failed', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all()
+            ]);
+            throw $e;
+        }
 
         $user = Auth::user();
         
@@ -267,23 +301,35 @@ class EmployeeController extends Controller
             // Create leave request
             DB::table('employee_leaves')->insert([
                 'user_id' => $user->id,
-                'employee_id' => 'EMP' . str_pad($user->id, 4, '0', STR_PAD_LEFT),
                 'leave_type' => $request->leave_type,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
                 'total_days' => $totalDays,
                 'reason' => $request->reason,
                 'status' => 'pending',
+                'application_date' => now()->format('Y-m-d'),
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
             
+            \Log::info('Leave request submitted successfully', [
+                'user_id' => $user->id,
+                'total_days' => $totalDays
+            ]);
+
             return redirect()->route('employee.dashboard')
                 ->with('success', "Leave request submitted successfully! Total days: {$totalDays}. Your manager will review it shortly.");
                 
         } catch (\Exception $e) {
+            \Log::error('Leave request submission failed', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Show detailed error for debugging
             return redirect()->back()
-                ->with('error', 'Failed to submit leave request. Please try again.')
+                ->with('error', 'Failed to submit leave request. Error: ' . $e->getMessage() . ' (Line: ' . $e->getLine() . ')')
                 ->withInput();
         }
     }
@@ -294,7 +340,7 @@ class EmployeeController extends Controller
     public function showProfile(): View
     {
         $user = Auth::user();
-        return view('employee.profile', compact('user'));
+        return view('dashboards.Employees.profile', compact('user'));
     }
 
     /**
@@ -361,7 +407,7 @@ class EmployeeController extends Controller
             ['month' => 'September 2024', 'amount' => '$3,200', 'status' => 'Paid', 'date' => '2024-09-30'],
         ];
 
-        return view('employee.payslips', compact('payslips'));
+        return view('dashboards.Employees.payslips', compact('payslips'));
     }
 
     /**
@@ -390,6 +436,6 @@ class EmployeeController extends Controller
             ['date' => '2024-12-09', 'clock_in' => '09:00', 'clock_out' => '17:30', 'hours' => '7.5', 'status' => 'Present'],
         ];
 
-        return view('employee.attendance', compact('attendance'));
+        return view('dashboards.Employees.attendance', compact('attendance'));
     }
 }

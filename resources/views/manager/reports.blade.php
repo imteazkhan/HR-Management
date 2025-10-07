@@ -1,4 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.manager')
+
+@section('title', 'Team Reports - Manager Dashboard')
+@section('page-title', 'Team Reports')
+@section('page-icon', 'bi bi-clipboard-data')
+@section('page-description', 'Generate and view team reports')
 
 @section('content')
 <div class="container-fluid">
@@ -6,47 +11,66 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5><i class="bi bi-clipboard-data"></i> Team Reports</h5>
-                        <div class="btn-group" role="group">
-                            <a href="{{ route('manager.reports', ['type' => 'attendance']) }}" 
-                               class="btn btn-sm {{ $reportType === 'attendance' ? 'btn-primary' : 'btn-outline-primary' }}">
-                                Attendance
-                            </a>
-                            <a href="{{ route('manager.reports', ['type' => 'productivity']) }}" 
-                               class="btn btn-sm {{ $reportType === 'productivity' ? 'btn-primary' : 'btn-outline-primary' }}">
-                                Productivity
-                            </a>
-                        </div>
-                    </div>
+                    <h5><i class="bi bi-clipboard-data"></i> Team Reports</h5>
                 </div>
                 <div class="card-body">
-                    @if(isset($reportData) && !empty($reportData))
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <h6>{{ $reportData['title'] }}</h6>
-                                <p class="text-muted">Period: {{ $reportData['period'] }}</p>
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <button class="btn btn-success btn-sm">
-                                    <i class="bi bi-download"></i> Export PDF
-                                </button>
-                                <button class="btn btn-outline-success btn-sm">
-                                    <i class="bi bi-file-earmark-excel"></i> Export Excel
-                                </button>
-                            </div>
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <form method="GET" action="{{ route('manager.reports') }}" class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="type" class="form-label">Report Type</label>
+                                    <select name="type" id="type" class="form-select">
+                                        <option value="attendance" {{ request('type') == 'attendance' ? 'selected' : '' }}>Attendance Report</option>
+                                        <option value="productivity" {{ request('type') == 'productivity' ? 'selected' : '' }}>Productivity Report</option>
+                                        <option value="leave" {{ request('type') == 'leave' ? 'selected' : '' }}>Leave Report</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="period" class="form-label">Period</label>
+                                    <select name="period" id="period" class="form-select">
+                                        <option value="current_week" {{ request('period') == 'current_week' ? 'selected' : '' }}>Current Week</option>
+                                        <option value="current_month" {{ request('period') == 'current_month' ? 'selected' : '' }}>Current Month</option>
+                                        <option value="last_month" {{ request('period') == 'last_month' ? 'selected' : '' }}>Last Month</option>
+                                        <option value="last_3_months" {{ request('period') == 'last_3_months' ? 'selected' : '' }}>Last 3 Months</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">&nbsp;</label>
+                                    <div class="d-grid">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="bi bi-bar-chart"></i> Generate Report
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
+                        <div class="col-md-4">
+                            @if(isset($reportData))
+                                <div class="d-grid">
+                                    <button class="btn btn-success" onclick="exportReport()">
+                                        <i class="bi bi-download"></i> Export to CSV
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    @if(isset($reportData))
+                    <div class="report-section">
+                        <h6>{{ $reportData['title'] }}</h6>
+                        <p class="text-muted">Period: {{ $reportData['period'] }}</p>
                         
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Employee</th>
-                                        @if($reportType === 'attendance')
+                                        @if($reportType == 'attendance')
+                                            <th>Employee</th>
                                             <th>Present Days</th>
                                             <th>Absent Days</th>
                                             <th>Late Days</th>
-                                        @elseif($reportType === 'productivity')
+                                        @elseif($reportType == 'productivity')
+                                            <th>Employee</th>
                                             <th>Tasks Completed</th>
                                             <th>Avg Completion Time</th>
                                             <th>Efficiency</th>
@@ -56,37 +80,28 @@
                                 <tbody>
                                     @foreach($reportData['data'] as $row)
                                     <tr>
-                                        <td>{{ $row['employee'] }}</td>
-                                        @if($reportType === 'attendance')
+                                        @if($reportType == 'attendance')
+                                            <td>{{ $row['employee'] }}</td>
                                             <td><span class="badge bg-success">{{ $row['present_days'] }}</span></td>
                                             <td><span class="badge bg-danger">{{ $row['absent_days'] }}</span></td>
                                             <td><span class="badge bg-warning">{{ $row['late_days'] }}</span></td>
-                                        @elseif($reportType === 'productivity')
+                                        @elseif($reportType == 'productivity')
+                                            <td>{{ $row['employee'] }}</td>
                                             <td>{{ $row['tasks_completed'] }}</td>
                                             <td>{{ $row['avg_completion_time'] }}</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <span class="me-2">{{ $row['efficiency'] }}</span>
-                                                    <div class="progress" style="width: 100px; height: 8px;">
-                                                        <div class="progress-bar" role="progressbar" 
-                                                             style="width: {{ str_replace('%', '', $row['efficiency']) }}%"
-                                                             aria-valuenow="{{ str_replace('%', '', $row['efficiency']) }}" 
-                                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                            </td>
+                                            <td>{{ $row['efficiency'] }}</td>
                                         @endif
                                     </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
+                    </div>
                     @else
-                        <div class="text-center py-4">
-                            <i class="bi bi-clipboard-x fs-1 text-muted"></i>
-                            <p class="text-muted">No report data available</p>
-                            <p class="text-muted">Select a report type to generate data</p>
-                        </div>
+                    <div class="text-center py-5">
+                        <i class="bi bi-clipboard-data fs-1 text-muted"></i>
+                        <p class="text-muted mt-3">Select a report type and click "Generate Report" to view data</p>
+                    </div>
                     @endif
                 </div>
             </div>

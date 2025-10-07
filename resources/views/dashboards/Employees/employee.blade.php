@@ -154,31 +154,31 @@
                                                 ->first();
                                         @endphp
                                         
-                                        @if(!$attendance || !$attendance->clock_in)
+                                        @if(!$attendance || !$attendance->check_in)
                                             <form action="{{ route('employee.clock') }}" method="POST" class="d-inline">
                                                 @csrf
                                                 <input type="hidden" name="action" value="in">
                                                 <button type="submit" class="btn btn-sm btn-success w-100">
-                                                    <i class="bi bi-play-circle"></i> Clock In
+                                                    <i class="bi bi-play-circle"></i> Check In
                                                 </button>
                                             </form>
-                                        @elseif(!$attendance->clock_out)
+                                        @elseif(!$attendance->check_out)
                                             <form action="{{ route('employee.clock') }}" method="POST" class="d-inline">
                                                 @csrf
                                                 <input type="hidden" name="action" value="out">
                                                 <button type="submit" class="btn btn-sm btn-danger w-100">
-                                                    <i class="bi bi-stop-circle"></i> Clock Out
+                                                    <i class="bi bi-stop-circle"></i> Check Out
                                                 </button>
                                             </form>
                                             <small class="text-success d-block mt-1">
-                                                Clocked in: {{ date('g:i A', strtotime($attendance->clock_in)) }}
+                                                Checked in: {{ date('g:i A', strtotime($attendance->check_in)) }}
                                             </small>
                                         @else
                                             <button class="btn btn-sm btn-secondary w-100" disabled>
                                                 <i class="bi bi-check-circle"></i> Completed
                                             </button>
                                             <small class="text-muted d-block mt-1">
-                                                {{ date('g:i A', strtotime($attendance->clock_in)) }} - {{ date('g:i A', strtotime($attendance->clock_out)) }}
+                                                {{ date('g:i A', strtotime($attendance->check_in)) }} - {{ date('g:i A', strtotime($attendance->check_out)) }}
                                             </small>
                                         @endif
                                     </div>
