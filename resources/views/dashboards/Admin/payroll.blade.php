@@ -374,6 +374,21 @@
             <p class="text-muted mb-0">System Administrator</p>
         </div>
 
+        <!-- Success/Error Messages -->
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
         <!-- Payroll Summary Cards -->
         <div class="row g-3 g-md-4 mb-4">
             <div class="col-6 col-lg-3">
@@ -443,10 +458,23 @@
                     </div>
                     <div class="col-auto">
                         <select class="form-select form-select-sm" id="monthFilter">
-                            <option value="{{ date('F Y') }}">{{ date('F Y') }}</option>
-                            <option value="{{ date('F Y', strtotime('-1 month')) }}">{{ date('F Y', strtotime('-1 month')) }}</option>
-                            <option value="{{ date('F Y', strtotime('-2 months')) }}">{{ date('F Y', strtotime('-2 months')) }}</option>
+                            <option value="{{ date('F Y') }}" {{ request('month') == date('F Y') ? 'selected' : '' }}>{{ date('F Y') }}</option>
+                            <option value="{{ date('F Y', strtotime('-1 month')) }}" {{ request('month') == date('F Y', strtotime('-1 month')) ? 'selected' : '' }}>{{ date('F Y', strtotime('-1 month')) }}</option>
+                            <option value="{{ date('F Y', strtotime('-2 months')) }}" {{ request('month') == date('F Y', strtotime('-2 months')) ? 'selected' : '' }}>{{ date('F Y', strtotime('-2 months')) }}</option>
+                            <option value="{{ date('F Y', strtotime('-3 months')) }}" {{ request('month') == date('F Y', strtotime('-3 months')) ? 'selected' : '' }}>{{ date('F Y', strtotime('-3 months')) }}</option>
+                            <option value="{{ date('F Y', strtotime('-4 months')) }}" {{ request('month') == date('F Y', strtotime('-4 months')) ? 'selected' : '' }}>{{ date('F Y', strtotime('-4 months')) }}</option>
+                            <option value="{{ date('F Y', strtotime('-5 months')) }}" {{ request('month') == date('F Y', strtotime('-5 months')) ? 'selected' : '' }}>{{ date('F Y', strtotime('-5 months')) }}</option>
                         </select>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-sm btn-info" onclick="window.location.reload()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#processPayrollModal">
+                            <i class="bi bi-plus-circle"></i> Process Payroll
+                        </button>
                     </div>
                     <div class="col-auto">
                         <button class="btn btn-sm btn-light" id="printPayrollBtn">
@@ -473,7 +501,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($payrollData as $index => $payroll)
+                            @forelse($payrollData as $index => $payroll)
                             <tr class="table-row-hover fade-in-up">
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -482,7 +510,7 @@
                                         </div>
                                         <div>
                                             <h6 class="mb-0">{{ $payroll['employee'] }}</h6>
-                                            <small class="text-muted">EMP{{ str_pad($index + 1, 3, '0', STR_PAD_LEFT) }}</small>
+                                            <small class="text-muted">EMP{{ str_pad($payroll['user_id'], 3, '0', STR_PAD_LEFT) }}</small>
                                         </div>
                                     </div>
                                 </td>
@@ -520,7 +548,19 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="10" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                        <p>No payroll records found for this month.</p>
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#processPayrollModal">
+                                            <i class="bi bi-plus-circle"></i> Process Payroll
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                         <tfoot class="table-light">
                             <tr>
@@ -575,8 +615,16 @@
                             <div class="mb-3">
                                 <label for="payrollMonth" class="form-label">Select Month</label>
                                 <input type="month" class="form-control" id="payrollMonth" name="month" value="{{ date('Y-m') }}" required>
+                                <div class="form-text">Select the month for which you want to process payroll.</div>
                             </div>
-                            <p class="text-muted">This will calculate and distribute salaries for all employees.</p>
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Note:</strong> This will calculate and distribute salaries for all employees based on their attendance, performance, and leave records for the selected month.
+                            </div>
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                <strong>Warning:</strong> If payroll already exists for this month, it will be skipped to avoid duplicates.
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -683,12 +731,15 @@
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
             const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
             
-            // Month Filter (Placeholder for client-side filtering)
+            // Month Filter functionality
             const monthFilter = document.getElementById('monthFilter');
             if (monthFilter) {
                 monthFilter.addEventListener('change', function() {
-                    // Implement client-side filtering or AJAX call to refresh table data
-                    console.log('Filter by month:', this.value);
+                    // Reload page with month parameter
+                    const selectedMonth = this.value;
+                    const url = new URL(window.location);
+                    url.searchParams.set('month', selectedMonth);
+                    window.location.href = url.toString();
                 });
             }
             
@@ -712,20 +763,28 @@
                 const payroll = @json($payrollData);
                 const payrollData = payroll[index];
                 
+                if (!payrollData) {
+                    alert('Payroll data not found!');
+                    return;
+                }
+                
                 // Create CSV content
-                let csvContent = "Employee,Position,Base Salary,Bonuses,Deductions,Net Salary,Month,Status\n";
-                csvContent += `"${payrollData.employee}","${payrollData.position}","${payrollData.base_salary}","${payrollData.bonuses}","${payrollData.deductions}","${payrollData.net_salary}","{{ date('F Y') }}","Processed"\n`;
+                let csvContent = "Employee,Position,Base Salary,Bonuses,Deductions,Net Salary,Attendance Rate,Leave Balance,Month,Status\n";
+                csvContent += `"${payrollData.employee}","${payrollData.position}","${payrollData.base_salary}","${payrollData.bonuses}","${payrollData.deductions}","${payrollData.net_salary}","${payrollData.attendance_rate}","${payrollData.leave_balance}","{{ request('month', date('F Y')) }}","Processed"\n`;
                 
                 // Create blob and download
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.setAttribute('href', url);
-                link.setAttribute('download', `payroll_${payrollData.employee.replace(/\s+/g, '_')}_${Date.now()}.csv`);
+                link.setAttribute('download', `payroll_${payrollData.employee.replace(/\s+/g, '_')}_{{ request('month', date('F_Y')) }}.csv`);
                 link.style.visibility = 'hidden';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                
+                // Show success message
+                showNotification('Payroll downloaded successfully!', 'success');
             };
             
             // Print Payroll Function
@@ -756,7 +815,7 @@
             window.showEditPayrollModal = function(payroll) {
                 // Set form action
                 const form = document.getElementById('editPayrollForm');
-                form.action = '/superadmin/payroll/' + payroll.id;
+                form.action = '{{ route("superadmin.payroll.update", ":id") }}'.replace(':id', payroll.id);
                 
                 // Populate form fields
                 document.getElementById('editEmployeeName').value = payroll.employee;
@@ -764,9 +823,60 @@
                 document.getElementById('editBonuses').value = payroll.bonuses;
                 document.getElementById('editDeductions').value = payroll.deductions;
                 
+                // Calculate and show net salary
+                updateNetSalary();
+                
                 const editModal = new bootstrap.Modal(document.getElementById('editPayrollModal'));
                 editModal.show();
             };
+            
+            // Update net salary calculation in edit form
+            function updateNetSalary() {
+                const baseSalary = parseFloat(document.getElementById('editBaseSalary').value) || 0;
+                const bonuses = parseFloat(document.getElementById('editBonuses').value) || 0;
+                const deductions = parseFloat(document.getElementById('editDeductions').value) || 0;
+                const netSalary = baseSalary + bonuses - deductions;
+                
+                // Show calculated net salary
+                let netSalaryDisplay = document.getElementById('netSalaryDisplay');
+                if (!netSalaryDisplay) {
+                    netSalaryDisplay = document.createElement('div');
+                    netSalaryDisplay.id = 'netSalaryDisplay';
+                    netSalaryDisplay.className = 'alert alert-info mt-2';
+                    document.getElementById('editDeductions').parentNode.appendChild(netSalaryDisplay);
+                }
+                netSalaryDisplay.innerHTML = `<strong>Net Salary: BDT ${netSalary.toLocaleString()}</strong>`;
+            }
+            
+            // Add event listeners for real-time calculation
+            document.addEventListener('DOMContentLoaded', function() {
+                ['editBaseSalary', 'editBonuses', 'editDeductions'].forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.addEventListener('input', updateNetSalary);
+                    }
+                });
+            });
+            
+            // Notification system
+            function showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+                notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                notification.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Auto remove after 3 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 3000);
+            }
 
             // Chart.js for Payroll Breakdown
             const payrollChart = document.getElementById('payrollChart');

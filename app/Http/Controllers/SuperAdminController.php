@@ -252,19 +252,43 @@ class SuperAdminController extends Controller
     public function createEmployee(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
             'role' => 'required|in:manager,employee',
-            'department_id' => 'nullable|exists:departments,id'
+            'department_id' => 'nullable|exists:departments,id',
+            'phone' => 'nullable|string|max:20',
+            'date_of_birth' => 'nullable|date',
+            'gender' => 'nullable|in:male,female,other',
+            'joining_date' => 'nullable|date',
+            'employment_type' => 'required|in:full_time,part_time,contract,intern',
+            'salary' => 'nullable|numeric|min:0',
+            'address' => 'nullable|string|max:500'
         ]);
 
-        User::create([
-            'name' => $request->name,
+        // Create the user with combined name
+        $user = User::create([
+            'name' => $request->first_name . ' ' . $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
             'department_id' => $request->department_id,
+        ]);
+
+        // Create employee profile
+        $user->employeeProfile()->create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'phone' => $request->phone,
+            'date_of_birth' => $request->date_of_birth,
+            'gender' => $request->gender,
+            'joining_date' => $request->joining_date ?: now(),
+            'employment_type' => $request->employment_type,
+            'salary' => $request->salary,
+            'address' => $request->address,
+            'employee_id' => 'EMP' . str_pad($user->id, 4, '0', STR_PAD_LEFT),
+            'status' => 'active'
         ]);
 
         return redirect()->route('superadmin.employees')
@@ -645,12 +669,27 @@ class SuperAdminController extends Controller
     /**
      * Show payroll management
      */
-    public function showPayroll(): View
+    public function showPayroll(Request $request): View
     {
-        // Get payroll data from database
-        $payrolls = Payroll::orderBy('created_at', 'desc')->paginate(15);
+        // Get month from request or use current month
+        $selectedMonth = $request->get('month', date('F Y'));
         
-        // Format data for the view (keeping the same structure as before)
+        // Get payroll data from database for selected month, or create from employees if none exist
+        $payrolls = Payroll::where('month', $selectedMonth)
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        // If no payroll records exist for selected month, create them from employees
+        if ($payrolls->isEmpty() && $selectedMonth === date('F Y')) {
+            $this->generatePayrollForMonth($selectedMonth);
+            $payrolls = Payroll::where('month', $selectedMonth)
+                ->with('user')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+        
+        // Format data for the view
         $payrollData = $payrolls->map(function ($payroll) {
             // Get attendance data for this employee and month
             $attendanceData = $this->getEmployeeAttendanceSummary($payroll->user_id, $payroll->month);
@@ -659,20 +698,82 @@ class SuperAdminController extends Controller
             $year = date('Y');
             $leaveData = $this->getEmployeeLeaveData($payroll->user_id, $year);
             
+            // Get employee profile for position
+            $employeeProfile = EmployeeProfile::where('user_id', $payroll->user_id)->first();
+            $position = $employeeProfile ? ($employeeProfile->designation ?? 'Employee') : 'Employee';
+            
             return [
                 'id' => $payroll->id,
                 'employee' => $payroll->employee_name,
-                'position' => $payroll->position,
+                'position' => $position,
                 'base_salary' => $payroll->base_salary,
                 'bonuses' => $payroll->bonuses,
                 'deductions' => $payroll->deductions,
                 'net_salary' => $payroll->net_salary,
                 'attendance_rate' => $attendanceData['attendance_rate'] ?? 'N/A',
-                'leave_balance' => $leaveData['remaining_annual_leaves'] . '/' . $leaveData['annual_leaves']
+                'leave_balance' => $leaveData['leave_balance'] ?? 'N/A',
+                'user_id' => $payroll->user_id
             ];
         })->toArray();
 
-        return view('dashboards.Admin.payroll', compact('payrollData', 'payrolls'));
+        return view('dashboards.Admin.payroll', compact('payrollData'));
+    }
+    
+    /**
+     * Generate payroll records for specified month from existing employees
+     */
+    private function generatePayrollForMonth($monthYear)
+    {
+        $year = date('Y', strtotime($monthYear));
+        $month = date('m', strtotime($monthYear));
+        
+        // Get all employees
+        $employees = User::where('role', 'employee')->get();
+        
+        foreach ($employees as $employee) {
+            // Skip if payroll already exists
+            $existingPayroll = Payroll::where('user_id', $employee->id)
+                ->where('month', $monthYear)
+                ->first();
+                
+            if ($existingPayroll) {
+                continue;
+            }
+            
+            // Get employee profile for salary information
+            $employeeProfile = EmployeeProfile::where('user_id', $employee->id)->first();
+            
+            // Get attendance data for the month
+            $attendanceData = $this->getEmployeeAttendanceData($employee->id, $year, $month);
+            
+            // Get leave data for the employee
+            $leaveData = $this->getEmployeeLeaveData($employee->id, $year);
+            
+            // Calculate base salary (from profile or default)
+            $baseSalary = $employeeProfile ? ($employeeProfile->salary ?? 50000) : 50000;
+            
+            // Calculate bonuses based on attendance and performance
+            $bonuses = $this->calculateBonuses($employee, $attendanceData, $leaveData);
+            
+            // Calculate deductions based on absences and leaves
+            $deductions = $this->calculateDeductions($employee, $attendanceData, $leaveData);
+            
+            // Calculate net salary
+            $netSalary = $baseSalary + $bonuses - $deductions;
+            
+            // Create payroll record
+            Payroll::create([
+                'user_id' => $employee->id,
+                'employee_name' => $employee->name,
+                'position' => $employeeProfile ? ($employeeProfile->designation ?? 'Employee') : 'Employee',
+                'base_salary' => $baseSalary,
+                'bonuses' => $bonuses,
+                'deductions' => $deductions,
+                'net_salary' => $netSalary,
+                'month' => $monthYear,
+                'status' => 'processed'
+            ]);
+        }
     }
     
     /**
@@ -818,54 +919,45 @@ class SuperAdminController extends Controller
      */
     private function getEmployeeLeaveData($employeeId, $year)
     {
-        // Get leave balance for the employee
-        $leaveBalance = DB::table('leave_balances')
-            ->where('user_id', $employeeId)
-            ->where('year', $year)
-            ->first();
+        // Get leave requests for the employee
+        $leaveRequests = EmployeeLeave::where('user_id', $employeeId)
+            ->whereYear('start_date', $year)
+            ->get();
             
-        if (!$leaveBalance) {
-            // Return default values if no leave balance found
-            return [
-                'annual_leaves' => 21,
-                'sick_leaves' => 10,
-                'used_annual_leaves' => 0,
-                'used_sick_leaves' => 0,
-                'remaining_annual_leaves' => 21,
-                'remaining_sick_leaves' => 10
-            ];
-        }
+        $totalLeaveTaken = $leaveRequests->where('status', 'approved')->sum('days_requested');
+        $annualLeaves = 20; // Default annual leave days
+        $remainingLeaves = max(0, $annualLeaves - $totalLeaveTaken);
         
         return [
-            'annual_leaves' => $leaveBalance->annual_leaves ?? 21,
-            'sick_leaves' => $leaveBalance->sick_leaves ?? 10,
-            'used_annual_leaves' => $leaveBalance->used_annual_leaves ?? 0,
-            'used_sick_leaves' => $leaveBalance->used_sick_leaves ?? 0,
-            'remaining_annual_leaves' => ($leaveBalance->annual_leaves ?? 21) - ($leaveBalance->used_annual_leaves ?? 0),
-            'remaining_sick_leaves' => ($leaveBalance->sick_leaves ?? 10) - ($leaveBalance->used_sick_leaves ?? 0)
+            'annual_leaves' => $annualLeaves,
+            'leave_taken' => $totalLeaveTaken,
+            'remaining_annual_leaves' => $remainingLeaves,
+            'leave_balance' => $remainingLeaves . '/' . $annualLeaves
         ];
     }
     
     /**
-     * Calculate base salary based on attendance
+     * Calculate base salary for an employee
      */
     private function calculateBaseSalary($employee, $attendanceData)
     {
-        // Base salary could come from employee profile or be a fixed amount
-        // For now, we'll use a mock calculation based on attendance
-        $baseAmount = rand(25000, 50000); // BDT
+        // Get employee profile for salary information
+        $employeeProfile = EmployeeProfile::where('user_id', $employee->id)->first();
         
-        // Adjust base salary based on attendance (full attendance bonus)
+        // Base salary from profile or default
+        $baseSalary = $employeeProfile ? ($employeeProfile->salary ?? 50000) : 50000;
+        
+        // Adjust base salary based on attendance (attendance-based adjustment)
         $totalWorkingDays = date('t'); // Days in the month
-        $attendanceRate = $totalWorkingDays > 0 ? ($attendanceData['present_days'] + $attendanceData['half_days'] * 0.5) / $totalWorkingDays : 0;
+        $attendanceRate = $totalWorkingDays > 0 ? 
+            ($attendanceData['present_days'] + $attendanceData['half_days'] * 0.5) / $totalWorkingDays : 0;
         
-        // If attendance is 100%, give full base salary
         // If attendance is below 80%, reduce base salary proportionally
         if ($attendanceRate < 0.8) {
-            $baseAmount *= $attendanceRate;
+            $baseSalary *= $attendanceRate;
         }
         
-        return round($baseAmount, 2);
+        return round($baseSalary, 2);
     }
     
     /**
@@ -886,6 +978,37 @@ class SuperAdminController extends Controller
         }
         
         // Minimal leave usage bonus
+        if ($leaveData['leave_taken'] <= 5) {
+            $bonuses += 1500; // BDT
+        }
+        
+        return $bonuses;
+    }
+    
+    /**
+     * Calculate deductions based on attendance and leave data
+     */
+    private function calculateDeductions($employee, $attendanceData, $leaveData)
+    {
+        $deductions = 0;
+        
+        // Deduction for excessive absences (more than 3 days)
+        if ($attendanceData['absent_days'] > 3) {
+            $deductions += ($attendanceData['absent_days'] - 3) * 500; // BDT per day
+        }
+        
+        // Deduction for excessive late arrivals (more than 5 times)
+        if ($attendanceData['late_days'] > 5) {
+            $deductions += ($attendanceData['late_days'] - 5) * 200; // BDT per late day
+        }
+        
+        // Tax deduction (simplified - 5% of base salary)
+        $employeeProfile = EmployeeProfile::where('user_id', $employee->id)->first();
+        $baseSalary = $employeeProfile ? ($employeeProfile->salary ?? 50000) : 50000;
+        $taxDeduction = $baseSalary * 0.05;
+        $deductions += $taxDeduction;
+        
+        return $deductions;
         if ($leaveData['used_annual_leaves'] <= 5) {
             $bonuses += 500; // BDT
         }
@@ -896,31 +1019,6 @@ class SuperAdminController extends Controller
         return round($bonuses, 2);
     }
     
-    /**
-     * Calculate deductions based on absences and leave data
-     */
-    private function calculateDeductions($employee, $attendanceData, $leaveData)
-    {
-        $deductions = 0;
-        
-        // Deduct for absences (assume 1% of base salary per absence)
-        $absenceDeduction = $attendanceData['absent_days'] * 500; // BDT per absence
-        $deductions += $absenceDeduction;
-        
-        // Deduct for late arrivals (assume 0.5% of base salary per 3 late arrivals)
-        $lateDeduction = floor($attendanceData['late_days'] / 3) * 250; // BDT per 3 late arrivals
-        $deductions += $lateDeduction;
-        
-        // Deduct for unauthorized leaves (leaves taken beyond allocated)
-        $unauthorizedLeaveDeduction = max(0, $attendanceData['on_leave_days'] - ($leaveData['annual_leaves'] + $leaveData['sick_leaves'])) * 1000;
-        $deductions += $unauthorizedLeaveDeduction;
-        
-        // Random other deductions
-        $deductions += rand(0, 2000); // BDT
-        
-        return round($deductions, 2);
-    }
-
     /**
      * Update payroll
      */

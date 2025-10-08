@@ -1131,7 +1131,7 @@
                                             </tr>
                                         @endforeach
                                     @else
-                                        <tr>
+                                        <!-- <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <img src="https://ui-avatars.com/api/?name=John+Smith&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
@@ -1148,8 +1148,8 @@
                                                 <button class="btn btn-sm btn-outline-primary">View</button>
                                                 <button class="btn btn-sm btn-outline-warning">Edit</button>
                                             </td>
-                                        </tr>
-                                        <tr>
+                                        </tr> -->
+                                        <!-- <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <img src="https://ui-avatars.com/api/?name=Sarah+Lee&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
@@ -1166,8 +1166,8 @@
                                                 <button class="btn btn-sm btn-outline-primary">View</button>
                                                 <button class="btn btn-sm btn-outline-warning">Edit</button>
                                             </td>
-                                        </tr>
-                                        <tr>
+                                        </tr> -->
+                                        <!-- <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <img src="https://ui-avatars.com/api/?name=Mike+Davis&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
@@ -1184,7 +1184,7 @@
                                                 <button class="btn btn-sm btn-outline-primary">View</button>
                                                 <button class="btn btn-sm btn-outline-warning">Edit</button>
                                             </td>
-                                        </tr>
+                                        </tr> -->
                                     @endif
                                 </tbody>
                             </table>

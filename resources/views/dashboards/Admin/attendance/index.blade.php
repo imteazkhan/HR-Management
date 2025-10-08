@@ -232,6 +232,122 @@
         .fade-in-up {
             animation: fadeInUp 0.6s ease-out;
         }
+        
+        /* Pagination Styles */
+        .pagination {
+            margin-bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .pagination .page-link {
+            border-radius: 6px;
+            margin: 0 2px;
+            border: 1px solid #dee2e6;
+            color: #495057;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.25;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 38px;
+            height: 38px;
+        }
+        .pagination .page-link:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+            color: #495057;
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+            font-weight: 500;
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
+            cursor: not-allowed;
+        }
+        .pagination .page-item.disabled .page-link:hover {
+            transform: none;
+            background-color: #fff;
+        }
+        
+        /* Fix pagination arrow symbols */
+        .pagination .page-link[aria-label="Previous"],
+        .pagination .page-link[aria-label="Next"] {
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        /* Custom pagination navigation styling */
+        .pagination .page-item:first-child .page-link,
+        .pagination .page-item:last-child .page-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        /* Bootstrap icon styling in pagination */
+        .pagination .page-link i {
+            font-size: 0.75rem;
+            vertical-align: middle;
+        }
+        
+        .pagination .page-item:first-child .page-link i {
+            margin-right: 0.25rem;
+        }
+        
+        .pagination .page-item:last-child .page-link i {
+            margin-left: 0.25rem;
+        }
+        
+        /* Responsive pagination */
+        @media (max-width: 768px) {
+            .pagination {
+                font-size: 0.8rem;
+                flex-wrap: wrap;
+                gap: 2px;
+            }
+            .pagination .page-link {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.8rem;
+                min-width: 32px;
+                height: 32px;
+            }
+            .pagination .page-link[aria-label="Previous"],
+            .pagination .page-link[aria-label="Next"] {
+                font-size: 0.7rem;
+                padding: 0.4rem 0.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .pagination {
+                font-size: 0.75rem;
+            }
+            .pagination .page-link {
+                padding: 0.35rem 0.5rem;
+                font-size: 0.75rem;
+                min-width: 28px;
+                height: 28px;
+                margin: 0 1px;
+            }
+            .pagination .page-link[aria-label="Previous"],
+            .pagination .page-link[aria-label="Next"] {
+                font-size: 0.65rem;
+                padding: 0.35rem 0.4rem;
+            }
+            /* Hide some page numbers on very small screens */
+            .pagination .page-item:not(.active):not(:first-child):not(:last-child):not(:nth-child(2)):not(:nth-last-child(2)) {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -551,7 +667,7 @@
                                                 @endforeach
                                             @else
                                                 <!-- Static data as fallback -->
-                                                <tr>
+                                                <!-- <tr>
                                                     <td>
                                                         <div class="form-check">
                                                             <input class="form-check-input row-checkbox" type="checkbox" data-id="1">
@@ -576,9 +692,9 @@
                                                             <i class="bi bi-pencil"></i>
                                                         </button>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                                
-                                                <tr>
+                                                <!-- <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <img src="https://ui-avatars.com/api/?name=Christopher+Anderson&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
@@ -598,8 +714,8 @@
                                                             <i class="bi bi-pencil"></i>
                                                         </button>
                                                     </td>
-                                                </tr>
-                                                <tr>
+                                                </tr> -->
+                                                <!-- <tr>
                                                     <td>
                                                         <div class="form-check">
                                                             <input class="form-check-input row-checkbox" type="checkbox" data-id="10">
@@ -624,14 +740,14 @@
                                                             <i class="bi bi-pencil"></i>
                                                         </button>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                             @endif
                                         </tbody>
                                     </table>
                                 </div>
                                 
                                 <!-- Bulk Actions -->
-                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="d-flex justify-content-start align-items-center mt-3">
                                     <div>
                                         <button class="btn btn-sm btn-outline-danger" id="bulkDeleteBtn" disabled>
                                             <i class="bi bi-trash"></i> Delete Selected
@@ -640,28 +756,32 @@
                                             <i class="bi bi-pencil"></i> Edit Selected
                                         </button>
                                     </div>
-                                    
-                                    <!-- Pagination -->
-                                    @if(isset($attendanceRecords))
-                                        <div class="d-flex justify-content-center mt-4">
-                                            {{ $attendanceRecords->links() }}
-                                        </div>
-                                    @else
-                                        <nav aria-label="Attendance records pagination">
-                                            <ul class="pagination mb-0">
-                                                <li class="page-item disabled">
-                                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                                                </li>
-                                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                <li class="page-item">
-                                                    <a class="page-link" href="#">Next</a>
-                                                </li>
-                                            </ul>
-                                        </nav>
-                                    @endif
                                 </div>
+                                
+                                <!-- Overview Pagination -->
+                                <nav aria-label="Overview attendance pagination" class="mt-4">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                                <i class="bi bi-chevron-left"></i> Previous
+                                            </a>
+                                        </li>
+                                        <li class="page-item active">
+                                            <a class="page-link" href="#">1</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">2</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">3</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">
+                                                Next <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -734,6 +854,45 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                <!-- Admin Filters -->
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-3">
+                                        <label for="adminDateFilter" class="form-label">Date</label>
+                                        <input type="date" class="form-control" id="adminDateFilter" value="{{ date('Y-m-d') }}">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="adminDepartmentFilter" class="form-label">Department</label>
+                                        <select class="form-select" id="adminDepartmentFilter">
+                                            <option value="">All Departments</option>
+                                            @if(isset($departments))
+                                                @foreach($departments as $department)
+                                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                                @endforeach
+                                            @else
+                                                <option value="1">IT Department</option>
+                                                <option value="2">Human Resources</option>
+                                                <option value="3">Finance</option>
+                                                <option value="4">Operations</option>
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="adminStatusFilter" class="form-label">Status</label>
+                                        <select class="form-select" id="adminStatusFilter">
+                                            <option value="">All Statuses</option>
+                                            <option value="present">Present</option>
+                                            <option value="absent">Absent</option>
+                                            <option value="late">Late</option>
+                                            <option value="on_leave">On Leave</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 d-flex align-items-end">
+                                        <button class="btn btn-primary w-100" id="applyAdminFiltersBtn">
+                                            <i class="bi bi-search"></i> Apply Filters
+                                        </button>
+                                    </div>
+                                </div>
+                                
                                 <div class="table-responsive">
                                     <table class="table table-hover" id="adminAttendanceTable">
                                         <thead>
@@ -748,60 +907,138 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=John+Admin&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
-                                                        <span>John Admin</span>
-                                                    </div>
-                                                </td>
-                                                <td>IT Department</td>
-                                                <td><span class="badge bg-success">Present</span></td>
-                                                <td>09:00 AM</td>
-                                                <td>-</td>
-                                                <td>3.5 hrs</td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-outline-primary">View</button>
-                                                    <button class="btn btn-sm btn-outline-warning">Edit</button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Sarah+Admin&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
-                                                        <span>Sarah Admin</span>
-                                                    </div>
-                                                </td>
-                                                <td>Human Resources</td>
-                                                <td><span class="badge bg-success">Present</span></td>
-                                                <td>08:45 AM</td>
-                                                <td>-</td>
-                                                <td>3.8 hrs</td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-outline-primary">View</button>
-                                                    <button class="btn btn-sm btn-outline-warning">Edit</button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="https://ui-avatars.com/api/?name=Mike+Admin&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
-                                                        <span>Mike Admin</span>
-                                                    </div>
-                                                </td>
-                                                <td>Finance</td>
-                                                <td><span class="badge bg-danger">Absent</span></td>
-                                                <td>-</td>
-                                                <td>-</td>
-                                                <td>0 hrs</td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-outline-primary">View</button>
-                                                    <button class="btn btn-sm btn-outline-warning">Edit</button>
-                                                </td>
-                                            </tr>
+                                            @if(isset($adminAttendanceRecords) && count($adminAttendanceRecords) > 0)
+                                                @foreach($adminAttendanceRecords as $record)
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($record->employee_name ?? 'Admin') }}&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
+                                                                <span>{{ $record->employee_name ?? 'Unknown Admin' }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ $record->department ?? 'Unknown Department' }}</td>
+                                                        <td>
+                                                            @if($record->status == 'present')
+                                                                <span class="badge bg-success">Present</span>
+                                                            @elseif($record->status == 'absent')
+                                                                <span class="badge bg-danger">Absent</span>
+                                                            @elseif($record->status == 'late')
+                                                                <span class="badge bg-warning">Late</span>
+                                                            @elseif($record->status == 'half_day')
+                                                                <span class="badge bg-info">Half Day</span>
+                                                            @elseif($record->status == 'on_leave')
+                                                                <span class="badge bg-secondary">On Leave</span>
+                                                            @else
+                                                                <span class="badge bg-secondary">{{ ucfirst($record->status ?? 'N/A') }}</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>{{ $record->check_in ? \Carbon\Carbon::parse($record->check_in)->format('h:i A') : '-' }}</td>
+                                                        <td>{{ $record->check_out ? \Carbon\Carbon::parse($record->check_out)->format('h:i A') : '-' }}</td>
+                                                        <td>{{ $record->total_hours ? round($record->total_hours / 60, 2) . ' hrs' : '0 hrs' }}</td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-outline-primary view-admin-record" data-id="{{ $record->id }}" title="View Details">
+                                                                <i class="bi bi-eye"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-outline-warning edit-admin-record" data-id="{{ $record->id }}" title="Edit Record">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
+                                                <!-- Fallback data when no records exist -->
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="https://ui-avatars.com/api/?name=John+Admin&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
+                                                            <span>John Admin</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>IT Department</td>
+                                                    <td><span class="badge bg-success">Present</span></td>
+                                                    <td>09:00 AM</td>
+                                                    <td>-</td>
+                                                    <td>3.5 hrs</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary view-admin-record" data-id="1" title="View Details">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-warning edit-admin-record" data-id="1" title="Edit Record">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="https://ui-avatars.com/api/?name=Sarah+Admin&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
+                                                            <span>Sarah Admin</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>Human Resources</td>
+                                                    <td><span class="badge bg-success">Present</span></td>
+                                                    <td>08:45 AM</td>
+                                                    <td>-</td>
+                                                    <td>3.8 hrs</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary view-admin-record" data-id="2" title="View Details">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-warning edit-admin-record" data-id="2" title="Edit Record">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="https://ui-avatars.com/api/?name=Mike+Admin&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
+                                                            <span>Mike Admin</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>Finance</td>
+                                                    <td><span class="badge bg-danger">Absent</span></td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>0 hrs</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary view-admin-record" data-id="3" title="View Details">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-warning edit-admin-record" data-id="3" title="Edit Record">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         </tbody>
                                     </table>
                                 </div>
+                                
+                                <!-- Admin Attendance Pagination -->
+                                <nav aria-label="Admin attendance pagination" class="mt-4">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                                <i class="bi bi-chevron-left"></i> Previous
+                                            </a>
+                                        </li>
+                                        <li class="page-item active">
+                                            <a class="page-link" href="#">1</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">2</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">3</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">
+                                                Next <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -942,6 +1179,31 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                
+                                <!-- Employee Attendance Pagination -->
+                                <nav aria-label="Employee attendance pagination" class="mt-4">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                                <i class="bi bi-chevron-left"></i> Previous
+                                            </a>
+                                        </li>
+                                        <li class="page-item active">
+                                            <a class="page-link" href="#">1</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">2</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">3</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">
+                                                Next <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -1082,6 +1344,31 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                
+                                <!-- Manager Attendance Pagination -->
+                                <nav aria-label="Manager attendance pagination" class="mt-4">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                                <i class="bi bi-chevron-left"></i> Previous
+                                            </a>
+                                        </li>
+                                        <li class="page-item active">
+                                            <a class="page-link" href="#">1</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">2</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">3</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">
+                                                Next <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -1492,7 +1779,7 @@
                                                     </tr>
                                                 @endforeach
                                             @else
-                                                <tr>
+                                                <!-- <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <img src="https://ui-avatars.com/api/?name=John+Smith&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
@@ -1509,8 +1796,8 @@
                                                         <button class="btn btn-sm btn-outline-primary">View</button>
                                                         <button class="btn btn-sm btn-outline-warning">Edit</button>
                                                     </td>
-                                                </tr>
-                                                <tr>
+                                                </tr> -->
+                                                <!-- <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <img src="https://ui-avatars.com/api/?name=Sarah+Lee&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
@@ -1527,8 +1814,8 @@
                                                         <button class="btn btn-sm btn-outline-primary">View</button>
                                                         <button class="btn btn-sm btn-outline-warning">Edit</button>
                                                     </td>
-                                                </tr>
-                                                <tr>
+                                                </tr> -->
+                                                <!-- <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <img src="https://ui-avatars.com/api/?name=Mike+Davis&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
@@ -1545,32 +1832,36 @@
                                                         <button class="btn btn-sm btn-outline-primary">View</button>
                                                         <button class="btn btn-sm btn-outline-warning">Edit</button>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                             @endif
                                         </tbody>
                                     </table>
                                 </div>
                                 
-                                <!-- Pagination -->
-                                @if(isset($attendanceRecords))
-                                    <div class="d-flex justify-content-center mt-4">
-                                        {{ $attendanceRecords->links() }}
-                                    </div>
-                                @else
-                                    <nav aria-label="Attendance records pagination">
-                                        <ul class="pagination justify-content-center">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                                            </li>
-                                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="#">Next</a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                @endif
+                                <!-- Records Pagination -->
+                                <nav aria-label="Attendance records pagination" class="mt-4">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                                <i class="bi bi-chevron-left"></i> Previous
+                                            </a>
+                                        </li>
+                                        <li class="page-item active">
+                                            <a class="page-link" href="#">1</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">2</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">3</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">
+                                                Next <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -1758,72 +2049,1075 @@
                 });
             }
             
-            // View entry functionality
-            document.querySelectorAll('.view-entry').forEach(button => {
-                button.addEventListener('click', function() {
-                    const entryId = this.getAttribute('data-id');
-                    alert('Viewing entry #' + entryId);
-                    // In a real app, this would open a modal with entry details
-                });
-            });
+            // Initial attachment of event listeners for manual attendance entries
+            attachEntryEventListeners();
             
-            // Edit entry functionality
-            document.querySelectorAll('.edit-entry').forEach(button => {
-                button.addEventListener('click', function() {
-                    const entryId = this.getAttribute('data-id');
-                    alert('Editing entry #' + entryId);
-                    // In a real app, this would populate the form with entry data
-                });
-            });
+            // Manual Attendance Pagination functionality
+            let currentPage = 1;
+            const totalPages = 3;
+            const entriesPerPage = 3;
             
-            // Delete entry functionality
-            document.querySelectorAll('.delete-entry').forEach(button => {
-                button.addEventListener('click', function() {
-                    const entryId = this.getAttribute('data-id');
-                    if (confirm('Are you sure you want to delete this attendance entry?')) {
-                        // In a real app, this would make an AJAX call to delete the entry
-                        fetch('{{ route("hrm.attendance.delete-entry", ["id" => ":id"]) }}'.replace(':id', entryId), {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert('Entry #' + entryId + ' deleted successfully!');
-                                // Refresh recent entries
-                                refreshRecentEntries();
-                            } else {
-                                alert('Error deleting entry: ' + data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Error deleting entry. Please try again.');
-                        });
+            // Sample data for demonstration
+            const sampleEntries = [
+                {
+                    id: 1,
+                    name: 'Alex Johnson',
+                    date: 'Jan 15, 2024',
+                    status: 'Present',
+                    statusClass: 'bg-success',
+                    clockIn: '09:30 AM',
+                    clockOut: '05:30 PM',
+                    enteredBy: 'Admin User'
+                },
+                {
+                    id: 2,
+                    name: 'Mary Williams',
+                    date: 'Jan 14, 2024',
+                    status: 'Late',
+                    statusClass: 'bg-warning',
+                    clockIn: '10:15 AM',
+                    clockOut: '06:00 PM',
+                    enteredBy: 'Admin User'
+                },
+                {
+                    id: 3,
+                    name: 'Tom Brown',
+                    date: 'Jan 14, 2024',
+                    status: 'Absent',
+                    statusClass: 'bg-danger',
+                    clockIn: '-',
+                    clockOut: '-',
+                    enteredBy: 'Admin User'
+                },
+                {
+                    id: 4,
+                    name: 'Sarah Davis',
+                    date: 'Jan 13, 2024',
+                    status: 'Present',
+                    statusClass: 'bg-success',
+                    clockIn: '08:45 AM',
+                    clockOut: '05:15 PM',
+                    enteredBy: 'Admin User'
+                },
+                {
+                    id: 5,
+                    name: 'Mike Wilson',
+                    date: 'Jan 13, 2024',
+                    status: 'Half Day',
+                    statusClass: 'bg-info',
+                    clockIn: '09:00 AM',
+                    clockOut: '01:00 PM',
+                    enteredBy: 'Admin User'
+                },
+                {
+                    id: 6,
+                    name: 'Emma Thompson',
+                    date: 'Jan 12, 2024',
+                    status: 'Present',
+                    statusClass: 'bg-success',
+                    clockIn: '08:30 AM',
+                    clockOut: '05:45 PM',
+                    enteredBy: 'Admin User'
+                },
+                {
+                    id: 7,
+                    name: 'James Miller',
+                    date: 'Jan 12, 2024',
+                    status: 'Late',
+                    statusClass: 'bg-warning',
+                    clockIn: '10:30 AM',
+                    clockOut: '06:30 PM',
+                    enteredBy: 'Admin User'
+                },
+                {
+                    id: 8,
+                    name: 'Lisa Garcia',
+                    date: 'Jan 11, 2024',
+                    status: 'Present',
+                    statusClass: 'bg-success',
+                    clockIn: '09:15 AM',
+                    clockOut: '05:20 PM',
+                    enteredBy: 'Admin User'
+                },
+                {
+                    id: 9,
+                    name: 'Robert Lee',
+                    date: 'Jan 11, 2024',
+                    status: 'Absent',
+                    statusClass: 'bg-danger',
+                    clockIn: '-',
+                    clockOut: '-',
+                    enteredBy: 'Admin User'
+                }
+            ];
+            
+            function updateManualEntriesTable() {
+                const tableBody = document.querySelector('#recentEntriesTable tbody');
+                const startIndex = (currentPage - 1) * entriesPerPage;
+                const endIndex = startIndex + entriesPerPage;
+                const pageEntries = sampleEntries.slice(startIndex, endIndex);
+                
+                // Clear existing rows
+                tableBody.innerHTML = '';
+                
+                // Add new rows
+                pageEntries.forEach(entry => {
+                    const row = `
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(entry.name)}&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
+                                    <span>${entry.name}</span>
+                                </div>
+                            </td>
+                            <td>${entry.date}</td>
+                            <td><span class="badge ${entry.statusClass} status-badge">${entry.status}</span></td>
+                            <td>${entry.clockIn}</td>
+                            <td>${entry.clockOut}</td>
+                            <td>${entry.enteredBy}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-entry" data-id="${entry.id}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-entry" data-id="${entry.id}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-entry" data-id="${entry.id}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+                
+                // Update pagination info
+                const pageInfo = document.querySelector('.text-muted');
+                if (pageInfo) {
+                    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                }
+                
+                // Update button states
+                const prevBtn = document.getElementById('prevPageBtn');
+                const nextBtn = document.getElementById('nextPageBtn');
+                
+                if (prevBtn) {
+                    prevBtn.disabled = currentPage === 1;
+                    if (currentPage === 1) {
+                        prevBtn.classList.add('disabled');
+                    } else {
+                        prevBtn.classList.remove('disabled');
                     }
-                });
-            });
+                }
+                
+                if (nextBtn) {
+                    nextBtn.disabled = currentPage === totalPages;
+                    if (currentPage === totalPages) {
+                        nextBtn.classList.add('disabled');
+                    } else {
+                        nextBtn.classList.remove('disabled');
+                    }
+                }
+                
+                // Re-attach event listeners for new buttons
+                attachEntryEventListeners();
+            }
             
-            // Pagination functionality
+            function attachEntryEventListeners() {
+                // View entry functionality
+                document.querySelectorAll('.view-entry').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const entryId = this.getAttribute('data-id');
+                        showNotification(`Viewing entry #${entryId}`, 'info');
+                    });
+                });
+                
+                // Edit entry functionality
+                document.querySelectorAll('.edit-entry').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const entryId = this.getAttribute('data-id');
+                        showNotification(`Editing entry #${entryId}`, 'info');
+                    });
+                });
+                
+                // Delete entry functionality
+                document.querySelectorAll('.delete-entry').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const entryId = this.getAttribute('data-id');
+                        if (confirm('Are you sure you want to delete this attendance entry?')) {
+                            showNotification(`Entry #${entryId} deleted successfully!`, 'success');
+                            // Remove the entry from sampleEntries array
+                            const index = sampleEntries.findIndex(entry => entry.id == entryId);
+                            if (index > -1) {
+                                sampleEntries.splice(index, 1);
+                                // Adjust current page if necessary
+                                const maxPage = Math.ceil(sampleEntries.length / entriesPerPage);
+                                if (currentPage > maxPage && maxPage > 0) {
+                                    currentPage = maxPage;
+                                }
+                                updateManualEntriesTable();
+                            }
+                        }
+                    });
+                });
+            }
+            
+            // Pagination button functionality
             const prevPageBtn = document.getElementById('prevPageBtn');
             const nextPageBtn = document.getElementById('nextPageBtn');
             
             if (prevPageBtn) {
-                prevPageBtn.addEventListener('click', function() {
-                    alert('Loading previous page...');
-                    // In a real app, this would load the previous page of entries
+                prevPageBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                        currentPage--;
+                        updateManualEntriesTable();
+                        showNotification(`Loading page ${currentPage}...`, 'info');
+                    }
                 });
             }
             
             if (nextPageBtn) {
-                nextPageBtn.addEventListener('click', function() {
-                    alert('Loading next page...');
-                    // In a real app, this would load the next page of entries
+                nextPageBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        updateManualEntriesTable();
+                        showNotification(`Loading page ${currentPage}...`, 'info');
+                    }
                 });
             }
+            
+            // Initialize the table
+            updateManualEntriesTable();
+            
+            // ===== OVERVIEW TAB PAGINATION =====
+            let overviewCurrentPage = 1;
+            const overviewTotalPages = 4;
+            const overviewEntriesPerPage = 5;
+            
+            const overviewSampleData = [
+                { id: 1, name: 'John Smith', department: 'IT Department', status: 'Present', statusClass: 'bg-success', clockIn: '09:00 AM', clockOut: '-', hours: '3.5 hrs' },
+                { id: 2, name: 'Sarah Johnson', department: 'Marketing', status: 'Present', statusClass: 'bg-success', clockIn: '08:45 AM', clockOut: '-', hours: '3.8 hrs' },
+                { id: 3, name: 'Mike Davis', department: 'Finance', status: 'Late', statusClass: 'bg-warning', clockIn: '10:15 AM', clockOut: '-', hours: '2.2 hrs' },
+                { id: 4, name: 'Emma Wilson', department: 'HR', status: 'Present', statusClass: 'bg-success', clockIn: '09:10 AM', clockOut: '-', hours: '3.4 hrs' },
+                { id: 5, name: 'Robert Brown', department: 'Operations', status: 'Absent', statusClass: 'bg-danger', clockIn: '-', clockOut: '-', hours: '0 hrs' },
+                { id: 6, name: 'Lisa Garcia', department: 'IT Department', status: 'Present', statusClass: 'bg-success', clockIn: '08:30 AM', clockOut: '-', hours: '4.0 hrs' },
+                { id: 7, name: 'David Miller', department: 'Marketing', status: 'Present', statusClass: 'bg-success', clockIn: '09:05 AM', clockOut: '-', hours: '3.6 hrs' },
+                { id: 8, name: 'Jennifer Lee', department: 'Finance', status: 'Half Day', statusClass: 'bg-info', clockIn: '09:00 AM', clockOut: '01:00 PM', hours: '4.0 hrs' },
+                { id: 9, name: 'Christopher Anderson', department: 'Operations', status: 'Present', statusClass: 'bg-success', clockIn: '09:05 AM', clockOut: '-', hours: '3.6 hrs' },
+                { id: 10, name: 'Amanda Thomas', department: 'HR', status: 'Present', statusClass: 'bg-success', clockIn: '08:50 AM', clockOut: '-', hours: '3.8 hrs' },
+                { id: 11, name: 'James Wilson', department: 'IT Department', status: 'Late', statusClass: 'bg-warning', clockIn: '10:30 AM', clockOut: '-', hours: '2.0 hrs' },
+                { id: 12, name: 'Maria Rodriguez', department: 'Marketing', status: 'Present', statusClass: 'bg-success', clockIn: '08:55 AM', clockOut: '-', hours: '3.7 hrs' },
+                { id: 13, name: 'Kevin Taylor', department: 'Finance', status: 'Present', statusClass: 'bg-success', clockIn: '09:15 AM', clockOut: '-', hours: '3.3 hrs' },
+                { id: 14, name: 'Nicole Martinez', department: 'Operations', status: 'Absent', statusClass: 'bg-danger', clockIn: '-', clockOut: '-', hours: '0 hrs' },
+                { id: 15, name: 'Daniel Jackson', department: 'HR', status: 'Present', statusClass: 'bg-success', clockIn: '09:20 AM', clockOut: '-', hours: '3.2 hrs' },
+                { id: 16, name: 'Rachel White', department: 'IT Department', status: 'Present', statusClass: 'bg-success', clockIn: '08:40 AM', clockOut: '-', hours: '3.9 hrs' },
+                { id: 17, name: 'Steven Harris', department: 'Marketing', status: 'Present', statusClass: 'bg-success', clockIn: '09:00 AM', clockOut: '-', hours: '3.5 hrs' },
+                { id: 18, name: 'Michelle Clark', department: 'Finance', status: 'Late', statusClass: 'bg-warning', clockIn: '10:45 AM', clockOut: '-', hours: '1.8 hrs' },
+                { id: 19, name: 'Brian Lewis', department: 'Operations', status: 'Present', statusClass: 'bg-success', clockIn: '08:35 AM', clockOut: '-', hours: '4.1 hrs' },
+                { id: 20, name: 'Laura Walker', department: 'HR', status: 'Present', statusClass: 'bg-success', clockIn: '09:10 AM', clockOut: '-', hours: '3.4 hrs' }
+            ];
+            
+            function updateOverviewTable() {
+                const tableBody = document.querySelector('#attendanceTable tbody');
+                if (!tableBody) return;
+                
+                const startIndex = (overviewCurrentPage - 1) * overviewEntriesPerPage;
+                const endIndex = startIndex + overviewEntriesPerPage;
+                const pageEntries = overviewSampleData.slice(startIndex, endIndex);
+                
+                tableBody.innerHTML = '';
+                
+                pageEntries.forEach(entry => {
+                    const row = `
+                        <tr>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input row-checkbox" type="checkbox" data-id="${entry.id}">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(entry.name)}&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
+                                    <span>${entry.name}</span>
+                                </div>
+                            </td>
+                            <td>${entry.department}</td>
+                            <td><span class="badge ${entry.statusClass}">${entry.status}</span></td>
+                            <td>${entry.clockIn}</td>
+                            <td>${entry.clockOut}</td>
+                            <td>${entry.hours}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-record" data-id="${entry.id}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-record" data-id="${entry.id}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+                
+                updateOverviewPagination();
+                attachOverviewEventListeners();
+            }
+            
+            function updateOverviewPagination() {
+                const paginationContainer = document.querySelector('#overview .pagination');
+                if (!paginationContainer) return;
+                
+                let paginationHTML = '';
+                
+                // Previous button
+                paginationHTML += `
+                    <li class="page-item ${overviewCurrentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link overview-prev" href="#" tabindex="-1" aria-disabled="${overviewCurrentPage === 1}">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                `;
+                
+                // Page numbers
+                for (let i = 1; i <= overviewTotalPages; i++) {
+                    paginationHTML += `
+                        <li class="page-item ${i === overviewCurrentPage ? 'active' : ''}">
+                            <a class="page-link overview-page" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `;
+                }
+                
+                // Next button
+                paginationHTML += `
+                    <li class="page-item ${overviewCurrentPage === overviewTotalPages ? 'disabled' : ''}">
+                        <a class="page-link overview-next" href="#">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                `;
+                
+                paginationContainer.innerHTML = paginationHTML;
+                attachOverviewPaginationListeners();
+            }
+            
+            function attachOverviewEventListeners() {
+                document.querySelectorAll('.view-record').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const recordId = this.getAttribute('data-id');
+                        showNotification(`Viewing overview record #${recordId}`, 'info');
+                    });
+                });
+                
+                document.querySelectorAll('.edit-record').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const recordId = this.getAttribute('data-id');
+                        showNotification(`Editing overview record #${recordId}`, 'info');
+                    });
+                });
+                
+                document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        updateBulkActionButtons();
+                    });
+                });
+            }
+            
+            function attachOverviewPaginationListeners() {
+                document.querySelectorAll('.overview-prev').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (overviewCurrentPage > 1) {
+                            overviewCurrentPage--;
+                            updateOverviewTable();
+                            showNotification(`Loading page ${overviewCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.overview-next').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (overviewCurrentPage < overviewTotalPages) {
+                            overviewCurrentPage++;
+                            updateOverviewTable();
+                            showNotification(`Loading page ${overviewCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.overview-page').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const page = parseInt(this.getAttribute('data-page'));
+                        if (page !== overviewCurrentPage) {
+                            overviewCurrentPage = page;
+                            updateOverviewTable();
+                            showNotification(`Loading page ${overviewCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+            }
+            
+            // ===== ADMIN ATTENDANCE TAB PAGINATION =====
+            let adminCurrentPage = 1;
+            const adminTotalPages = 3;
+            const adminEntriesPerPage = 3;
+            
+            const adminSampleData = [
+                { id: 1, name: 'John Admin', department: 'IT Department', status: 'Present', statusClass: 'bg-success', clockIn: '09:00 AM', clockOut: '-', hours: '3.5 hrs' },
+                { id: 2, name: 'Sarah Admin', department: 'Human Resources', status: 'Present', statusClass: 'bg-success', clockIn: '08:45 AM', clockOut: '-', hours: '3.8 hrs' },
+                { id: 3, name: 'Mike Admin', department: 'Finance', status: 'Absent', statusClass: 'bg-danger', clockIn: '-', clockOut: '-', hours: '0 hrs' },
+                { id: 4, name: 'Emma Admin', department: 'Operations', status: 'Present', statusClass: 'bg-success', clockIn: '09:10 AM', clockOut: '-', hours: '3.4 hrs' },
+                { id: 5, name: 'Robert Admin', department: 'IT Department', status: 'Late', statusClass: 'bg-warning', clockIn: '10:15 AM', clockOut: '-', hours: '2.2 hrs' },
+                { id: 6, name: 'Lisa Admin', department: 'Human Resources', status: 'Present', statusClass: 'bg-success', clockIn: '08:30 AM', clockOut: '-', hours: '4.0 hrs' },
+                { id: 7, name: 'David Admin', department: 'Finance', status: 'Present', statusClass: 'bg-success', clockIn: '09:05 AM', clockOut: '-', hours: '3.6 hrs' },
+                { id: 8, name: 'Jennifer Admin', department: 'Operations', status: 'Half Day', statusClass: 'bg-info', clockIn: '09:00 AM', clockOut: '01:00 PM', hours: '4.0 hrs' },
+                { id: 9, name: 'Christopher Admin', department: 'IT Department', status: 'Present', statusClass: 'bg-success', clockIn: '09:05 AM', clockOut: '-', hours: '3.6 hrs' }
+            ];
+            
+            function updateAdminTable() {
+                const tableBody = document.querySelector('#adminAttendanceTable tbody');
+                if (!tableBody) return;
+                
+                const startIndex = (adminCurrentPage - 1) * adminEntriesPerPage;
+                const endIndex = startIndex + adminEntriesPerPage;
+                const pageEntries = adminSampleData.slice(startIndex, endIndex);
+                
+                tableBody.innerHTML = '';
+                
+                pageEntries.forEach(entry => {
+                    const row = `
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(entry.name)}&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
+                                    <span>${entry.name}</span>
+                                </div>
+                            </td>
+                            <td>${entry.department}</td>
+                            <td><span class="badge ${entry.statusClass}">${entry.status}</span></td>
+                            <td>${entry.clockIn}</td>
+                            <td>${entry.clockOut}</td>
+                            <td>${entry.hours}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-admin-record" data-id="${entry.id}" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-admin-record" data-id="${entry.id}" title="Edit Record">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+                
+                updateAdminPagination();
+                attachAdminEventListeners();
+            }
+            
+            function updateAdminPagination() {
+                const paginationContainer = document.querySelector('#admin-attendance .pagination');
+                if (!paginationContainer) return;
+                
+                let paginationHTML = '';
+                
+                // Previous button
+                paginationHTML += `
+                    <li class="page-item ${adminCurrentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link admin-prev" href="#" tabindex="-1" aria-disabled="${adminCurrentPage === 1}">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                `;
+                
+                // Page numbers
+                for (let i = 1; i <= adminTotalPages; i++) {
+                    paginationHTML += `
+                        <li class="page-item ${i === adminCurrentPage ? 'active' : ''}">
+                            <a class="page-link admin-page" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `;
+                }
+                
+                // Next button
+                paginationHTML += `
+                    <li class="page-item ${adminCurrentPage === adminTotalPages ? 'disabled' : ''}">
+                        <a class="page-link admin-next" href="#">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                `;
+                
+                paginationContainer.innerHTML = paginationHTML;
+                attachAdminPaginationListeners();
+            }
+            
+            function attachAdminEventListeners() {
+                document.querySelectorAll('.view-admin-record').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const recordId = this.getAttribute('data-id');
+                        showNotification(`Viewing admin record #${recordId}`, 'info');
+                        showAdminRecordModal(recordId);
+                    });
+                });
+                
+                document.querySelectorAll('.edit-admin-record').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const recordId = this.getAttribute('data-id');
+                        showNotification(`Editing admin record #${recordId}`, 'info');
+                        showAdminEditModal(recordId);
+                    });
+                });
+            }
+            
+            function attachAdminPaginationListeners() {
+                document.querySelectorAll('.admin-prev').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (adminCurrentPage > 1) {
+                            adminCurrentPage--;
+                            updateAdminTable();
+                            showNotification(`Loading admin page ${adminCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.admin-next').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (adminCurrentPage < adminTotalPages) {
+                            adminCurrentPage++;
+                            updateAdminTable();
+                            showNotification(`Loading admin page ${adminCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.admin-page').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const page = parseInt(this.getAttribute('data-page'));
+                        if (page !== adminCurrentPage) {
+                            adminCurrentPage = page;
+                            updateAdminTable();
+                            showNotification(`Loading admin page ${adminCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+            }
+            
+            // ===== EMPLOYEE ATTENDANCE TAB PAGINATION =====
+            let employeeCurrentPage = 1;
+            const employeeTotalPages = 3;
+            const employeeEntriesPerPage = 3;
+            
+            const employeeSampleData = [
+                { id: 1, name: 'John Employee', department: 'IT Department', status: 'Present', statusClass: 'bg-success', clockIn: '09:00 AM', clockOut: '-', hours: '3.5 hrs' },
+                { id: 2, name: 'Sarah Employee', department: 'Marketing', status: 'Present', statusClass: 'bg-success', clockIn: '08:45 AM', clockOut: '-', hours: '3.8 hrs' },
+                { id: 3, name: 'Mike Employee', department: 'Finance', status: 'Absent', statusClass: 'bg-danger', clockIn: '-', clockOut: '-', hours: '0 hrs' },
+                { id: 4, name: 'Emma Employee', department: 'Operations', status: 'Present', statusClass: 'bg-success', clockIn: '09:10 AM', clockOut: '-', hours: '3.4 hrs' },
+                { id: 5, name: 'Robert Employee', department: 'IT Department', status: 'Late', statusClass: 'bg-warning', clockIn: '10:15 AM', clockOut: '-', hours: '2.2 hrs' },
+                { id: 6, name: 'Lisa Employee', department: 'Marketing', status: 'Present', statusClass: 'bg-success', clockIn: '08:30 AM', clockOut: '-', hours: '4.0 hrs' },
+                { id: 7, name: 'David Employee', department: 'Finance', status: 'Present', statusClass: 'bg-success', clockIn: '09:05 AM', clockOut: '-', hours: '3.6 hrs' },
+                { id: 8, name: 'Jennifer Employee', department: 'Operations', status: 'Half Day', statusClass: 'bg-info', clockIn: '09:00 AM', clockOut: '01:00 PM', hours: '4.0 hrs' },
+                { id: 9, name: 'Christopher Employee', department: 'IT Department', status: 'Present', statusClass: 'bg-success', clockIn: '09:05 AM', clockOut: '-', hours: '3.6 hrs' }
+            ];
+            
+            function updateEmployeeTable() {
+                const tableBody = document.querySelector('#employeeAttendanceTable tbody');
+                if (!tableBody) return;
+                
+                const startIndex = (employeeCurrentPage - 1) * employeeEntriesPerPage;
+                const endIndex = startIndex + employeeEntriesPerPage;
+                const pageEntries = employeeSampleData.slice(startIndex, endIndex);
+                
+                tableBody.innerHTML = '';
+                
+                pageEntries.forEach(entry => {
+                    const row = `
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(entry.name)}&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
+                                    <span>${entry.name}</span>
+                                </div>
+                            </td>
+                            <td>${entry.department}</td>
+                            <td><span class="badge ${entry.statusClass}">${entry.status}</span></td>
+                            <td>${entry.clockIn}</td>
+                            <td>${entry.clockOut}</td>
+                            <td>${entry.hours}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-employee-record" data-id="${entry.id}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-employee-record" data-id="${entry.id}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+                
+                updateEmployeePagination();
+                attachEmployeeEventListeners();
+            }
+            
+            function updateEmployeePagination() {
+                const paginationContainer = document.querySelector('#employee-attendance .pagination');
+                if (!paginationContainer) return;
+                
+                let paginationHTML = '';
+                
+                // Previous button
+                paginationHTML += `
+                    <li class="page-item ${employeeCurrentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link employee-prev" href="#" tabindex="-1" aria-disabled="${employeeCurrentPage === 1}">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                `;
+                
+                // Page numbers
+                for (let i = 1; i <= employeeTotalPages; i++) {
+                    paginationHTML += `
+                        <li class="page-item ${i === employeeCurrentPage ? 'active' : ''}">
+                            <a class="page-link employee-page" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `;
+                }
+                
+                // Next button
+                paginationHTML += `
+                    <li class="page-item ${employeeCurrentPage === employeeTotalPages ? 'disabled' : ''}">
+                        <a class="page-link employee-next" href="#">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                `;
+                
+                paginationContainer.innerHTML = paginationHTML;
+                attachEmployeePaginationListeners();
+            }
+            
+            function attachEmployeeEventListeners() {
+                document.querySelectorAll('.view-employee-record').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const recordId = this.getAttribute('data-id');
+                        showNotification(`Viewing employee record #${recordId}`, 'info');
+                    });
+                });
+                
+                document.querySelectorAll('.edit-employee-record').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const recordId = this.getAttribute('data-id');
+                        showNotification(`Editing employee record #${recordId}`, 'info');
+                    });
+                });
+            }
+            
+            function attachEmployeePaginationListeners() {
+                document.querySelectorAll('.employee-prev').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (employeeCurrentPage > 1) {
+                            employeeCurrentPage--;
+                            updateEmployeeTable();
+                            showNotification(`Loading employee page ${employeeCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.employee-next').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (employeeCurrentPage < employeeTotalPages) {
+                            employeeCurrentPage++;
+                            updateEmployeeTable();
+                            showNotification(`Loading employee page ${employeeCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.employee-page').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const page = parseInt(this.getAttribute('data-page'));
+                        if (page !== employeeCurrentPage) {
+                            employeeCurrentPage = page;
+                            updateEmployeeTable();
+                            showNotification(`Loading employee page ${employeeCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+            }
+            
+            // ===== MANAGER ATTENDANCE TAB PAGINATION =====
+            let managerCurrentPage = 1;
+            const managerTotalPages = 3;
+            const managerEntriesPerPage = 3;
+            
+            const managerSampleData = [
+                { id: 1, name: 'John Manager', department: 'IT Department', status: 'Present', statusClass: 'bg-success', clockIn: '09:00 AM', clockOut: '-', hours: '3.5 hrs' },
+                { id: 2, name: 'Sarah Manager', department: 'Human Resources', status: 'Present', statusClass: 'bg-success', clockIn: '08:45 AM', clockOut: '-', hours: '3.8 hrs' },
+                { id: 3, name: 'Mike Manager', department: 'Finance', status: 'Absent', statusClass: 'bg-danger', clockIn: '-', clockOut: '-', hours: '0 hrs' },
+                { id: 4, name: 'Emma Manager', department: 'Operations', status: 'Present', statusClass: 'bg-success', clockIn: '09:10 AM', clockOut: '-', hours: '3.4 hrs' },
+                { id: 5, name: 'Robert Manager', department: 'IT Department', status: 'Late', statusClass: 'bg-warning', clockIn: '10:15 AM', clockOut: '-', hours: '2.2 hrs' },
+                { id: 6, name: 'Lisa Manager', department: 'Human Resources', status: 'Present', statusClass: 'bg-success', clockIn: '08:30 AM', clockOut: '-', hours: '4.0 hrs' },
+                { id: 7, name: 'David Manager', department: 'Finance', status: 'Present', statusClass: 'bg-success', clockIn: '09:05 AM', clockOut: '-', hours: '3.6 hrs' },
+                { id: 8, name: 'Jennifer Manager', department: 'Operations', status: 'Half Day', statusClass: 'bg-info', clockIn: '09:00 AM', clockOut: '01:00 PM', hours: '4.0 hrs' },
+                { id: 9, name: 'Christopher Manager', department: 'IT Department', status: 'Present', statusClass: 'bg-success', clockIn: '09:05 AM', clockOut: '-', hours: '3.6 hrs' }
+            ];
+            
+            function updateManagerTable() {
+                const tableBody = document.querySelector('#managerAttendanceTable tbody');
+                if (!tableBody) return;
+                
+                const startIndex = (managerCurrentPage - 1) * managerEntriesPerPage;
+                const endIndex = startIndex + managerEntriesPerPage;
+                const pageEntries = managerSampleData.slice(startIndex, endIndex);
+                
+                tableBody.innerHTML = '';
+                
+                pageEntries.forEach(entry => {
+                    const row = `
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(entry.name)}&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
+                                    <span>${entry.name}</span>
+                                </div>
+                            </td>
+                            <td>${entry.department}</td>
+                            <td><span class="badge ${entry.statusClass}">${entry.status}</span></td>
+                            <td>${entry.clockIn}</td>
+                            <td>${entry.clockOut}</td>
+                            <td>${entry.hours}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-manager-record" data-id="${entry.id}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-manager-record" data-id="${entry.id}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+                
+                updateManagerPagination();
+                attachManagerEventListeners();
+            }
+            
+            function updateManagerPagination() {
+                const paginationContainer = document.querySelector('#manager-attendance .pagination');
+                if (!paginationContainer) return;
+                
+                let paginationHTML = '';
+                
+                // Previous button
+                paginationHTML += `
+                    <li class="page-item ${managerCurrentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link manager-prev" href="#" tabindex="-1" aria-disabled="${managerCurrentPage === 1}">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                `;
+                
+                // Page numbers
+                for (let i = 1; i <= managerTotalPages; i++) {
+                    paginationHTML += `
+                        <li class="page-item ${i === managerCurrentPage ? 'active' : ''}">
+                            <a class="page-link manager-page" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `;
+                }
+                
+                // Next button
+                paginationHTML += `
+                    <li class="page-item ${managerCurrentPage === managerTotalPages ? 'disabled' : ''}">
+                        <a class="page-link manager-next" href="#">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                `;
+                
+                paginationContainer.innerHTML = paginationHTML;
+                attachManagerPaginationListeners();
+            }
+            
+            function attachManagerEventListeners() {
+                document.querySelectorAll('.view-manager-record').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const recordId = this.getAttribute('data-id');
+                        showNotification(`Viewing manager record #${recordId}`, 'info');
+                    });
+                });
+                
+                document.querySelectorAll('.edit-manager-record').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const recordId = this.getAttribute('data-id');
+                        showNotification(`Editing manager record #${recordId}`, 'info');
+                    });
+                });
+            }
+            
+            function attachManagerPaginationListeners() {
+                document.querySelectorAll('.manager-prev').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (managerCurrentPage > 1) {
+                            managerCurrentPage--;
+                            updateManagerTable();
+                            showNotification(`Loading manager page ${managerCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.manager-next').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (managerCurrentPage < managerTotalPages) {
+                            managerCurrentPage++;
+                            updateManagerTable();
+                            showNotification(`Loading manager page ${managerCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.manager-page').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const page = parseInt(this.getAttribute('data-page'));
+                        if (page !== managerCurrentPage) {
+                            managerCurrentPage = page;
+                            updateManagerTable();
+                            showNotification(`Loading manager page ${managerCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+            }
+            
+            // ===== RECORDS TAB PAGINATION =====
+            let recordsCurrentPage = 1;
+            const recordsTotalPages = 4;
+            const recordsEntriesPerPage = 5;
+            
+            const recordsSampleData = [
+                { id: 1, name: 'John Smith', date: 'Jan 15, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '09:00 AM', clockOut: '05:00 PM', hours: '8.0 hrs', enteredBy: 'System' },
+                { id: 2, name: 'Sarah Lee', date: 'Jan 15, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '08:45 AM', clockOut: '05:30 PM', hours: '8.75 hrs', enteredBy: 'System' },
+                { id: 3, name: 'Mike Davis', date: 'Jan 15, 2024', status: 'Absent', statusClass: 'bg-danger', clockIn: '-', clockOut: '-', hours: '0 hrs', enteredBy: 'System' },
+                { id: 4, name: 'Emma Wilson', date: 'Jan 14, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '09:10 AM', clockOut: '05:15 PM', hours: '8.08 hrs', enteredBy: 'Manual Entry' },
+                { id: 5, name: 'Robert Brown', date: 'Jan 14, 2024', status: 'Late', statusClass: 'bg-warning', clockIn: '10:15 AM', clockOut: '06:00 PM', hours: '7.75 hrs', enteredBy: 'System' },
+                { id: 6, name: 'Lisa Garcia', date: 'Jan 14, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '08:30 AM', clockOut: '05:45 PM', hours: '9.25 hrs', enteredBy: 'System' },
+                { id: 7, name: 'David Miller', date: 'Jan 13, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '09:05 AM', clockOut: '05:20 PM', hours: '8.25 hrs', enteredBy: 'System' },
+                { id: 8, name: 'Jennifer Lee', date: 'Jan 13, 2024', status: 'Half Day', statusClass: 'bg-info', clockIn: '09:00 AM', clockOut: '01:00 PM', hours: '4.0 hrs', enteredBy: 'Manual Entry' },
+                { id: 9, name: 'Christopher Anderson', date: 'Jan 13, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '09:05 AM', clockOut: '05:35 PM', hours: '8.5 hrs', enteredBy: 'System' },
+                { id: 10, name: 'Amanda Thomas', date: 'Jan 12, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '08:50 AM', clockOut: '05:25 PM', hours: '8.58 hrs', enteredBy: 'System' },
+                { id: 11, name: 'James Wilson', date: 'Jan 12, 2024', status: 'Late', statusClass: 'bg-warning', clockIn: '10:30 AM', clockOut: '06:30 PM', hours: '8.0 hrs', enteredBy: 'System' },
+                { id: 12, name: 'Maria Rodriguez', date: 'Jan 12, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '08:55 AM', clockOut: '05:40 PM', hours: '8.75 hrs', enteredBy: 'System' },
+                { id: 13, name: 'Kevin Taylor', date: 'Jan 11, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '09:15 AM', clockOut: '05:30 PM', hours: '8.25 hrs', enteredBy: 'System' },
+                { id: 14, name: 'Nicole Martinez', date: 'Jan 11, 2024', status: 'Absent', statusClass: 'bg-danger', clockIn: '-', clockOut: '-', hours: '0 hrs', enteredBy: 'System' },
+                { id: 15, name: 'Daniel Jackson', date: 'Jan 11, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '09:20 AM', clockOut: '05:45 PM', hours: '8.42 hrs', enteredBy: 'Manual Entry' },
+                { id: 16, name: 'Rachel White', date: 'Jan 10, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '08:40 AM', clockOut: '05:15 PM', hours: '8.58 hrs', enteredBy: 'System' },
+                { id: 17, name: 'Steven Harris', date: 'Jan 10, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '09:00 AM', clockOut: '05:30 PM', hours: '8.5 hrs', enteredBy: 'System' },
+                { id: 18, name: 'Michelle Clark', date: 'Jan 10, 2024', status: 'Late', statusClass: 'bg-warning', clockIn: '10:45 AM', clockOut: '06:45 PM', hours: '8.0 hrs', enteredBy: 'System' },
+                { id: 19, name: 'Brian Lewis', date: 'Jan 09, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '08:35 AM', clockOut: '05:50 PM', hours: '9.25 hrs', enteredBy: 'System' },
+                { id: 20, name: 'Laura Walker', date: 'Jan 09, 2024', status: 'Present', statusClass: 'bg-success', clockIn: '09:10 AM', clockOut: '05:25 PM', hours: '8.25 hrs', enteredBy: 'Manual Entry' }
+            ];
+            
+            function updateRecordsTable() {
+                const tableBody = document.querySelector('#records table tbody');
+                if (!tableBody) return;
+                
+                const startIndex = (recordsCurrentPage - 1) * recordsEntriesPerPage;
+                const endIndex = startIndex + recordsEntriesPerPage;
+                const pageEntries = recordsSampleData.slice(startIndex, endIndex);
+                
+                tableBody.innerHTML = '';
+                
+                pageEntries.forEach(entry => {
+                    const row = `
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(entry.name)}&background=0D8ABC&color=fff" class="rounded-circle me-2" width="30" height="30">
+                                    <span>${entry.name}</span>
+                                </div>
+                            </td>
+                            <td>${entry.date}</td>
+                            <td><span class="badge ${entry.statusClass}">${entry.status}</span></td>
+                            <td>${entry.clockIn}</td>
+                            <td>${entry.clockOut}</td>
+                            <td>${entry.hours}</td>
+                            <td>${entry.enteredBy}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-records-record" data-id="${entry.id}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-records-record" data-id="${entry.id}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-records-record" data-id="${entry.id}" data-name="${entry.name}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+                
+                updateRecordsPagination();
+                attachRecordsEventListeners();
+            }
+            
+            function updateRecordsPagination() {
+                const paginationContainer = document.querySelector('#records .pagination');
+                if (!paginationContainer) return;
+                
+                let paginationHTML = '';
+                
+                // Previous button
+                paginationHTML += `
+                    <li class="page-item ${recordsCurrentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link records-prev" href="#" tabindex="-1" aria-disabled="${recordsCurrentPage === 1}">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                `;
+                
+                // Page numbers
+                for (let i = 1; i <= recordsTotalPages; i++) {
+                    paginationHTML += `
+                        <li class="page-item ${i === recordsCurrentPage ? 'active' : ''}">
+                            <a class="page-link records-page" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `;
+                }
+                
+                // Next button
+                paginationHTML += `
+                    <li class="page-item ${recordsCurrentPage === recordsTotalPages ? 'disabled' : ''}">
+                        <a class="page-link records-next" href="#">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                `;
+                
+                paginationContainer.innerHTML = paginationHTML;
+                attachRecordsPaginationListeners();
+            }
+            
+            function attachRecordsEventListeners() {
+                document.querySelectorAll('.view-records-record').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const recordId = this.getAttribute('data-id');
+                        showNotification(`Viewing detailed record #${recordId}`, 'info');
+                    });
+                });
+                
+                document.querySelectorAll('.edit-records-record').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const recordId = this.getAttribute('data-id');
+                        showNotification(`Editing detailed record #${recordId}`, 'info');
+                    });
+                });
+                
+                document.querySelectorAll('.delete-records-record').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const recordId = this.getAttribute('data-id');
+                        const recordName = this.getAttribute('data-name');
+                        if (confirm(`Are you sure you want to delete the attendance record for ${recordName}?`)) {
+                            showNotification(`Record #${recordId} for ${recordName} deleted successfully!`, 'success');
+                            // Remove the entry from recordsSampleData array
+                            const index = recordsSampleData.findIndex(entry => entry.id == recordId);
+                            if (index > -1) {
+                                recordsSampleData.splice(index, 1);
+                                // Adjust current page if necessary
+                                const maxPage = Math.ceil(recordsSampleData.length / recordsEntriesPerPage);
+                                if (recordsCurrentPage > maxPage && maxPage > 0) {
+                                    recordsCurrentPage = maxPage;
+                                }
+                                updateRecordsTable();
+                            }
+                        }
+                    });
+                });
+            }
+            
+            function attachRecordsPaginationListeners() {
+                document.querySelectorAll('.records-prev').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (recordsCurrentPage > 1) {
+                            recordsCurrentPage--;
+                            updateRecordsTable();
+                            showNotification(`Loading records page ${recordsCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.records-next').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (recordsCurrentPage < recordsTotalPages) {
+                            recordsCurrentPage++;
+                            updateRecordsTable();
+                            showNotification(`Loading records page ${recordsCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.records-page').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const page = parseInt(this.getAttribute('data-page'));
+                        if (page !== recordsCurrentPage) {
+                            recordsCurrentPage = page;
+                            updateRecordsTable();
+                            showNotification(`Loading records page ${recordsCurrentPage}...`, 'info');
+                        }
+                    });
+                });
+            }
+            
+            // Initialize all tables when tabs are switched
+            document.querySelectorAll('#attendanceTabs button').forEach(tabButton => {
+                tabButton.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-bs-target');
+                    
+                    // Initialize the appropriate table based on the active tab
+                    setTimeout(() => {
+                        switch(targetTab) {
+                            case '#overview':
+                                updateOverviewTable();
+                                break;
+                            case '#admin-attendance':
+                                updateAdminTable();
+                                break;
+                            case '#employee-attendance':
+                                updateEmployeeTable();
+                                break;
+                            case '#manager-attendance':
+                                updateManagerTable();
+                                break;
+                            case '#records':
+                                updateRecordsTable();
+                                break;
+                        }
+                    }, 100);
+                });
+            });
+            
+            // Initialize the default active tab (Overview)
+            setTimeout(() => {
+                updateOverviewTable();
+            }, 500);
             
             // Status change effect on clock times
             const statusSelect = document.getElementById('attendanceStatus');
@@ -2072,6 +3366,237 @@
             printAdminBtn.addEventListener('click', function() {
                 printAttendanceTable('adminAttendanceTable', 'Admin Attendance Records');
             });
+        }
+
+        // Admin Filters functionality
+        const applyAdminFiltersBtn = document.getElementById('applyAdminFiltersBtn');
+        if (applyAdminFiltersBtn) {
+            applyAdminFiltersBtn.addEventListener('click', function() {
+                const dateFilter = document.getElementById('adminDateFilter').value;
+                const departmentFilter = document.getElementById('adminDepartmentFilter').value;
+                const departmentText = document.getElementById('adminDepartmentFilter').options[document.getElementById('adminDepartmentFilter').selectedIndex].text;
+                const statusFilter = document.getElementById('adminStatusFilter').value;
+                const statusText = document.getElementById('adminStatusFilter').options[document.getElementById('adminStatusFilter').selectedIndex].text;
+                
+                // Build filter message
+                let message = 'Admin filters applied:';
+                if (dateFilter) message += ` Date=${dateFilter},`;
+                if (departmentFilter) message += ` Department=${departmentText},`;
+                if (statusFilter) message += ` Status=${statusText},`;
+                
+                // Remove trailing comma
+                message = message.replace(/,$/, '');
+                if (!dateFilter && !departmentFilter && !statusFilter) {
+                    message += ' No filters applied';
+                }
+                
+                showNotification(message, 'info');
+                
+                // In a real application, this would make an AJAX request to filter admin attendance data
+                // Example:
+                // fetch(`/admin/attendance/filter?date=${dateFilter}&department=${departmentFilter}&status=${statusFilter}`)
+                //     .then(response => response.json())
+                //     .then(data => {
+                //         updateAdminAttendanceTable(data);
+                //     });
+            });
+        }
+
+        // Admin record view functionality
+        document.querySelectorAll('.view-admin-record').forEach(button => {
+            button.addEventListener('click', function() {
+                const recordId = this.getAttribute('data-id');
+                showNotification(`Viewing admin record #${recordId}`, 'info');
+                
+                // In a real application, this would open a modal with detailed admin attendance information
+                // Example modal content could include:
+                // - Admin details (name, department, role)
+                // - Full attendance history
+                // - Performance metrics
+                // - Recent activities
+                
+                // For now, show a placeholder modal or alert
+                showAdminRecordModal(recordId);
+            });
+        });
+
+        // Admin record edit functionality
+        document.querySelectorAll('.edit-admin-record').forEach(button => {
+            button.addEventListener('click', function() {
+                const recordId = this.getAttribute('data-id');
+                showNotification(`Editing admin record #${recordId}`, 'info');
+                
+                // In a real application, this would open an edit form for admin attendance
+                // Example: openAdminEditModal(recordId);
+                
+                // For now, show a placeholder
+                showAdminEditModal(recordId);
+            });
+        });
+
+        // Function to show admin record details modal
+        function showAdminRecordModal(recordId) {
+            // Create a simple modal for demonstration
+            const modalHtml = `
+                <div class="modal fade" id="adminRecordModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title">Admin Record Details #${recordId}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Admin Information</h6>
+                                        <p><strong>Name:</strong> John Admin</p>
+                                        <p><strong>Department:</strong> IT Department</p>
+                                        <p><strong>Role:</strong> System Administrator</p>
+                                        <p><strong>Employee ID:</strong> ADM${recordId.toString().padStart(3, '0')}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Attendance Details</h6>
+                                        <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                                        <p><strong>Status:</strong> <span class="badge bg-success">Present</span></p>
+                                        <p><strong>Clock In:</strong> 09:00 AM</p>
+                                        <p><strong>Clock Out:</strong> 05:30 PM</p>
+                                        <p><strong>Total Hours:</strong> 8.5 hrs</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h6>Recent Activity</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-clock text-success"></i> Clocked in at 09:00 AM</li>
+                                    <li><i class="bi bi-pause text-warning"></i> Break: 12:00 PM - 01:00 PM</li>
+                                    <li><i class="bi bi-clock text-info"></i> Currently active</li>
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Edit Record</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('adminRecordModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('adminRecordModal'));
+            modal.show();
+        }
+
+        // Function to show admin edit modal
+        function showAdminEditModal(recordId) {
+            // Create a simple edit modal for demonstration
+            const modalHtml = `
+                <div class="modal fade" id="adminEditModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning text-dark">
+                                <h5 class="modal-title">Edit Admin Record #${recordId}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="adminEditForm">
+                                    <div class="mb-3">
+                                        <label for="adminStatus" class="form-label">Status</label>
+                                        <select class="form-select" id="adminStatus">
+                                            <option value="present" selected>Present</option>
+                                            <option value="absent">Absent</option>
+                                            <option value="late">Late</option>
+                                            <option value="on_leave">On Leave</option>
+                                        </select>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="adminClockIn" class="form-label">Clock In</label>
+                                                <input type="time" class="form-control" id="adminClockIn" value="09:00">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="adminClockOut" class="form-label">Clock Out</label>
+                                                <input type="time" class="form-control" id="adminClockOut" value="17:30">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="adminNotes" class="form-label">Notes</label>
+                                        <textarea class="form-control" id="adminNotes" rows="3" placeholder="Add any notes..."></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-warning" onclick="saveAdminRecord(${recordId})">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('adminEditModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('adminEditModal'));
+            modal.show();
+        }
+
+        // Function to save admin record changes
+        function saveAdminRecord(recordId) {
+            const status = document.getElementById('adminStatus').value;
+            const clockIn = document.getElementById('adminClockIn').value;
+            const clockOut = document.getElementById('adminClockOut').value;
+            const notes = document.getElementById('adminNotes').value;
+            
+            // In a real application, this would make an AJAX request to save the changes
+            // Example:
+            // fetch(`/admin/attendance/${recordId}`, {
+            //     method: 'PUT',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            //     },
+            //     body: JSON.stringify({
+            //         status: status,
+            //         check_in: clockIn,
+            //         check_out: clockOut,
+            //         notes: notes
+            //     })
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     if (data.success) {
+            //         showNotification('Admin record updated successfully!', 'success');
+            //         // Refresh the table or update the specific row
+            //     } else {
+            //         showNotification('Error updating record: ' + data.message, 'error');
+            //     }
+            // });
+            
+            // For demonstration, just show success message
+            showNotification(`Admin record #${recordId} updated successfully!`, 'success');
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('adminEditModal'));
+            modal.hide();
         }
 
         // Employee attendance export/print

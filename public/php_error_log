@@ -1,0 +1,1 @@
+[08-Oct-2025 06:37:47 UTC] PHP Fatal error:  Cannot redeclare App\Http\Controllers\SuperAdminController::calculateDeductions() in D:\xampp\htdocs\imteaz\HR-Management\app\Http\Controllers\SuperAdminController.php on line 1001
