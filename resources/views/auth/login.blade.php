@@ -336,7 +336,7 @@
         <div class="login-left">
             <div class="logo">
                 <i class="fas fa-users"></i>
-                TalentFlow HR
+                ik HR
             </div>
             
             <div class="welcome-text">
@@ -350,6 +350,9 @@
                 <li><i class="fas fa-check"></i> Attendance Tracking</li>
                 <li><i class="fas fa-check"></i> Performance Reviews</li>
             </ul>
+            <div>
+                Admin: admin@gmail.com | Password: 12345678
+            </div>
         </div>
         
         <!-- Right Side with Login Form -->
